@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { ViewCashflowComponentStyle } from '../../types';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { CashflowIcon, ArrowRightIcon } from '../../assets/images';
 import mergeStyles from './styles';
+import { ThemeContext } from 'react-native-theme-component';
 
 export type ViewCashflowComponentProps = {
-  i18n?: any;
   label?: string;
   message?: string;
   style?: ViewCashflowComponentStyle;
@@ -13,8 +13,9 @@ export type ViewCashflowComponentProps = {
 };
 
 const ViewCashflowComponent = (props: ViewCashflowComponentProps) => {
-  const { i18n, label, message, style, onViewCashFlow } = props;
+  const { label, message, style, onViewCashFlow } = props;
   const styles: ViewCashflowComponentStyle = mergeStyles(style);
+  const { i18n } = useContext(ThemeContext);
 
   return (
     <View style={styles.containerStyle}>

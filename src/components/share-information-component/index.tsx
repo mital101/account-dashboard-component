@@ -1,11 +1,8 @@
-import {
-  BWarningIcon,
-  ArrowDownIcon,
-} from '../../assets/images';
-import { Wallet } from "@banking-component/core";
-import { Formik, FormikProps } from "formik";
-import moment from "moment";
-import React, { ReactNode, useContext, useEffect, useRef, useState } from "react";
+import { BWarningIcon, ArrowDownIcon } from '../../assets/images';
+import { Wallet } from '@banking-component/core';
+import { Formik, FormikProps } from 'formik';
+import moment from 'moment';
+import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -15,43 +12,32 @@ import {
   TextStyle,
   View,
   ViewStyle,
-  TouchableOpacity
-} from "react-native";
-import {
-  AlertModal,
-  Button,
-  InputField,
-  showMessage
-} from "react-native-theme-component";
-import CheckBox, { CheckBoxStyle } from "./component/check-box";
-import ShareDatePicker, {
-  ShareDatePickerStyle
-} from "./component/share-date-picker";
-import {
-  ShareInformationData,
-  ShareInformationSchema
-} from "./data/share-information-data";
-import useMergeStyle from "./theme";
-import { WalletContext } from "../../context/wallet-context";
-import SelectAccountModal, { SelectAccountModalStyle } from "./component/select-account-modal";
-import { ThemeContext } from "react-native-theme-component";
+  TouchableOpacity,
+} from 'react-native';
+import { AlertModal, Button, InputField, showMessage } from 'react-native-theme-component';
+import CheckBox, { CheckBoxStyle } from './component/check-box';
+import ShareDatePicker, { ShareDatePickerStyle } from './component/share-date-picker';
+import { ShareInformationData, ShareInformationSchema } from './data/share-information-data';
+import useMergeStyle from './theme';
+import { WalletContext } from '../../context/wallet-context';
+import SelectAccountModal, { SelectAccountModalStyle } from './component/select-account-modal';
+import { ThemeContext } from 'react-native-theme-component';
 
 export type ShareInformationComponentStyle = {
   containerStyle?: StyleProp<ViewStyle>;
   mainContainerStyle: StyleProp<ViewStyle>;
   sectionTextStyle?: StyleProp<TextStyle>;
   applyContainerStyle?: StyleProp<ViewStyle>;
-  accountNameContainerStyle?: StyleProp<ViewStyle>
-  accountNameTextStyle?: StyleProp<TextStyle>
+  accountNameContainerStyle?: StyleProp<ViewStyle>;
+  accountNameTextStyle?: StyleProp<TextStyle>;
   accountWrapperStyle?: StyleProp<ViewStyle>;
   accountNumberTextStyle?: StyleProp<TextStyle>;
-  accountContainerStyle?: StyleProp<ViewStyle>
+  accountContainerStyle?: StyleProp<ViewStyle>;
 };
 
 export type ShareInformationComponentProps = {
   userId: string;
   wallet: Wallet;
-  i18n?: any;
   checkBoxStyle?: CheckBoxStyle;
   datePickerStyle?: ShareDatePickerStyle;
   style?: ShareInformationComponentStyle;
@@ -78,45 +64,31 @@ const ShareInformationComponent = (props: ShareInformationComponentProps) => {
     checkBoxStyle,
     datePickerStyle,
     style,
-    i18n,
     wallet,
-    SelectAccount
+    SelectAccount,
   } = props;
-  const [fromDate, setFromDate] = useState(
-    moment()
-      .subtract(1, "M")
-      .startOf("M")
-      .toDate()
-  );
-  const [toDate, setToDate] = useState(
-    moment()
-      .subtract(1, "M")
-      .endOf("M")
-      .toDate()
-  );
+  const [fromDate, setFromDate] = useState(moment().subtract(1, 'M').startOf('M').toDate());
+  const [toDate, setToDate] = useState(moment().subtract(1, 'M').endOf('M').toDate());
   const [isShareCopy, setShareCopy] = useState(false);
   const [isValidEmail, setValidEmail] = useState(false);
   const formikRef: any = useRef(null);
   const [isConfirmAlert, setConfirmAlert] = useState(false);
   const [isShowSelectAccount, setShowSelectAccount] = useState(false);
   const styles = useMergeStyle(style);
-  const {
-    isSharingInformation,
-    shareInformation,
-    isShareSuccessfully,
-    wallets
-  } = useContext(WalletContext);
+  const { isSharingInformation, shareInformation, isShareSuccessfully, wallets } = useContext(
+    WalletContext
+  );
   const [selectedWallets, setSelectedWallets] = useState<Wallet[]>([wallet]);
-  const { colors } = useContext(ThemeContext);
+  const { colors, i18n } = useContext(ThemeContext);
 
   useEffect(() => {
     if (isShareSuccessfully) {
       onSuccess();
       showMessage({
         message:
-          i18n?.t("share_information_component.msg_shared_successfully") ??
-          "Account Information are sent successfully",
-        backgroundColor: "#44ac44"
+          i18n?.t('share_information_component.msg_shared_successfully') ??
+          'Account Information are sent successfully',
+        backgroundColor: '#44ac44',
       });
     }
   }, [isShareSuccessfully]);
@@ -132,45 +104,40 @@ const ShareInformationComponent = (props: ShareInformationComponentProps) => {
     return (
       <View>
         <Text style={styles.sectionTextStyle}>
-          {i18n?.t("share_information_component.lbl_recipient_email") ??
-            "Recipient Email"}
+          {i18n?.t('share_information_component.lbl_recipient_email') ?? 'Recipient Email'}
         </Text>
         <InputField
-          name="email"
+          name='email'
           placeholder={
-            i18n?.t("share_information_component.plh_enter_recipient_email") ??
-            "Enter recipient email"
+            i18n?.t('share_information_component.plh_enter_recipient_email') ??
+            'Enter recipient email'
           }
-          activeBorderColor={"#FOF3F8"}
-          keyboardType="email-address"
-          autoCapitalize={"none"}
+          activeBorderColor={'#FOF3F8'}
+          keyboardType='email-address'
+          autoCapitalize={'none'}
         />
         <Text style={styles.sectionTextStyle}>
-          {i18n?.t("share_information_component.lbl_message") ??
-            "Message (Optional)"}
+          {i18n?.t('share_information_component.lbl_message') ?? 'Message (Optional)'}
         </Text>
         <InputField
-          name="message"
-          placeholder={
-            i18n?.t("share_information_component.plh_enter_message") ??
-            "Enter message"
-          }
-          activeBorderColor={"#FOF3F8"}
+          name='message'
+          placeholder={i18n?.t('share_information_component.plh_enter_message') ?? 'Enter message'}
+          activeBorderColor={'#FOF3F8'}
           multiline={true}
           numberOfLines={4}
           scrollEnabled={true}
-          textAlignVertical="top"
+          textAlignVertical='top'
           style={{
             containerStyle: {
-              marginBottom: 10
+              marginBottom: 10,
             },
             inputContainerStyle: {
               height: 110,
-              alignItems: "flex-start",
+              alignItems: 'flex-start',
               marginTop: 5,
               paddingTop: 5,
-              paddingBottom: 10
-            }
+              paddingBottom: 10,
+            },
           }}
         />
       </View>
@@ -182,8 +149,7 @@ const ShareInformationComponent = (props: ShareInformationComponentProps) => {
       <SafeAreaView style={styles.containerStyle}>
         <ScrollView style={styles.mainContainerStyle}>
           <Text style={styles.sectionTextStyle}>
-            {i18n?.t("share_information_component.lbl_data_account") ??
-              "Account"}
+            {i18n?.t('share_information_component.lbl_data_account') ?? 'Account'}
           </Text>
 
           <View style={styles.accountWrapperStyle}>
@@ -193,21 +159,16 @@ const ShareInformationComponent = (props: ShareInformationComponentProps) => {
               onPress={() => setShowSelectAccount(true)}
             >
               <View style={innerStyles.accountNames}>
-                <Text
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                  style={styles.accountNameTextStyle}
-                >
+                <Text numberOfLines={1} ellipsizeMode='tail' style={styles.accountNameTextStyle}>
                   {selectedWallets?.length === 0 ? (
                     <Text style={styles.accountNumberTextStyle}>
-                      {i18n?.t(
-                        "share_information_component.lbl_select_account"
-                      ) ?? "Select a account "}
+                      {i18n?.t('share_information_component.lbl_select_account') ??
+                        'Select a account '}
                     </Text>
                   ) : selectedWallets?.length === wallets.length ? (
-                    i18n?.t("cash_flow.lbl_all_accounts") ?? "All Accounts"
+                    i18n?.t('cash_flow.lbl_all_accounts') ?? 'All Accounts'
                   ) : (
-                    selectedWallets?.map(w => w.walletName).join(", ")
+                    selectedWallets?.map((w) => w.walletName).join(', ')
                   )}
                 </Text>
               </View>
@@ -216,31 +177,24 @@ const ShareInformationComponent = (props: ShareInformationComponentProps) => {
           </View>
 
           <Text style={styles.sectionTextStyle}>
-            {i18n?.t("share_information_component.lbl_date_range") ??
-              "Date Range"}
+            {i18n?.t('share_information_component.lbl_date_range') ?? 'Date Range'}
           </Text>
           <View style={innerStyles.dateRange}>
             <ShareDatePicker
-              label={i18n?.t("share_information_component.lbl_from") ?? "From"}
+              label={i18n?.t('share_information_component.lbl_from') ?? 'From'}
               date={fromDate}
-              maxDate={moment(toDate)
-                .subtract(1, "d")
-                .toDate()}
+              maxDate={moment(toDate).subtract(1, 'd').toDate()}
               onSelected={setFromDate}
               style={datePickerStyle}
             />
             <View style={innerStyles.seperatorDate} />
             <ShareDatePicker
-              label={i18n?.t("share_information_component.lbl_to") ?? "To"}
+              label={i18n?.t('share_information_component.lbl_to') ?? 'To'}
               date={toDate}
               maxDate={new Date()}
-              onSelected={date => {
-                if (moment(date).isSameOrBefore(fromDate, "d")) {
-                  setFromDate(
-                    moment(date)
-                      .subtract(1, "d")
-                      .toDate()
-                  );
+              onSelected={(date) => {
+                if (moment(date).isSameOrBefore(fromDate, 'd')) {
+                  setFromDate(moment(date).subtract(1, 'd').toDate());
                 }
                 setToDate(date);
               }}
@@ -251,10 +205,10 @@ const ShareInformationComponent = (props: ShareInformationComponentProps) => {
             innerRef={formikRef}
             initialValues={ShareInformationData.empty()}
             validationSchema={ShareInformationSchema(
-              i18n?.t("share_information_component.val_enter_email") ??
-                "Recipient email is required",
-              i18n?.t("share_information_component.val_email_invalid") ??
-                "Recipient email is invalid"
+              i18n?.t('share_information_component.val_enter_email') ??
+                'Recipient email is required',
+              i18n?.t('share_information_component.val_email_invalid') ??
+                'Recipient email is invalid'
             )}
             onSubmit={() => {}}
           >
@@ -263,10 +217,7 @@ const ShareInformationComponent = (props: ShareInformationComponentProps) => {
           <CheckBox
             style={checkBoxStyle}
             isSelected={isShareCopy}
-            label={
-              i18n?.t("share_information_component.lbl_send_copy") ??
-              "Send me a copy of this"
-            }
+            label={i18n?.t('share_information_component.lbl_send_copy') ?? 'Send me a copy of this'}
             onPress={() => setShareCopy(!isShareCopy)}
           />
         </ScrollView>
@@ -275,13 +226,11 @@ const ShareInformationComponent = (props: ShareInformationComponentProps) => {
             style={{
               secondaryContainerStyle: {
                 flex: 1,
-                marginRight: 7
-              }
+                marginRight: 7,
+              },
             }}
-            variant="secondary"
-            label={
-              i18n?.t("share_information_component.btn_cancel") ?? "Cancel"
-            }
+            variant='secondary'
+            label={i18n?.t('share_information_component.btn_cancel') ?? 'Cancel'}
             onPress={onCancel}
           />
           <Button
@@ -290,10 +239,10 @@ const ShareInformationComponent = (props: ShareInformationComponentProps) => {
             style={{
               primaryContainerStyle: {
                 flex: 1,
-                marginLeft: 7
-              }
+                marginLeft: 7,
+              },
             }}
-            label={i18n?.t("share_information_component.btn_share") ?? "Share"}
+            label={i18n?.t('share_information_component.btn_share') ?? 'Share'}
             onPress={() => {
               setConfirmAlert(true);
             }}
@@ -302,36 +251,27 @@ const ShareInformationComponent = (props: ShareInformationComponentProps) => {
       </SafeAreaView>
       <AlertModal
         isVisible={isConfirmAlert}
-        title={
-          i18n?.t("share_information_component.lbl_confirmation") ??
-          "Confirmation"
-        }
-        cancelTitle={
-          i18n?.t("share_information_component.btn_cancel") ?? "Cancel"
-        }
-        confirmTitle={
-          i18n?.t("share_information_component.btn_continue") ?? "Continue"
-        }
+        title={i18n?.t('share_information_component.lbl_confirmation') ?? 'Confirmation'}
+        cancelTitle={i18n?.t('share_information_component.btn_cancel') ?? 'Cancel'}
+        confirmTitle={i18n?.t('share_information_component.btn_continue') ?? 'Continue'}
         isShowClose={false}
         onClose={() => setConfirmAlert(false)}
         onCancel={() => setConfirmAlert(false)}
-        leftIcon={<BWarningIcon size={17} color="#FFBB05" />}
+        leftIcon={<BWarningIcon size={17} color='#FFBB05' />}
         message={
-          i18n?.t("share_information_component.msg_confirm_share") ??
-          "Are you sure you want to share these sensitive information? Please click “Continue” to proceed."
+          i18n?.t('share_information_component.msg_confirm_share') ??
+          'Are you sure you want to share these sensitive information? Please click “Continue” to proceed.'
         }
         onConfirmed={() => {
           setConfirmAlert(false);
-          let selectedWalletIds = selectedWallets.map(a => a.walletId);
+          let selectedWalletIds = selectedWallets.map((a) => a.walletId);
           shareInformation(
             userId,
             selectedWalletIds,
-            [formikRef?.current.values["email"]],
-            moment(fromDate).format("YYYY-MM-DD"),
-            moment(toDate).format("YYYY-MM-DD"),
-            moment()
-              .add(1, "y")
-              .format("YYYY-MM-DD")
+            [formikRef?.current.values['email']],
+            moment(fromDate).format('YYYY-MM-DD'),
+            moment(toDate).format('YYYY-MM-DD'),
+            moment().add(1, 'y').format('YYYY-MM-DD')
           );
         }}
       />
@@ -341,7 +281,7 @@ const ShareInformationComponent = (props: ShareInformationComponentProps) => {
         selectedWallets={selectedWallets}
         style={SelectAccount?.styles}
         onClose={() => setShowSelectAccount(false)}
-        onApplied={ws => {
+        onApplied={(ws) => {
           setShowSelectAccount(false);
           setSelectedWallets(ws);
         }}
@@ -354,16 +294,16 @@ const ShareInformationComponent = (props: ShareInformationComponentProps) => {
 
 const innerStyles = StyleSheet.create({
   dateRange: {
-    flexDirection: "row"
+    flexDirection: 'row',
   },
   seperatorDate: {
-    width: 20
+    width: 20,
   },
   accountNames: {
     flex: 1,
-    justifyContent: "center",
-    marginRight: 10
-  }
+    justifyContent: 'center',
+    marginRight: 10,
+  },
 });
 
 export default ShareInformationComponent;

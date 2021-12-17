@@ -6,7 +6,6 @@ import { CashflowIcon, ArrowRightIcon } from '../../assets/images';
 import { ThemeContext } from 'react-native-theme-component';
 
 export type BalanceComponentProps = {
-  i18n?: any;
   balance: string;
   totalBalanceLabel?: string;
   style?: BalanceStyle;
@@ -16,16 +15,8 @@ export type BalanceComponentProps = {
 };
 
 const BalanceComponent = (props: BalanceComponentProps) => {
-  const {
-    style,
-    totalBalanceLabel,
-    balance,
-    rightIcon,
-    i18n,
-    onViewCashFlow,
-    cashflowIconColor,
-  } = props;
-  const { colors } = useContext(ThemeContext);
+  const { style, totalBalanceLabel, balance, rightIcon, onViewCashFlow, cashflowIconColor } = props;
+  const { colors, i18n } = useContext(ThemeContext);
 
   const styles: BalanceStyle = mergeStyles(style);
 

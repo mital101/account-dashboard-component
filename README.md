@@ -35,6 +35,8 @@ If have any issue while installing, can see [Issue While Installing Sub-Componen
 
 ## Quick Start
 
+### Init API Service
+
 - `WalletService` is initiated should be from `App.ts`
 
 ```javascript
@@ -44,6 +46,8 @@ WalletService.instance().initClients({
   walletClient: createAuthorizedApiClient(wallet), // Your Axios authorized client Wallet Url
 });
 ```
+
+### Init Component Provider
 
 - Wrapped the app with `WalletProvider`
 
@@ -63,30 +67,9 @@ export default App;
 
 ### Assets And Multiple Languages
 
-- All icons, images and texts are provided by default. You can use your custom by passing them as a props inside each component
+- All icons, images and texts are provided by default. You can use your custom by passing them as a props into each component
 
-- In order to do multiple languages, you need to pass `i18n` (`i18n` should be configurated in the app level) into `WalletComponent` as a root props. And then, you have to copy and paste all attributes of `wallet_component` in [texts](wallet-component-data.json) into your app locale file. You can also change text value, but DON'T change the key.
-
-- Example
-
-```javascript
-const TestScreen = () => {
-  return (
-    <View>
-      <WalletComponent
-        Root={{
-          props: {
-            i18n: i18n,
-            formatCurrency: currencyFormatter,
-          },
-        }}
-      />
-    </View>
-  );
-};
-
-export default TestScreen;
-```
+- In order to do multiple languages, you need to configurate `i18n` for [react-native-theme-component](https://github.com/101digital/react-native-theme-component.git). And then, you have to copy and paste all fields and values in [texts](wallet-component-data.json) into your app locale file. You can also change text value, but DON'T change the key.
 
 ## API Reference
 

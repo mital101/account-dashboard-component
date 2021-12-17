@@ -29,7 +29,7 @@ const WalletComponent = forwardRef((props: WalletComponentProps, ref) => {
     ViewCashFlow,
   } = props;
   const containerStyle = Root?.style;
-  const { formatCurrency, scrollHandler, i18n } = Root.props;
+  const { formatCurrency, scrollHandler } = Root.props;
   const styles = useMergeStyles(containerStyle);
   const {
     summary,
@@ -42,7 +42,7 @@ const WalletComponent = forwardRef((props: WalletComponentProps, ref) => {
     isRefreshingWallets,
     refreshWallets,
   } = useContext(WalletContext);
-  const { colors } = useContext(ThemeContext);
+  const { colors, i18n } = useContext(ThemeContext);
   const currencyCode = getDefaultWallet()?.currencyCode ?? 'USD';
   const currentBalance = summary?.currentBalance ?? 0;
   const groupedWallets = getGroupWallets();
@@ -91,63 +91,6 @@ const WalletComponent = forwardRef((props: WalletComponentProps, ref) => {
     setSelectedWallet(undefined);
     setShowActionSheet(false);
   };
-
-  // const renderSuccessModal = () => {
-  //   return (
-  //     <AlertModal
-  //       style={LinkAccountSuccessModal?.alertStyle}
-  //       isVisible={
-  //         !isLinkingWallet && linkedWallet !== undefined && !ConfirmSetPrimaryModal?.props?.disable
-  //       }
-  //       title={
-  //         LinkAccountSuccessModal?.props?.title ??
-  //         i18n?.t('wallet_component.lbl_link_successfully') ??
-  //         'Account Added Succefully'
-  //       }
-  //       confirmTitle={
-  //         LinkAccountSuccessModal?.props?.confirmButonLabel ??
-  //         i18n?.t('wallet_component.btn_continue') ??
-  //         'Continue'
-  //       }
-  //       onClose={() => {
-  //         clearLinkedWallet();
-  //         fetchWallets();
-  //       }}
-  //       isFullWidth={LinkAccountSuccessModal?.props?.isFullWidth}
-  //       isShowClose={LinkAccountSuccessModal?.props?.isShowClose}
-  //       message={
-  //         LinkAccountSuccessModal?.props?.message ??
-  //         i18n?.t('wallet_component.msg_link_successfully') ??
-  //         'Your bank account is successfully linked to your profile.'
-  //       }
-  //       onConfirmed={() => {
-  //         if (isSelectedPrimary) {
-  //           const wallet = linkedWallet;
-  //           if (wallet) {
-  //             setPrimaryWallet(wallet.walletId);
-  //           }
-  //         } else {
-  //           clearLinkedWallet();
-  //           fetchWallets();
-  //         }
-  //       }}
-  //     >
-  //       {LinkAccountSuccessModal?.components?.renderSetPrimary?.(isSelectedPrimary, () => {
-  //         setSelectedPrimary(!isSelectedPrimary);
-  //       }) ?? (
-  //         <SetPrimaryComponent
-  //           i18n={i18n}
-  //           isSelected={isSelectedPrimary}
-  //           disabled={isEmpty(wallets)}
-  //           style={LinkAccountSuccessModal?.style}
-  //           onPressed={() => setSelectedPrimary(!isSelectedPrimary)}
-  //           {...LinkAccountSuccessModal?.props}
-  //           {...LinkAccountSuccessModal?.components}
-  //         />
-  //       )}
-  //     </AlertModal>
-  //   );
-  // };
 
   if (isEmpty(wallets)) {
     if (isLoadingWallets) {
@@ -202,7 +145,6 @@ const WalletComponent = forwardRef((props: WalletComponentProps, ref) => {
                     isShowSwitch={isShowSwitch}
                     style={WalletItem?.style}
                     formatCurrency={formatCurrency}
-                    i18n={i18n}
                     {...WalletItem?.props}
                     {...WalletItem?.components}
                   />
@@ -216,7 +158,6 @@ const WalletComponent = forwardRef((props: WalletComponentProps, ref) => {
                 <BalanceComponent
                   balance={formatCurrency(currentBalance, currencyCode)}
                   style={Balance?.style}
-                  i18n={i18n}
                   {...Balance?.props}
                   {...Balance?.components}
                 />
@@ -226,16 +167,11 @@ const WalletComponent = forwardRef((props: WalletComponentProps, ref) => {
               <View>
                 <LinkAccountComponent
                   style={LinkAccountButton?.style}
-                  i18n={i18n}
                   {...LinkAccountButton?.props}
                   {...LinkAccountButton?.components}
                 />
                 {ViewCashFlow?.props?.onViewCashFlow && (
-                  <ViewCashflowComponent
-                    style={ViewCashFlow?.styles}
-                    i18n={i18n}
-                    {...ViewCashFlow?.props}
-                  />
+                  <ViewCashflowComponent style={ViewCashFlow?.styles} {...ViewCashFlow?.props} />
                 )}
               </View>
             )}
@@ -261,7 +197,6 @@ const WalletComponent = forwardRef((props: WalletComponentProps, ref) => {
         wallet={selectedWallet}
         onCancel={hideActionSheet}
         style={ActionSheet?.style}
-        i18n={i18n}
         {...ActionSheet?.props}
         {...ActionSheet?.components}
       />
