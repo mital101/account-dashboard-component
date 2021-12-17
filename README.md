@@ -7,6 +7,8 @@ Manage wallets
 - [Features](#features)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+  - [Init API Service](#init-api-service)
+  - [Init Component Provider](#init-component-provider)
   - [Assets And Multiple Languages](#assets-and-multiple-languages)
 - [API Reference](#api-reference)
   - [WalletService](#walletservice)
