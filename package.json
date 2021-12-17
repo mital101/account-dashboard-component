@@ -5,8 +5,7 @@
   "description": "Manage wallets",
   "repository": {
     "type": "git",
-    "url": "https://github.com/101digital/react-native-banking-components.git",
-    "directory": "packages/wallet-component"
+    "url": "https://github.com/101digital/wallet-component.git"
   },
   "main": "index.js",
   "types": "index.d.ts",
