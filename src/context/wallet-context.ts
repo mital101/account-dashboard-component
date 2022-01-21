@@ -46,6 +46,7 @@ export interface WalletContextData {
     toDate: string,
     expiredDate: string
   ) => void;
+  isLinkedSuccessfully: boolean;
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -69,6 +70,7 @@ export const walletDefaultValue: WalletContextData = {
   isSharingInformation: false,
   shareInformation: () => null,
   isShareSuccessfully: false,
+  isLinkedSuccessfully: false,
 };
 
 export const WalletContext = React.createContext<WalletContextData>(walletDefaultValue);
@@ -88,6 +90,7 @@ export function useWalletContextValue(): WalletContextData {
   const [_isSharingInformation, setIsSharingInformation] = useState(false);
   const [_errorShareInformation, setErrorShareInformation] = useState<Error | undefined>();
   const [_isShareSuccessfully, setShareSucessfully] = useState(false);
+  const [_isLinkedSuccessfully, setLinkedSucessfully] = useState(false);
 
   const fetchWallets = useCallback(async () => {
     try {
@@ -239,6 +242,10 @@ export function useWalletContextValue(): WalletContextData {
         setIsLinkingWallet(true);
         await walletService.linkBankAccount(bankId, consentId, accountIds);
         refreshWallets(1000);
+        setLinkedSucessfully(true);
+        setTimeout(() => {
+          setLinkedSucessfully(false);
+        }, 100);
         setIsLinkingWallet(false);
       } catch (error) {
         setLinkWalletError(error as Error);
@@ -320,8 +327,10 @@ export function useWalletContextValue(): WalletContextData {
       errorShareInformation: _errorShareInformation,
       shareInformation,
       isShareSuccessfully: _isShareSuccessfully,
+      isLinkedSuccessfully: _isLinkedSuccessfully,
     }),
     [
+      _isLinkedSuccessfully,
       _wallets,
       _isLoading,
       _summary,
