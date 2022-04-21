@@ -4,7 +4,7 @@ import { AlertModalStyles } from 'react-native-theme-component/src/alert';
 import { EmptyWalletThemeProps } from './components/no-wallet-component';
 import { BankImagesMap, Transaction, TransactionSummary, Wallet } from './model';
 
-export type WalletComponentRefs = {
+export type WalletListComponentRefs = {
   showActionsSheet: (wallet: Wallet) => void;
   unlinkWallet: (wallet: Wallet) => void;
   setAsPrimary: (wallet: Wallet) => void;
@@ -12,9 +12,9 @@ export type WalletComponentRefs = {
   hideActionSheet: () => void;
 };
 
-export type WalletComponentProps = {
+export type WalletListComponentProps = {
   Root: {
-    style?: WalletComponentStyle;
+    style?: WalletListComponentStyle;
     props?: {
       scrollHandler?: {
         onScroll: (...args: any[]) => void;
@@ -136,7 +136,7 @@ export type WalletComponentProps = {
   };
 };
 
-export type WalletComponentStyle = {
+export type WalletListComponentStyle = {
   containerStyle?: StyleProp<ViewStyle>;
   listDivider?: StyleProp<ViewStyle>;
 };

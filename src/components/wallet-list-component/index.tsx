@@ -1,7 +1,7 @@
 import React, { forwardRef, useContext, useImperativeHandle, useState } from 'react';
 import { ActivityIndicator, SectionList, View, RefreshControl, ScrollView } from 'react-native';
 import useMergeStyles from './styles';
-import { WalletComponentProps, WalletComponentRefs } from '../../types';
+import { WalletListComponentProps, WalletListComponentRefs } from '../../types';
 import { BInformationIcon } from '../../assets/images';
 import { WalletContext } from '../../context/wallet-context';
 import { ThemeContext, AlertModal, useCurrencyFormat } from 'react-native-theme-component';
@@ -15,7 +15,7 @@ import { Wallet } from '../../model';
 import EmptyWalletComponent from '../no-wallet-component';
 import { isEmpty, uniqBy } from 'lodash';
 
-const WalletComponent = forwardRef((props: WalletComponentProps, ref) => {
+const WalletListComponent = forwardRef((props: WalletListComponentProps, ref) => {
   const {
     Root,
     Balance,
@@ -53,7 +53,7 @@ const WalletComponent = forwardRef((props: WalletComponentProps, ref) => {
 
   useImperativeHandle(
     ref,
-    (): WalletComponentRefs => ({
+    (): WalletListComponentRefs => ({
       showActionsSheet,
       unlinkWallet,
       setAsPrimary,
@@ -261,4 +261,4 @@ const WalletComponent = forwardRef((props: WalletComponentProps, ref) => {
   );
 });
 
-export default WalletComponent;
+export default WalletListComponent;
