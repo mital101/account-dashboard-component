@@ -1,13 +1,8 @@
-import {
-  BankImagesMap,
-  Wallet,
-  EmptyWalletThemeProps,
-  Transaction,
-  TransactionSummary,
-} from '@banking-component/core';
 import { ReactNode } from 'react';
 import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { AlertModalStyles } from 'react-native-theme-component/src/alert';
+import { EmptyWalletThemeProps } from './components/no-wallet-component';
+import { BankImagesMap, Transaction, TransactionSummary, Wallet } from './model';
 
 export type WalletComponentRefs = {
   showActionsSheet: (wallet: Wallet) => void;

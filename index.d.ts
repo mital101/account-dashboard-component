@@ -1,4 +1,3 @@
-export { WalletComponentRefs } from './src/types';
 export { WalletContext } from './src/context/wallet-context';
 export { default as WalletProvider } from './src/context/wallet-provider';
 export { WalletService } from './src/services/wallet-service';
