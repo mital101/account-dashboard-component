@@ -53,7 +53,12 @@
       "lbl_cashflow": "Cashflow",
       "msg_cashflow": "View cashflow chart for your money in & money out to analyse your spending.",
       "btn_view": "View",
-      "btn_share_information": "Share Information"
+      "btn_share_information": "Share Information",
+      "btn_add_money": "Add Money",
+      "btn_send_money": "Send Money",
+      "lbl_recent_transactions": "Recent transactions",
+      "btn_view_all": "View all",
+      "msg_no_transaction": "You have no transactions yet."
     },
     "share_information_component": {
       "lbl_recipient_email": "Recipient Email",
@@ -79,6 +84,15 @@
       "msg_shared_successfully": "Account Information are sent successfully",
       "lbl_unable_share": "Unable to share",
       "msg_share_failed": "An error occured while trying to share your transaction details. Please try again."
+    },
+    "transaction_component": {
+      "msg_no_transaction": "No transactions found",
+      "lbl_primary": "Primary",
+      "lbl_summary": "Summary",
+      "lbl_money_in": "Money in",
+      "lbl_money_out": "Money out",
+      "msg_no_wallet": "No bank account linked",
+      "btn_link_bank_account": "Link bank account"
     }
   }
 }
