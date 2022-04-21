@@ -67,7 +67,7 @@ export interface WalletContextData {
 
 export const walletDefaultValue: WalletContextData = {
   wallets: [],
-  isLoadingWallets: false,
+  isLoadingWallets: true,
   isRefreshingWallets: false,
   refreshWallets: () => null,
   getWallets: () => null,

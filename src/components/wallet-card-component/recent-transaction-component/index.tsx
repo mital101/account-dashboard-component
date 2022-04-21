@@ -128,7 +128,7 @@ const RecentTransactionComponent = ({ style, wallet }: RecentTransactionComponen
               <FlatList
                 contentContainerStyle={styles.contentContainerStyle}
                 showsVerticalScrollIndicator={false}
-                keyExtractor={(item) => item.txnId}
+                keyExtractor={(subItem) => subItem.txnId}
                 scrollEnabled={false}
                 data={item.data}
                 ItemSeparatorComponent={() => (
