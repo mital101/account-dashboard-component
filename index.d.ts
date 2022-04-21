@@ -1,5 +1,5 @@
 export { WalletContext } from './src/context/wallet-context';
-export { default as WalletProvider } from './src/context/wallet-provider';
+export { WalletProvider } from './src/context/wallet-provider';
 export { WalletService } from './src/services/wallet-service';
 export { default as WalletListComponent } from './src/components/wallet-list-component';
 export { default as ShareInformationComponent } from './src/components/share-information-component';
