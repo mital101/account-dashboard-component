@@ -48,17 +48,17 @@ const TransactionCardComponent = ({
     <View style={styles.containerStyle}>
       <View style={styles.headerContainerStyle}>
         <Text style={styles.labelTextStyle}>
-          {i18n?.t('wallet_component.lbl_recent_transactions') ?? 'Recent transactions'}
+          {i18n?.t('wallet_card_component.lbl_recent_transactions') ?? 'Recent transactions'}
         </Text>
         <Text onPress={onViewAllTransactions} style={styles.viewAllTextStyle}>
-          {i18n?.t('wallet_component.btn_view_all') ?? 'View all'}
+          {i18n?.t('wallet_card_component.btn_view_all') ?? 'View all'}
         </Text>
       </View>
       {isLoadingTransaction ? (
         <ActivityIndicator style={styles.loadingContainerStyle} color={colors.primaryColor} />
       ) : isEmpty(walletTransaction?.data) ? (
         <Text style={styles.emptyTransactionTextStyle}>
-          {i18n?.t('wallet_component.msg_no_transaction') ?? 'You have no transactions yet.'}
+          {i18n?.t('wallet_card_component.msg_no_transaction') ?? 'You have no transactions yet.'}
         </Text>
       ) : (
         <FlatList

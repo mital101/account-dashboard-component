@@ -24,7 +24,7 @@ const BalanceComponent = (props: BalanceComponentProps) => {
       <View style={styles.containerStyle}>
         <View style={innerStyles.topWrap}>
           <Text style={styles.titleTextStyle}>
-            {i18n?.t('wallet_component.lbl_total_balance') ?? 'Total Available Balance'}
+            {i18n?.t('wallets_list_component.lbl_total_balance') ?? 'Total Available Balance'}
           </Text>
           {onViewCashFlow && (
             <TouchableOpacity
@@ -34,7 +34,7 @@ const BalanceComponent = (props: BalanceComponentProps) => {
             >
               <CashflowIcon size={15} color={cashflowIconColor ?? colors.primaryColor} />
               <Text style={styles.viewCashflowTextStyle}>
-                {i18n?.t('wallet_component.btn_view_cashflow') ?? 'View Cashflow'}
+                {i18n?.t('wallets_list_component.btn_view_cashflow') ?? 'View Cashflow'}
               </Text>
               <ArrowRightIcon width={9} color={cashflowIconColor ?? colors.primaryColor} />
             </TouchableOpacity>

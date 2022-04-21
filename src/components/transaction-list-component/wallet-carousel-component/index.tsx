@@ -60,7 +60,7 @@ const WalletCarouselComponent = (props: WalletCarouselItemProps) => {
               <View style={styles.primaryWrap}>
                 {tickIcon ?? <BCheckedIcon size={12} color={colors.primaryColor} />}
                 <Text style={styles.primaryTextStyle}>
-                  {i18n?.t('transaction_component.lbl_primary') ?? 'Primary'}
+                  {i18n?.t('transaction_list_component.lbl_primary') ?? 'Primary'}
                 </Text>
               </View>
             )}
@@ -70,7 +70,7 @@ const WalletCarouselComponent = (props: WalletCarouselItemProps) => {
       {renderSummary?.(summary) ?? (
         <>
           <Text style={styles.summaryTextStyle}>
-            {i18n?.t('transaction_component.lbl_summary') ?? 'Summary'}
+            {i18n?.t('transaction_list_component.lbl_summary') ?? 'Summary'}
           </Text>
           <View style={styles.summaryWrapper}>
             <View style={styles.moneyBoxWrapper}>
@@ -79,7 +79,7 @@ const WalletCarouselComponent = (props: WalletCarouselItemProps) => {
               </View>
               <View style={styles.moneyWrapper}>
                 <Text style={styles.moneyLabelTextStyle}>
-                  {i18n?.t('transaction_component.lbl_money_in') ?? 'Money In'}
+                  {i18n?.t('transaction_list_component.lbl_money_in') ?? 'Money In'}
                 </Text>
                 <Text
                   adjustsFontSizeToFit
@@ -98,7 +98,7 @@ const WalletCarouselComponent = (props: WalletCarouselItemProps) => {
               </View>
               <View style={styles.moneyWrapper}>
                 <Text style={styles.moneyLabelTextStyle}>
-                  {i18n?.t('transaction_component.lbl_money_out') ?? 'Money Out'}
+                  {i18n?.t('transaction_list_component.lbl_money_out') ?? 'Money Out'}
                 </Text>
                 <Text
                   adjustsFontSizeToFit

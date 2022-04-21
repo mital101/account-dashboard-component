@@ -89,7 +89,7 @@ const WalletItemComponent = (props: WalletItemProps) => {
             <View style={styles.primaryContainerStyle}>
               {tickIcon ?? <BCheckedIcon size={12} color={colors.primaryColor} />}
               <Text style={styles.primaryTextStyle}>
-                {i18n?.t('wallet_component.lbl_primary') ?? 'Primary'}
+                {i18n?.t('wallets_list_component.lbl_primary') ?? 'Primary'}
               </Text>
             </View>
           )}

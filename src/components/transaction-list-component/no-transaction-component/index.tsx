@@ -20,7 +20,7 @@ const EmptyTransactionComponent = (props: EmptyTransactionProps) => {
     <View style={styles.containerStyle}>
       <View style={styles.iconStyle}>{emptyIcon ?? <BNoTransactionIcon />}</View>
       <Text style={styles.messageStyle}>
-        {i18n?.t('transaction_component.msg_no_transaction') ?? 'No Transactions Found'}
+        {i18n?.t('transaction_list_component.msg_no_transaction') ?? 'No Transactions Found'}
       </Text>
     </View>
   );

@@ -301,7 +301,7 @@
     }
   ],
   "texts": {
-    "wallet_component": {
+    "wallets_list_component": {
       "lbl_link_successfully": "Account Added Succefully",
       "msg_link_successfully": "Your bank account is successfully linked to your profile.",
       "btn_continue": "Continue",
@@ -322,7 +322,9 @@
       "lbl_cashflow": "Cashflow",
       "msg_cashflow": "View cashflow chart for your money in & money out to analyse your spending.",
       "btn_view": "View",
-      "btn_share_information": "Share Information",
+      "btn_share_information": "Share Information"
+    },
+    "wallet_card_component": {
       "btn_add_money": "Add Money",
       "btn_send_money": "Send Money",
       "lbl_recent_transactions": "Recent transactions",
@@ -354,7 +356,7 @@
       "lbl_unable_share": "Unable to share",
       "msg_share_failed": "An error occured while trying to share your transaction details. Please try again."
     },
-    "transaction_component": {
+    "transaction_list_component": {
       "msg_no_transaction": "No transactions found",
       "lbl_primary": "Primary",
       "lbl_summary": "Summary",

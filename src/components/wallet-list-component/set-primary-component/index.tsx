@@ -27,7 +27,7 @@ const SetPrimaryComponent = (props: SetPrimaryComponentProps) => {
     >
       <View style={styles.checkBoxStyle}>{isSelected && (tickIcon ?? <BTickIcon />)}</View>
       <Text style={styles.titleTextStyle}>
-        {i18n?.t('wallet_component.lbl_set_as_primary') ?? 'Set as primary'}
+        {i18n?.t('wallets_list_component.lbl_set_as_primary') ?? 'Set as primary'}
       </Text>
     </TouchableOpacity>
   );

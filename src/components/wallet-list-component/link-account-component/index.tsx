@@ -25,7 +25,7 @@ const LinkAccountComponent = (props: LinkAccountComponentProps) => {
     >
       {addIcon ?? <BPlusIcon width={20} height={20} color={colors.primaryColor} />}
       <Text style={styles.buttonTextStyle}>
-        {i18n?.t('wallet_component.btn_link_bank_account') ?? 'Link Bank Account'}
+        {i18n?.t('wallets_list_component.btn_link_bank_account') ?? 'Link Bank Account'}
       </Text>
     </TouchableOpacity>
   );

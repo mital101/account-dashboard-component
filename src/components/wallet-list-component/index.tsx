@@ -112,9 +112,10 @@ const WalletListComponent = forwardRef((props: WalletListComponentProps, ref) =>
       >
         <View style={styles.listContainerStyle}>{Root.components?.headerTitle}</View>
         <EmptyWalletComponent
-          message={EmptyWallet?.props.message ?? i18n?.t('wallet_component.msg_no_wallet')}
+          message={EmptyWallet?.props.message ?? i18n?.t('wallets_list_component.msg_no_wallet')}
           buttonLabel={
-            EmptyWallet?.props.buttonLabel ?? i18n?.t('wallet_component.btn_link_bank_account')
+            EmptyWallet?.props.buttonLabel ??
+            i18n?.t('wallets_list_component.btn_link_bank_account')
           }
           style={EmptyWallet?.style}
           {...EmptyWallet?.props}
@@ -200,8 +201,8 @@ const WalletListComponent = forwardRef((props: WalletListComponentProps, ref) =>
       />
       <AlertModal
         isVisible={isShowUnlink && !ConfirmUnlinkModal?.props?.disable}
-        title={i18n?.t('wallet_component.lbl_unlink_account') ?? 'Unlink Bank Account'}
-        cancelTitle={i18n?.t('wallet_component.btn_cancel') ?? 'Cancel'}
+        title={i18n?.t('wallets_list_component.lbl_unlink_account') ?? 'Unlink Bank Account'}
+        cancelTitle={i18n?.t('wallets_list_component.btn_cancel') ?? 'Cancel'}
         confirmTitle={ConfirmUnlinkModal?.props?.confirmButonLabel}
         isFullWidth={ConfirmUnlinkModal?.props?.isFullWidth}
         isShowClose={ConfirmUnlinkModal?.props?.isShowClose}
@@ -213,7 +214,7 @@ const WalletListComponent = forwardRef((props: WalletListComponentProps, ref) =>
           )
         }
         message={
-          i18n?.t('wallet_component.msg_unlink_account') ??
+          i18n?.t('wallets_list_component.msg_unlink_account') ??
           'Are you sure? once unlinked, you cannot undo this action.'
         }
         onConfirmed={() => {
@@ -229,8 +230,8 @@ const WalletListComponent = forwardRef((props: WalletListComponentProps, ref) =>
       />
       <AlertModal
         isVisible={isShowPrimary && !ConfirmSetPrimaryModal?.props?.disable}
-        title={i18n?.t('wallet_component.lbl_confirmation') ?? 'Confirmation'}
-        cancelTitle={i18n?.t('wallet_component.btn_cancel') ?? 'Cancel'}
+        title={i18n?.t('wallets_list_component.lbl_confirmation') ?? 'Confirmation'}
+        cancelTitle={i18n?.t('wallets_list_component.btn_cancel') ?? 'Cancel'}
         confirmTitle={ConfirmSetPrimaryModal?.props?.confirmButonLabel}
         isFullWidth={ConfirmSetPrimaryModal?.props?.isFullWidth}
         isShowClose={ConfirmSetPrimaryModal?.props?.isShowClose}
@@ -242,7 +243,7 @@ const WalletListComponent = forwardRef((props: WalletListComponentProps, ref) =>
           )
         }
         message={(
-          i18n?.t('wallet_component.msg_set_primary') ??
+          i18n?.t('wallets_list_component.msg_set_primary') ??
           'Are you sure you want to set %s as the primary account?.'
         ).replace('%s', selectedWallet?.walletName ?? '')}
         onConfirmed={() => {

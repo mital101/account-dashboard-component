@@ -99,9 +99,10 @@ const TransactionListComponent = (props: TransactionListComponentProps) => {
     }
     return (
       <EmptyWalletComponent
-        message={EmptyWallet?.props.message ?? i18n?.t('transaction_component.msg_no_wallet')}
+        message={EmptyWallet?.props.message ?? i18n?.t('transaction_list_component.msg_no_wallet')}
         buttonLabel={
-          EmptyWallet?.props.buttonLabel ?? i18n?.t('transaction_component.btn_link_bank_account')
+          EmptyWallet?.props.buttonLabel ??
+          i18n?.t('transaction_list_component.btn_link_bank_account')
         }
         style={EmptyWallet?.style}
         {...EmptyWallet?.props}

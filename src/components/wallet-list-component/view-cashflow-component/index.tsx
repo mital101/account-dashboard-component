@@ -18,12 +18,12 @@ const ViewCashflowComponent = (props: ViewCashflowComponentProps) => {
   return (
     <View style={styles.containerStyle}>
       <Text style={styles.labelTextStyle}>
-        {i18n?.t('wallet_component.lbl_cashflow') ?? 'Cashflow'}
+        {i18n?.t('wallets_list_component.lbl_cashflow') ?? 'Cashflow'}
       </Text>
       <View style={styles.messageContainerStyle}>
         <View style={innerStyles.messageWrap}>
           <Text style={styles.messageTextStyle}>
-            {i18n?.t('wallet_component.msg_cashflow') ??
+            {i18n?.t('wallets_list_component.msg_cashflow') ??
               'View cashflow chart for your money in & money out to analyse your spending.'}
           </Text>
         </View>
@@ -34,7 +34,7 @@ const ViewCashflowComponent = (props: ViewCashflowComponentProps) => {
         >
           <CashflowIcon size={15} color={'#fff'} />
           <Text style={styles.viewTitleTextStyle}>
-            {i18n?.t('wallet_component.btn_view') ?? 'View'}
+            {i18n?.t('wallets_list_component.btn_view') ?? 'View'}
           </Text>
           <ArrowRightIcon width={9} color={'#fff'} />
         </TouchableOpacity>

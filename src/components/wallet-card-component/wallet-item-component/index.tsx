@@ -67,7 +67,7 @@ const WalletItemComponent = (props: WalletItemComponentProps) => {
           </Text>
           <View style={styles.bottomContainerStyle}>
             <Button
-              label={i18n?.t('wallet_component.btn_add_money') ?? 'Add Money'}
+              label={i18n?.t('wallet_card_component.btn_add_money') ?? 'Add Money'}
               onPress={onAddMoney}
               style={{
                 primaryContainerStyle: {
@@ -77,7 +77,7 @@ const WalletItemComponent = (props: WalletItemComponentProps) => {
               }}
             />
             <Button
-              label={i18n?.t('wallet_component.btn_send_money') ?? 'Send Money'}
+              label={i18n?.t('wallet_card_component.btn_send_money') ?? 'Send Money'}
               onPress={onSendMoney}
               style={{
                 primaryContainerStyle: {
