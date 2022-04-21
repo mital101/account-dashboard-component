@@ -104,7 +104,7 @@ export const WalletContext = React.createContext<WalletContextData>(walletDefaul
 
 export function useWalletContextValue(): WalletContextData {
   const [_wallets, setWallets] = useState<Wallet[]>([]);
-  const [_isLoadingWallets, setIsLoadingWallets] = useState(false);
+  const [_isLoadingWallets, setIsLoadingWallets] = useState(true);
   const [_summary, setSummary] = useState<WalletSummary | undefined>();
   const [_loadError, setLoadError] = useState<Error | undefined>();
   const [_unlinkError, setUnlinkError] = useState<Error | undefined>();
