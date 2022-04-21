@@ -1,5 +1,4 @@
 import { BWarningIcon, ArrowDownIcon } from '../../assets/images';
-import { Wallet } from '@banking-component/core';
 import { Formik, FormikProps } from 'formik';
 import moment from 'moment';
 import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react';
@@ -22,6 +21,7 @@ import useMergeStyle from './theme';
 import { WalletContext } from '../../context/wallet-context';
 import SelectAccountModal, { SelectAccountModalStyle } from './component/select-account-modal';
 import { ThemeContext } from 'react-native-theme-component';
+import { Wallet } from '../../model';
 
 export type ShareInformationComponentStyle = {
   containerStyle?: StyleProp<ViewStyle>;

@@ -1,8 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { ShareInformationComponentStyle } from '.';
-import { defaultsDeep } from '@banking-component/core';
 import { ThemeContext } from 'react-native-theme-component';
 import { useContext } from 'react';
+import { defaultsDeep } from 'lodash';
 
 const useMergeStyle = (style?: ShareInformationComponentStyle): ShareInformationComponentStyle => {
   const { fonts } = useContext(ThemeContext);
@@ -62,7 +62,7 @@ const useMergeStyle = (style?: ShareInformationComponentStyle): ShareInformation
       fontSize: 14,
       fontFamily: fonts.regular,
     },
-    accountNameContainerStyle:{flexDirection:'row',alignItems:'center'},
+    accountNameContainerStyle: { flexDirection: 'row', alignItems: 'center' },
     accountNumberTextStyle: {
       fontSize: 14,
       fontFamily: fonts.regular,

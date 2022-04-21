@@ -1,4 +1,10 @@
-import { BankImagesMap, Wallet, EmptyWalletThemeProps } from '@banking-component/core';
+import {
+  BankImagesMap,
+  Wallet,
+  EmptyWalletThemeProps,
+  Transaction,
+  TransactionSummary,
+} from '@banking-component/core';
 import { ReactNode } from 'react';
 import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { AlertModalStyles } from 'react-native-theme-component/src/alert';
@@ -14,8 +20,7 @@ export type WalletComponentRefs = {
 export type WalletComponentProps = {
   Root: {
     style?: WalletComponentStyle;
-    props: {
-      formatCurrency: (amount: number, code: string) => string;
+    props?: {
       scrollHandler?: {
         onScroll: (...args: any[]) => void;
         scrollEventThrottle: number;
@@ -30,9 +35,7 @@ export type WalletComponentProps = {
   Balance?: {
     style?: BalanceStyle;
     props?: {
-      totalBalanceLabel?: string;
       onViewCashFlow?: () => void;
-      viewCashflowLabel?: string;
       cashflowIconColor?: string;
     };
     components?: {
@@ -43,7 +46,6 @@ export type WalletComponentProps = {
     style?: WalletItemStyle;
     props?: {
       onItemPressed?: (wallet: Wallet) => void;
-      primaryLabel?: string;
       bannerStartOffset?: number;
       bannerEndOffset?: number;
     };
@@ -63,11 +65,6 @@ export type WalletComponentProps = {
   ActionSheet?: {
     style?: ActionSheetStyle;
     props?: {
-      setPrimaryLabel?: string;
-      unlinkLabel?: string;
-      viewTransactionLabel?: string;
-      shareLabel?: string;
-      cancelLabel?: string;
       onSetPrimary?: (wallet: Wallet) => void;
       onUnlink?: (wallet: Wallet) => void;
       onViewTransactions?: (wallet: Wallet) => void;
@@ -85,7 +82,6 @@ export type WalletComponentProps = {
     style?: LinkAccountStyle;
     props?: {
       onLinkAccountPressed?: () => void;
-      buttonLabel?: string;
     };
     components?: {
       addIcon?: ReactNode;
@@ -94,12 +90,9 @@ export type WalletComponentProps = {
   ConfirmUnlinkModal?: {
     props?: {
       disable?: boolean;
-      title?: string;
-      message?: string;
-      cancelButtonLabel?: string;
-      confirmButonLabel?: string;
       isShowClose?: boolean;
       isFullWidth?: boolean;
+      confirmButonLabel?: string;
     };
     components?: {
       leftIcon?: ReactNode;
@@ -110,12 +103,9 @@ export type WalletComponentProps = {
   ConfirmSetPrimaryModal?: {
     props?: {
       disable?: boolean;
-      title?: string;
-      message?: string;
-      cancelButtonLabel?: string;
-      confirmButonLabel?: string;
       isShowClose?: boolean;
       isFullWidth?: boolean;
+      confirmButonLabel?: string;
     };
     components?: {
       leftIcon?: ReactNode;
@@ -128,10 +118,6 @@ export type WalletComponentProps = {
     alertStyle?: AlertModalStyles;
     props?: {
       disable?: boolean;
-      title?: string;
-      message?: string;
-      setPrimaryLabel?: string;
-      confirmButonLabel?: string;
       isShowClose?: boolean;
       isFullWidth?: boolean;
     };
@@ -219,4 +205,101 @@ export type ViewCashflowComponentStyle = {
   viewTitleTextStyle?: StyleProp<TextStyle>;
 };
 
+export type TransactionListComponentProps = {
+  Root?: {
+    style?: TransactionListComponentStyle;
+    props?: {
+      initWallet?: Wallet;
+    };
+    components?: {
+      loadingIndicator?: ReactNode;
+    };
+  };
+  CarouselItem?: {
+    style?: CarouselItemStyle;
+    props?: {
+      carouselWidth?: number;
+      carouselItemWidth?: number;
+    };
+    components?: {
+      renderSummary?: (summary?: TransactionSummary) => React.ReactElement | null;
+      tickIcon?: ReactNode;
+      moneyInIcon?: ReactNode;
+      moneyOutIcon?: ReactNode;
+    };
+  };
+  Pagination?: {
+    style?: DotStyle;
+    props?: {
+      activeOpacity?: number;
+      inactiveOpacity?: number;
+    };
+  };
+  EmptyTransaction?: {
+    style?: EmptyTransactionStyle;
+    components?: {
+      emptyIcon?: ReactNode;
+    };
+  };
+  TransactionPage?: {
+    style?: TransactionPageStyle;
+    component?: {
+      sectionHeader?: (date: string) => React.ReactElement | null;
+      renderItem?: (index: number, item: Transaction) => React.ReactElement | null;
+    };
+    props?: {
+      onItemPress?: (transaction: Transaction) => void;
+    };
+  };
+  TransactionItem?: {
+    style?: TransactionItemStyle;
+  };
+  EmptyWallet?: EmptyWalletThemeProps;
+};
 
+export type TransactionListComponentStyle = {
+  containerStyle?: StyleProp<ViewStyle>;
+  carouselWrap?: StyleProp<ViewStyle>;
+  paginationWrap?: StyleProp<ViewStyle>;
+};
+
+export type EmptyTransactionStyle = {
+  containerStyle?: StyleProp<ViewStyle>;
+  messageStyle?: StyleProp<TextStyle>;
+  iconStyle?: StyleProp<ViewStyle>;
+};
+
+export type CarouselItemStyle = {
+  containerStyle?: StyleProp<ViewStyle>;
+  imageWrapStyle?: StyleProp<ViewStyle>;
+  imageStyle?: StyleProp<ImageStyle>;
+  walletWrapStyle?: StyleProp<ViewStyle>;
+  walletNameTextStyle?: StyleProp<TextStyle>;
+  walletNumberTextStyle?: StyleProp<TextStyle>;
+  balanceTextStyle?: StyleProp<TextStyle>;
+  primaryTextStyle?: StyleProp<TextStyle>;
+  summaryTextStyle?: StyleProp<TextStyle>;
+  moneyInWrapStyle?: StyleProp<ViewStyle>;
+  moneyOutWrapStyle?: StyleProp<ViewStyle>;
+  moneyLabelTextStyle?: StyleProp<TextStyle>;
+  moneyValueTextStyle?: StyleProp<TextStyle>;
+};
+
+export type DotStyle = {
+  dot?: StyleProp<ViewStyle>;
+};
+
+export type TransactionPageStyle = {
+  containerStyle?: StyleProp<ViewStyle>;
+  transactionListStyle?: StyleProp<ViewStyle>;
+  dividerStyle?: StyleProp<ViewStyle>;
+};
+
+export type TransactionItemStyle = {
+  containerStyle?: StyleProp<ViewStyle>;
+  leftWrapStyle?: StyleProp<ViewStyle>;
+  rightWrapStyle?: StyleProp<ViewStyle>;
+  descriptionTextStyle?: StyleProp<TextStyle>;
+  walletNameTextStyle?: StyleProp<TextStyle>;
+  amountTextStyle?: StyleProp<TextStyle>;
+};

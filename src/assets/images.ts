@@ -1,5 +1,6 @@
 export const images = {
   bank: require('../assets/bank.png'),
+  maskCard: require('../assets/mask-card.png'),
 };
 
 export * from './checked.icon';
@@ -15,5 +16,10 @@ export * from './arrow-right.icon';
 export * from './share.icon';
 export * from './calendar.icon';
 export * from './warning.icon';
-export * from './arrow-down.icon'
-export * from './checked2.icon'
+export * from './arrow-down.icon';
+export * from './checked2.icon';
+export * from './no-transaction.icon';
+export * from './up.icon';
+export * from './down.icon';
+export * from './dashline.icon';
+export * from './copy.icon';

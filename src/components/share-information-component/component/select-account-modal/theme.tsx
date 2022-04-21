@@ -1,8 +1,8 @@
-import { defaultsDeep } from '@banking-component/core';
+import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 import { ThemeContext } from 'react-native-theme-component';
-import { SelectAccountModalStyle } from '../../types';
+import { SelectAccountModalStyle } from '.';
 
 const useMergeStyles = (style?: SelectAccountModalStyle): SelectAccountModalStyle => {
   const { fonts, colors } = useContext(ThemeContext);

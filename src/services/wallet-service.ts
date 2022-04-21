@@ -111,4 +111,19 @@ export class WalletService {
       throw new Error('Financial Client is not registered');
     }
   };
+
+  getTransactions = async (walletIds: string, pageNumber?: number) => {
+    if (this._walletClient) {
+      const response = await this._walletClient.get('transactions', {
+        params: {
+          walletIds: walletIds,
+          pageNumber,
+          pageSize: 10,
+        },
+      });
+      return response.data;
+    } else {
+      throw new Error('Wallet Client is not registered');
+    }
+  };
 }

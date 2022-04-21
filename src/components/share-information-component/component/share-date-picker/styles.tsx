@@ -1,8 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { ShareDatePickerStyle } from '.';
-import { defaultsDeep } from '@banking-component/core';
 import { ThemeContext } from 'react-native-theme-component';
 import { useContext } from 'react';
+import { defaultsDeep } from 'lodash';
 
 const useMergeStyle = (style?: ShareDatePickerStyle): ShareDatePickerStyle => {
   const { fonts } = useContext(ThemeContext);

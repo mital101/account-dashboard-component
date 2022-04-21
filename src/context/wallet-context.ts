@@ -1,14 +1,18 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { WalletService } from '../services/wallet-service';
+import { showMessage } from 'react-native-theme-component';
+import moment from 'moment';
 import {
+  GroupedTransactions,
   GroupedWallets,
+  Paging,
+  Transaction,
+  TransactionSummary,
   Wallet,
   WalletSummary,
-  orderBy,
-  isEmpty,
-  chain,
-} from '@banking-component/core';
-import { showMessage } from 'react-native-theme-component';
+  WalletTransaction,
+} from '../model';
+import { chain, groupBy, isEmpty, orderBy } from 'lodash';
 
 const walletService = WalletService.instance();
 
@@ -19,7 +23,7 @@ export interface WalletContextData {
   isLinkingWallet: boolean;
   summary?: WalletSummary;
   isUnlinking: boolean;
-  fetchWallets: () => void;
+  getWallets: () => void;
   refreshWallets: (delayTime?: number) => void;
   getGroupWallets: () => GroupedWallets | undefined;
   getDefaultWallet: () => Wallet | undefined;
@@ -47,6 +51,18 @@ export interface WalletContextData {
     expiredDate: string
   ) => void;
   isLinkedSuccessfully: boolean;
+  transactions: WalletTransaction[];
+  isLoadingTransaction: boolean;
+  isRefreshingTransaction: boolean;
+  transactionError?: Error;
+  clearTransactionError: () => void;
+  fetchTransactions: (walletId?: string, pageNumber?: number) => void;
+  refreshTransactions: (walletId?: string) => void;
+  getTransactionPaging: (walletId?: string) => Paging | undefined;
+  groupTransactions: (walletId?: string) => GroupedTransactions | undefined;
+  getTransactionByWalletId: (walletId: string) => WalletTransaction | undefined;
+  getTransactionSummary: (walletId?: string) => TransactionSummary | undefined;
+  clearTransactions: () => void;
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -54,7 +70,7 @@ export const walletDefaultValue: WalletContextData = {
   isLoadingWallets: false,
   isRefreshingWallets: false,
   refreshWallets: () => null,
-  fetchWallets: () => null,
+  getWallets: () => null,
   getGroupWallets: () => undefined,
   getDefaultWallet: () => undefined,
   getWalletDetail: () => undefined,
@@ -71,13 +87,24 @@ export const walletDefaultValue: WalletContextData = {
   shareInformation: () => null,
   isShareSuccessfully: false,
   isLinkedSuccessfully: false,
+  transactions: [],
+  isLoadingTransaction: false,
+  isRefreshingTransaction: false,
+  fetchTransactions: () => null,
+  clearTransactionError: () => null,
+  refreshTransactions: () => null,
+  getTransactionPaging: () => undefined,
+  groupTransactions: () => undefined,
+  getTransactionSummary: () => undefined,
+  clearTransactions: () => undefined,
+  getTransactionByWalletId: () => undefined,
 };
 
 export const WalletContext = React.createContext<WalletContextData>(walletDefaultValue);
 
 export function useWalletContextValue(): WalletContextData {
   const [_wallets, setWallets] = useState<Wallet[]>([]);
-  const [_isLoading, setIsLoading] = useState(false);
+  const [_isLoadingWallets, setIsLoadingWallets] = useState(false);
   const [_summary, setSummary] = useState<WalletSummary | undefined>();
   const [_loadError, setLoadError] = useState<Error | undefined>();
   const [_unlinkError, setUnlinkError] = useState<Error | undefined>();
@@ -86,19 +113,23 @@ export function useWalletContextValue(): WalletContextData {
   const [_updatePrimaryError, setUpdatePrimaryError] = useState<Error | undefined>();
   const [_isLinkingWallet, setIsLinkingWallet] = useState(false);
   const [_linkWalletError, setLinkWalletError] = useState<Error | undefined>();
-  const [_isRefreshing, setIsRefreshing] = useState(false);
+  const [_isRefreshingWallet, setIsRefreshingWallet] = useState(false);
   const [_isSharingInformation, setIsSharingInformation] = useState(false);
   const [_errorShareInformation, setErrorShareInformation] = useState<Error | undefined>();
   const [_isShareSuccessfully, setShareSucessfully] = useState(false);
   const [_isLinkedSuccessfully, setLinkedSucessfully] = useState(false);
+  const [_transactions, setTransactions] = useState<WalletTransaction[]>([]);
+  const [_transactionError, setTransactionError] = useState<Error | undefined>(undefined);
+  const [_isLoadingTransaction, setLoadingTransaction] = useState(false);
+  const [_isRefreshingTransaction, setRefreshingTransaction] = useState(false);
 
-  const fetchWallets = useCallback(async () => {
+  const getWallets = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setIsLoadingWallets(true);
       await _fetchWallets();
-      setIsLoading(false);
+      setIsLoadingWallets(false);
     } catch (err) {
-      setIsLoading(false);
+      setIsLoadingWallets(false);
       setLoadError(err as Error);
     }
   }, []);
@@ -124,22 +155,25 @@ export function useWalletContextValue(): WalletContextData {
   };
 
   const sleep = (ms: number) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(() => resolve(true), ms));
   };
 
-  const refreshWallets = useCallback(async (delayTime?: number) => {
-    try {
-      setIsRefreshing(true);
-      if (delayTime) {
-        await sleep(delayTime);
+  const refreshWallets = useCallback(
+    async (delayTime?: number) => {
+      try {
+        setIsRefreshingWallet(true);
+        if (delayTime) {
+          await sleep(delayTime);
+        }
+        await _fetchWallets();
+        setIsRefreshingWallet(false);
+      } catch (err) {
+        setIsRefreshingWallet(false);
+        setLoadError(err as Error);
       }
-      await _fetchWallets();
-      setIsRefreshing(false);
-    } catch (err) {
-      setIsRefreshing(false);
-      setLoadError(err as Error);
-    }
-  }, []);
+    },
+    [_wallets]
+  );
 
   const setPrimaryWallet = useCallback(async (walletId: string) => {
     try {
@@ -299,11 +333,154 @@ export function useWalletContextValue(): WalletContextData {
     setWallets([]);
   }, []);
 
+  const fetchTransactions = useCallback(
+    async (walletId?: string, pageNumber?: number) => {
+      if (!walletId) {
+        return;
+      }
+      try {
+        setLoadingTransaction(true);
+        const { data, paging, summary } = await walletService.getTransactions(walletId, pageNumber);
+        const index = _transactions.findIndex((ts) => ts.walletId === walletId);
+        if (index === -1) {
+          // is transactions not existed, add new
+          setTransactions([..._transactions, { walletId, data, paging, summary }]);
+        } else {
+          // update transactions
+          setTransactions(
+            _transactions.map((ts) => {
+              if (ts.walletId === walletId) {
+                return {
+                  ...ts,
+                  data: [...ts.data, ...data],
+                  paging: paging,
+                  summary: summary,
+                };
+              }
+              return ts;
+            })
+          );
+        }
+        setLoadingTransaction(false);
+      } catch (error) {
+        setLoadingTransaction(false);
+        setTransactionError(error as Error);
+      }
+    },
+    [setTransactions, _transactions]
+  );
+
+  const refreshTransactions = useCallback(
+    async (walletId?: string) => {
+      if (!walletId) {
+        return;
+      }
+      try {
+        setRefreshingTransaction(true);
+        const { data, paging, summary } = await walletService.getTransactions(walletId, 1);
+        const index = _transactions.findIndex((ts) => ts.walletId === walletId);
+        if (index === -1) {
+          // is transactions not existed, add new
+          setTransactions([..._transactions, { walletId, data, paging, summary }]);
+        } else {
+          // update transactions
+          setTransactions(
+            _transactions.map((ts) => {
+              if (ts.walletId === walletId) {
+                return {
+                  ...ts,
+                  data: data,
+                  paging: paging,
+                  summary: summary,
+                };
+              }
+              return ts;
+            })
+          );
+        }
+        setRefreshingTransaction(false);
+      } catch (error) {
+        setRefreshingTransaction(false);
+        setTransactionError(error as Error);
+      }
+    },
+    [setTransactions, _transactions]
+  );
+
+  const clearTransactionError = useCallback(() => {
+    setTransactionError(undefined);
+  }, []);
+
+  const getTransactionPaging = useCallback(
+    (walletId?: string) => {
+      if (!walletId) {
+        return undefined;
+      }
+      const transaction = _transactions.find((item) => item.walletId === walletId);
+      return transaction?.paging;
+    },
+    [_transactions]
+  );
+
+  const getTransactionByWalletId = useCallback(
+    (walletId: string) => {
+      return _transactions.find((item) => item.walletId === walletId);
+    },
+    [_transactions]
+  );
+
+  const groupTransactions = useCallback(
+    (walletId?: string) => {
+      if (!walletId) {
+        return [];
+      }
+      const walletTransaction = _transactions.find((item) => item.walletId === walletId);
+      const data = walletTransaction?.data;
+      if (!data) {
+        return [];
+      }
+
+      const sortedByDate = orderBy<Transaction>(
+        data,
+        [(txn: any) => new Date(txn.txnDateTime)],
+        ['desc']
+      );
+      const group = groupBy<Transaction>(sortedByDate, (transaction: Transaction) =>
+        moment(transaction.txnDateTime).format('DD MMM YYYY')
+      );
+      return Object.keys(group).map((key) => ({
+        section: key,
+        data: orderBy<Transaction>(group[key], ['txnId'], ['desc']),
+      }));
+    },
+    [_transactions]
+  );
+
+  const getTransactionSummary = useCallback(
+    (walletId?: string) => {
+      if (!walletId) {
+        return undefined;
+      }
+      const walletTransaction = _transactions.find((item) => item.walletId === walletId);
+      const summary = walletTransaction?.summary;
+
+      if (!summary) {
+        return undefined;
+      }
+      return summary;
+    },
+    [_transactions]
+  );
+
+  const clearTransactions = useCallback(() => {
+    setTransactions([]);
+  }, []);
+
   return useMemo(
     () => ({
       wallets: _wallets,
-      isLoadingWallets: _isLoading,
-      fetchWallets,
+      isLoadingWallets: _isLoadingWallets,
+      getWallets,
       summary: _summary,
       errorLoadWallet: _loadError,
       getGroupWallets,
@@ -321,18 +498,30 @@ export function useWalletContextValue(): WalletContextData {
       errorLinkWallet: _linkWalletError,
       clearWalletErrors,
       clearWallets,
-      isRefreshingWallets: _isRefreshing,
+      isRefreshingWallets: _isRefreshingWallet,
       refreshWallets,
       isSharingInformation: _isSharingInformation,
       errorShareInformation: _errorShareInformation,
       shareInformation,
       isShareSuccessfully: _isShareSuccessfully,
       isLinkedSuccessfully: _isLinkedSuccessfully,
+      transactions: _transactions,
+      fetchTransactions,
+      transactionError: _transactionError,
+      clearTransactionError,
+      isLoadingTransaction: _isLoadingTransaction,
+      refreshTransactions,
+      isRefreshingTransaction: _isRefreshingTransaction,
+      getTransactionPaging,
+      groupTransactions,
+      getTransactionSummary,
+      clearTransactions,
+      getTransactionByWalletId,
     }),
     [
       _isLinkedSuccessfully,
       _wallets,
-      _isLoading,
+      _isLinkingWallet,
       _summary,
       _loadError,
       _unlinkError,
@@ -341,10 +530,15 @@ export function useWalletContextValue(): WalletContextData {
       _updatePrimaryError,
       _isLinkingWallet,
       _linkWalletError,
-      _isRefreshing,
+      _isRefreshingWallet,
       _isSharingInformation,
       _errorShareInformation,
       _isShareSuccessfully,
+      _transactions,
+      _transactionError,
+      _isLoadingTransaction,
+      _isRefreshingTransaction,
+      _isLoadingWallets,
     ]
   );
 }

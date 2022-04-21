@@ -1,14 +1,6 @@
 import { BTickIcon } from '../../../../assets/images';
 import React, { ReactNode, useContext } from 'react';
-import {
-  TouchableOpacity,
-  TouchableOpacityProps,
-  View,
-  Text,
-  StyleProp,
-  ViewStyle,
-  TextStyle,
-} from 'react-native';
+import { TouchableOpacity, View, Text, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { ThemeContext } from 'react-native-theme-component';
 import useMergeStyle from './styles';
 

@@ -1,8 +1,8 @@
 import { CheckBoxStyle } from '.';
-import { defaultsDeep } from '@banking-component/core';
 import { StyleSheet } from 'react-native';
 import { ThemeContext } from 'react-native-theme-component';
 import { useContext } from 'react';
+import { defaultsDeep } from 'lodash';
 
 const useMergeStyle = (style?: CheckBoxStyle): CheckBoxStyle => {
   const { fonts } = useContext(ThemeContext);

@@ -5,11 +5,9 @@ export type WalletProviderProps = {
   children: ReactNode;
 };
 
-const WalletProvider = (props: WalletProviderProps) => {
+export const WalletProvider = (props: WalletProviderProps) => {
   const { children } = props;
   const walletContextData = useWalletContextValue();
 
   return <WalletContext.Provider value={walletContextData}>{children}</WalletContext.Provider>;
 };
-
-export default WalletProvider;

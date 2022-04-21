@@ -1,10 +1,18 @@
 import React, { useState, useContext, ReactNode } from 'react';
-import { Wallet } from '@banking-component/core';
 import { BottomSheet, ThemeContext, Button } from 'react-native-theme-component';
-import { View, FlatList, TouchableOpacity, Text, StyleProp, ViewStyle, TextStyle } from 'react-native';
+import {
+  View,
+  FlatList,
+  TouchableOpacity,
+  Text,
+  StyleProp,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
 import { CheckedIcon } from '../../../../assets/images';
 import useMergeStyles from './theme';
 import { ButtonStyles } from 'react-native-theme-component/src/button';
+import { Wallet } from '../../../../model';
 
 export type SelectAccountModalStyle = {
   itemContainerStyle?: StyleProp<ViewStyle>;
@@ -14,7 +22,6 @@ export type SelectAccountModalStyle = {
   itemSeparatorStyle?: StyleProp<ViewStyle>;
   buttonStyle?: ButtonStyles;
 };
-
 
 interface SelectAccountModalProps {
   isVisible: boolean;
