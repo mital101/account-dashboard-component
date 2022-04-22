@@ -36,7 +36,7 @@ const WalletDetailsModal = ({
 }: WalletDetailsModalProps) => {
   const styles: WalletDetailsModalStyles = useMergeStyles(style);
   const [isCopied, setCopied] = useState(false);
-  const { colors, i18n } = useContext(ThemeContext);
+  const { i18n } = useContext(ThemeContext);
 
   const copy = () => {
     setCopied(true);
@@ -50,17 +50,23 @@ const WalletDetailsModal = ({
     <BottomSheet onBackButtonPress={onClose} onBackdropPress={onClose} isVisible={isVisible}>
       <View style={styles.containerStyle}>
         <View style={styles.headerContainerStyle}>
-          <Text style={styles.modalTitleStyle}>{'UnionDigital Account Details'}</Text>
+          <Text style={styles.modalTitleStyle}>
+            {i18n?.t('wallet_card_component.lbl_account_details') ?? 'Account Details'}
+          </Text>
           <Text onPress={onClose} style={styles.closeTextStyle}>
-            {'Close'}
+            {i18n?.t('wallet_card_component.btn_close') ?? 'Close'}
           </Text>
         </View>
         <View style={styles.itemContainerStyle}>
-          <Text style={styles.itemTitleStyle}>{'Account Name'}</Text>
+          <Text style={styles.itemTitleStyle}>
+            {i18n?.t('wallet_card_component.lbl_account_name') ?? 'Account Name'}
+          </Text>
           <Text style={styles.itemValueStyle}>{wallet.bankAccount.accountHolderName}</Text>
         </View>
         <View style={styles.itemContainerStyle}>
-          <Text style={styles.itemTitleStyle}>{'Account Number'}</Text>
+          <Text style={styles.itemTitleStyle}>
+            {i18n?.t('wallet_card_component.lbl_account_number') ?? 'Account Number'}
+          </Text>
           <Text onPress={copy} style={styles.itemValueStyle}>
             {wallet.bankAccount.accountNumber}
           </Text>
@@ -69,13 +75,17 @@ const WalletDetailsModal = ({
           </TouchableOpacity>
         </View>
         <View style={styles.itemContainerStyle}>
-          <Text style={styles.itemTitleStyle}>{'Mobile Number'}</Text>
+          <Text style={styles.itemTitleStyle}>
+            {i18n?.t('wallet_card_component.lbl_mobile_number') ?? 'Mobile Number'}
+          </Text>
           <Text style={styles.itemValueStyle}>
             {phoneNumber.startsWith('0') ? phoneNumber : `+${phoneNumber}`}
           </Text>
         </View>
         <View style={styles.itemContainerStyle}>
-          <Text style={styles.itemTitleStyle}>{'Current Balance'}</Text>
+          <Text style={styles.itemTitleStyle}>
+            {i18n?.t('wallet_card_component.lbl_current_balance') ?? 'Current Balance'}
+          </Text>
           <Text style={styles.itemValueStyle}>
             {useCurrencyFormat(wallet.currentBalance, wallet.currencyCode)}
           </Text>
@@ -83,7 +93,10 @@ const WalletDetailsModal = ({
       </View>
       {isCopied && (
         <View style={styles.copiedContainerStyle}>
-          <Text style={styles.copiedTextStyle}>{'Text has been copied to your clipboard.'}</Text>
+          <Text style={styles.copiedTextStyle}>
+            {i18n?.t('wallet_card_component.msg_copied') ??
+              'Text has been copied to your clipboard.'}
+          </Text>
         </View>
       )}
     </BottomSheet>

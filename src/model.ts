@@ -69,6 +69,7 @@ export interface Transaction {
   txnId: string;
   txnType: string;
   txnCategory: string;
+  txnCode: string;
   txnDateTime: string;
   description: string;
   creditDebitIndicator: string;

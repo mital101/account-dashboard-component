@@ -1,11 +1,12 @@
 import moment from 'moment';
 import React from 'react';
-import { StyleProp, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useCurrencyFormat } from 'react-native-theme-component';
 import { CreditDebitIndicator, Transaction } from '../../../model';
 import useMergeStyles from './styles';
 
 export type TransactionItemComponentProps = {
+  onPressed: () => void;
   transaction: Transaction;
   dateFormat?: string;
   style?: TransactionItemComponentStyles;
@@ -23,11 +24,12 @@ const TransactionItemComponent = ({
   style,
   transaction,
   dateFormat,
+  onPressed,
 }: TransactionItemComponentProps) => {
   const styles: TransactionItemComponentStyles = useMergeStyles(style);
 
   return (
-    <View style={styles.containerStyle}>
+    <TouchableOpacity activeOpacity={0.8} onPress={onPressed} style={styles.containerStyle}>
       <View style={styles.headerContainerStyle}>
         <Text style={styles.descriptionTextStyle}>
           {transaction.recipientDescription ?? transaction.description}
@@ -41,7 +43,7 @@ const TransactionItemComponent = ({
       <Text style={styles.dateTextStyle}>
         {moment(transaction.txnDateTime).format(dateFormat ?? 'MMM DD, YYYY HH:MM A')}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

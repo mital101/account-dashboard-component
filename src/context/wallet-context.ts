@@ -12,7 +12,7 @@ import {
   WalletSummary,
   WalletTransaction,
 } from '../model';
-import { chain, groupBy, isEmpty, orderBy } from 'lodash';
+import _, { chain, groupBy, isEmpty, orderBy } from 'lodash';
 
 const walletService = WalletService.instance();
 
@@ -55,7 +55,6 @@ export interface WalletContextData {
   isLoadingTransaction: boolean;
   isRefreshingTransaction: boolean;
   transactionError?: Error;
-  clearTransactionError: () => void;
   fetchTransactions: (walletId?: string, pageNumber?: number) => void;
   refreshTransactions: (walletId?: string) => void;
   getTransactionPaging: (walletId?: string) => Paging | undefined;
@@ -91,7 +90,6 @@ export const walletDefaultValue: WalletContextData = {
   isLoadingTransaction: false,
   isRefreshingTransaction: false,
   fetchTransactions: () => null,
-  clearTransactionError: () => null,
   refreshTransactions: () => null,
   getTransactionPaging: () => undefined,
   groupTransactions: () => undefined,
@@ -128,6 +126,7 @@ export function useWalletContextValue(): WalletContextData {
       setIsLoadingWallets(true);
       await _fetchWallets();
       setIsLoadingWallets(false);
+      clearWalletErrors();
     } catch (err) {
       setIsLoadingWallets(false);
       setLoadError(err as Error);
@@ -167,6 +166,7 @@ export function useWalletContextValue(): WalletContextData {
         }
         await _fetchWallets();
         setIsRefreshingWallet(false);
+        clearWalletErrors();
       } catch (err) {
         setIsRefreshingWallet(false);
         setLoadError(err as Error);
@@ -322,12 +322,32 @@ export function useWalletContextValue(): WalletContextData {
   );
 
   const clearWalletErrors = useCallback(() => {
-    setLoadError(undefined);
-    setUnlinkError(undefined);
-    setUpdatePrimaryError(undefined);
-    setLinkWalletError(undefined);
-    setErrorShareInformation(undefined);
-  }, []);
+    if (_loadError) {
+      setLoadError(undefined);
+    }
+    if (_unlinkError) {
+      setUnlinkError(undefined);
+    }
+    if (_updatePrimaryError) {
+      setUpdatePrimaryError(undefined);
+    }
+    if (_linkWalletError) {
+      setLinkWalletError(undefined);
+    }
+    if (_errorShareInformation) {
+      setErrorShareInformation(undefined);
+    }
+    if (_transactionError) {
+      setTransactionError(undefined);
+    }
+  }, [
+    _errorShareInformation,
+    _loadError,
+    _unlinkError,
+    _updatePrimaryError,
+    _linkWalletError,
+    _transactionError,
+  ]);
 
   const clearWallets = useCallback(() => {
     setWallets([]);
@@ -362,6 +382,7 @@ export function useWalletContextValue(): WalletContextData {
           );
         }
         setLoadingTransaction(false);
+        clearWalletErrors();
       } catch (error) {
         setLoadingTransaction(false);
         setTransactionError(error as Error);
@@ -399,6 +420,7 @@ export function useWalletContextValue(): WalletContextData {
           );
         }
         setRefreshingTransaction(false);
+        clearWalletErrors();
       } catch (error) {
         setRefreshingTransaction(false);
         setTransactionError(error as Error);
@@ -406,10 +428,6 @@ export function useWalletContextValue(): WalletContextData {
     },
     [setTransactions, _transactions]
   );
-
-  const clearTransactionError = useCallback(() => {
-    setTransactionError(undefined);
-  }, []);
 
   const getTransactionPaging = useCallback(
     (walletId?: string) => {
@@ -439,7 +457,6 @@ export function useWalletContextValue(): WalletContextData {
       if (!data) {
         return [];
       }
-
       const sortedByDate = orderBy<Transaction>(
         data,
         [(txn: any) => new Date(txn.txnDateTime)],
@@ -449,8 +466,8 @@ export function useWalletContextValue(): WalletContextData {
         moment(transaction.txnDateTime).format('DD MMM YYYY')
       );
       return Object.keys(group).map((key) => ({
-        section: key,
-        data: orderBy<Transaction>(group[key], ['txnId'], ['desc']),
+        section: moment(key, 'DD MMM YYYY').toISOString(),
+        data: orderBy<Transaction>(group[key], ['txnDateTime'], ['desc']),
       }));
     },
     [_transactions]
@@ -508,7 +525,6 @@ export function useWalletContextValue(): WalletContextData {
       transactions: _transactions,
       fetchTransactions,
       transactionError: _transactionError,
-      clearTransactionError,
       isLoadingTransaction: _isLoadingTransaction,
       refreshTransactions,
       isRefreshingTransaction: _isRefreshingTransaction,

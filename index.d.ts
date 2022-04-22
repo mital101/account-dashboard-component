@@ -6,6 +6,7 @@ export { default as ShareInformationComponent } from './src/components/share-inf
 export { default as WalletCardComponent } from './src/components/wallet-card-component';
 export { default as TransactionListComponent } from './src/components/transaction-list-component';
 export { default as NoWalletComponent } from './src/components/no-wallet-component';
+export { default as RecentTransactionComponent } from './src/components/recent-transaction-component';
 export * from './src/assets/images';
 export * from './src/types';
 export * from './src/model';

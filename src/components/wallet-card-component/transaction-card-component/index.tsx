@@ -12,15 +12,19 @@ import {
 import { ThemeContext } from 'react-native-theme-component';
 import { DashlineIcon } from '../../../assets/dashline.icon';
 import { WalletContext } from '../../../context/wallet-context';
-import { Wallet } from '../../../model';
-import TransactionItemComponent from '../transaction-item-component';
+import { Transaction, Wallet } from '../../../model';
+import TransactionItemComponent, {
+  TransactionItemComponentStyles,
+} from '../transaction-item-component';
 import useMergeStyles from './styles';
 
 export type TransactionCardComponentProps = {
   wallet: Wallet;
+  dateFormat?: string;
   dashline?: ReactNode;
   style?: TransactionCardComponentStyles;
   onViewAllTransactions: () => void;
+  onTransactionDetails: (transaction: Transaction) => void;
 };
 
 export type TransactionCardComponentStyles = {
@@ -31,6 +35,7 @@ export type TransactionCardComponentStyles = {
   viewAllTextStyle?: StyleProp<TextStyle>;
   loadingContainerStyle?: StyleProp<ViewStyle>;
   itemSeperatorStyle?: StyleProp<ViewStyle>;
+  transactionItemComponentStyle?: TransactionItemComponentStyles;
 };
 
 const TransactionCardComponent = ({
@@ -38,6 +43,8 @@ const TransactionCardComponent = ({
   wallet,
   dashline,
   onViewAllTransactions,
+  dateFormat,
+  onTransactionDetails,
 }: TransactionCardComponentProps) => {
   const styles: TransactionCardComponentStyles = useMergeStyles(style);
   const { colors, i18n } = useContext(ThemeContext);
@@ -70,7 +77,14 @@ const TransactionCardComponent = ({
             <View style={styles.itemSeperatorStyle}>{dashline ?? <DashlineIcon height={1} />}</View>
           )}
           renderItem={({ item }) => {
-            return <TransactionItemComponent transaction={item} />;
+            return (
+              <TransactionItemComponent
+                onPressed={() => onTransactionDetails(item)}
+                dateFormat={dateFormat}
+                transaction={item}
+                style={styles.transactionItemComponentStyle}
+              />
+            );
           }}
         />
       )}

@@ -11,6 +11,7 @@ const useMergeStyles = (
 
   const defaultStyles: RecentTransactionComponentStyles = StyleSheet.create({
     containerStyle: {
+      flex: 1,
       paddingHorizontal: 25,
     },
     headerTitleStyle: {

@@ -23,3 +23,7 @@ export * from './up.icon';
 export * from './down.icon';
 export * from './dashline.icon';
 export * from './copy.icon';
+export * from './empty-transaction.icon';
+export * from './information2.icon';
+export * from './chevrons-down.icon';
+export * from './arrow-back.icon';

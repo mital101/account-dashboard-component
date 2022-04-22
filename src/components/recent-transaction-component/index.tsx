@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import moment from 'moment';
-import React, { useContext } from 'react';
+import React, { ReactNode, useContext } from 'react';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -14,14 +14,29 @@ import {
   FlatList,
 } from 'react-native';
 import { ThemeContext } from 'react-native-theme-component';
-import { DashlineIcon } from '../../../assets/images';
-import { WalletContext } from '../../../context/wallet-context';
-import { Wallet } from '../../../model';
-import TransactionItemComponent from '../transaction-item-component';
+import { DashlineIcon } from '../../assets/images';
+import { WalletContext } from '../../context/wallet-context';
+import { Transaction, Wallet } from '../../model';
+import TransactionItemComponent, {
+  TransactionItemComponentStyles,
+} from '../wallet-card-component/transaction-item-component';
+import EmptyTransactionComponent, {
+  EmptyTransactionComponentStyles,
+} from './components/empty-transaction-component';
+import ErrorTransactionComponent, {
+  ErrorTransactionComponentStyles,
+} from './components/error-transaction-component';
 import useMergeStyles from './styles';
 
 export type RecentTransactionComponentProps = {
   wallet: Wallet;
+  onAddMoney: () => void;
+  onTransactionDetails: (transaction: Transaction) => void;
+  dateFormat?: string;
+  sectionDateFormat?: string;
+  emptyTransaction?: ReactNode;
+  errorTransaction?: ReactNode;
+  dashLine?: ReactNode;
   style?: RecentTransactionComponentStyles;
 };
 
@@ -34,11 +49,24 @@ export type RecentTransactionComponentStyles = {
   loadmoreButtonContainerStyle?: StyleProp<ViewStyle>;
   loadmoreButtonLabelStyle?: StyleProp<TextStyle>;
   loadMoreIndicatorStyle?: StyleProp<ViewStyle>;
+  emptyTransactionComponentStyle?: EmptyTransactionComponentStyles;
+  errorTransactionComponentStyle?: ErrorTransactionComponentStyles;
+  transactionItemComponentStyle?: TransactionItemComponentStyles;
 };
 
-const RecentTransactionComponent = ({ style, wallet }: RecentTransactionComponentProps) => {
+const RecentTransactionComponent = ({
+  style,
+  wallet,
+  sectionDateFormat,
+  dateFormat,
+  emptyTransaction,
+  onAddMoney,
+  errorTransaction,
+  dashLine,
+  onTransactionDetails,
+}: RecentTransactionComponentProps) => {
   const styles: RecentTransactionComponentStyles = useMergeStyles(style);
-  const { colors } = useContext(ThemeContext);
+  const { colors, i18n } = useContext(ThemeContext);
 
   const {
     groupTransactions,
@@ -47,6 +75,7 @@ const RecentTransactionComponent = ({ style, wallet }: RecentTransactionComponen
     getTransactionPaging,
     isLoadingTransaction,
     fetchTransactions,
+    transactionError,
   } = useContext(WalletContext);
   const grouppedTransactions = groupTransactions(wallet.walletId);
   const paging = getTransactionPaging(wallet.walletId);
@@ -72,6 +101,22 @@ const RecentTransactionComponent = ({ style, wallet }: RecentTransactionComponen
     );
   };
 
+  if (transactionError) {
+    return (
+      <>
+        {errorTransaction ?? (
+          <ErrorTransactionComponent
+            isRefreshing={isRefreshingTransaction}
+            onRefresh={() => {
+              refreshTransactions();
+            }}
+            style={styles.errorTransactionComponentStyle}
+          />
+        )}
+      </>
+    );
+  }
+
   if (!grouppedTransactions || isEmpty(grouppedTransactions)) {
     return (
       <ScrollView
@@ -79,7 +124,14 @@ const RecentTransactionComponent = ({ style, wallet }: RecentTransactionComponen
         showsVerticalScrollIndicator={false}
         refreshControl={renderRefreshControl()}
       >
-        <Text>Empty transactions</Text>
+        <Text style={styles.headerTitleStyle}>{`${wallet.walletName} Transactions`}</Text>
+        {emptyTransaction ?? (
+          <EmptyTransactionComponent
+            onAddMoney={onAddMoney}
+            wallet={wallet}
+            style={styles.emptyTransactionComponentStyle}
+          />
+        )}
       </ScrollView>
     );
   }
@@ -111,7 +163,9 @@ const RecentTransactionComponent = ({ style, wallet }: RecentTransactionComponen
                 activeOpacity={0.8}
                 style={styles.loadmoreButtonContainerStyle}
               >
-                <Text style={styles.loadmoreButtonLabelStyle}>{'Load more'}</Text>
+                <Text style={styles.loadmoreButtonLabelStyle}>
+                  {i18n?.t('recent_transaction_component.btn_load_more') ?? 'Load more'}
+                </Text>
               </TouchableOpacity>
             ) : (
               <View />
@@ -123,21 +177,27 @@ const RecentTransactionComponent = ({ style, wallet }: RecentTransactionComponen
           return (
             <>
               <Text style={styles.sectionTitleStyle}>
-                {moment(item.section, 'DD MMM YYYY').format('MMM DD, YYYY')}
+                {moment(item.section).format(sectionDateFormat ?? 'MMM DD, YYYY')}
               </Text>
-              <FlatList
-                contentContainerStyle={styles.contentContainerStyle}
-                showsVerticalScrollIndicator={false}
-                keyExtractor={(subItem) => subItem.txnId}
-                scrollEnabled={false}
-                data={item.data}
-                ItemSeparatorComponent={() => (
-                  <View style={styles.itemSeperatorStyle}>{<DashlineIcon height={1} />}</View>
-                )}
-                renderItem={(props) => {
-                  return <TransactionItemComponent transaction={props.item} />;
-                }}
-              />
+              <View style={styles.contentContainerStyle}>
+                {item.data.map((transaction, index) => {
+                  return (
+                    <View key={transaction.txnId}>
+                      <TransactionItemComponent
+                        style={styles.transactionItemComponentStyle}
+                        dateFormat={dateFormat}
+                        transaction={transaction}
+                        onPressed={() => onTransactionDetails(transaction)}
+                      />
+                      {index !== item.data.length - 1 && (
+                        <View style={styles.itemSeperatorStyle}>
+                          {dashLine ?? <DashlineIcon height={1} />}
+                        </View>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
             </>
           );
         }}

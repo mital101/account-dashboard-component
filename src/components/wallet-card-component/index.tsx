@@ -4,15 +4,18 @@ import { ActivityIndicator, Dimensions, StyleProp, View, ViewStyle } from 'react
 import Carousel from 'react-native-snap-carousel';
 import { ThemeContext } from 'react-native-theme-component';
 import { WalletContext } from '../../context/wallet-context';
-import { Wallet } from '../../model';
+import { Transaction, Wallet } from '../../model';
 import EmptyWalletComponent from '../no-wallet-component';
 import useMergeStyles from './styles';
-import TransactionCardComponent from './transaction-card-component';
-import WalletItemComponent from './wallet-item-component';
+import TransactionCardComponent, {
+  TransactionCardComponentStyles,
+} from './transaction-card-component';
+import WalletItemComponent, { WalletItemComponentStyle } from './wallet-item-component';
 const { width } = Dimensions.get('window');
 
 export type WalletCardComponentProps = {
   style?: WalletCardComponentStyles;
+  dateFormat?: string;
   carouselWidth?: number;
   phoneNumber: string;
   carouselItemWidth?: number;
@@ -20,12 +23,15 @@ export type WalletCardComponentProps = {
   onAddMoney: (wallet: Wallet) => void;
   onSendMoney: (wallet: Wallet) => void;
   onViewAllTransactions: (wallet: Wallet) => void;
+  onTransactionDetails: (transaction: Transaction) => void;
 };
 
 export type WalletCardComponentStyles = {
   containerStyle?: StyleProp<ViewStyle>;
   carouselContainerStyle?: StyleProp<ViewStyle>;
   loadingContainerStyle?: StyleProp<ViewStyle>;
+  walletItemComponentStyle?: WalletItemComponentStyle;
+  transactionCardComponentStyle?: TransactionCardComponentStyles;
 };
 
 const WalletCardComponent = ({
@@ -37,6 +43,8 @@ const WalletCardComponent = ({
   onSendMoney,
   phoneNumber,
   onViewAllTransactions,
+  dateFormat,
+  onTransactionDetails,
 }: WalletCardComponentProps) => {
   const { colors } = useContext(ThemeContext);
   const styles: WalletCardComponentStyles = useMergeStyles(style);
@@ -116,6 +124,7 @@ const WalletCardComponent = ({
                 onAddMoney={() => onAddMoney(item)}
                 onSendMoney={() => onSendMoney(item)}
                 phoneNumber={phoneNumber}
+                style={styles.walletItemComponentStyle}
               />
             );
           }}
@@ -136,9 +145,12 @@ const WalletCardComponent = ({
       {currentWallet && (
         <TransactionCardComponent
           wallet={currentWallet}
+          dateFormat={dateFormat}
           onViewAllTransactions={() => {
             onViewAllTransactions(currentWallet);
           }}
+          onTransactionDetails={onTransactionDetails}
+          style={styles.transactionCardComponentStyle}
         />
       )}
     </View>
