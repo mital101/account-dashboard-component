@@ -51,7 +51,7 @@ const WalletItemComponent = (props: WalletItemComponentProps) => {
         />
         <View style={styles.contentContainerStyle}>
           <View style={styles.headerContainerStyle}>
-            <Text style={styles.walletNameStyle}>{wallet.walletName}</Text>
+            <Text style={styles.walletNameStyle}>{wallet.bankAccount.accountHolderName}</Text>
             <Text
               onPress={() => {
                 setShowDetail(true);
