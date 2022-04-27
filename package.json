@@ -1,7 +1,7 @@
 {
   "name": "@banking-component/wallet-component",
   "private": true,
-  "version": "1.9.10",
+  "version": "1.9.11",
   "description": "Manage wallets/transactions",
   "repository": {
     "type": "git",
@@ -18,6 +18,7 @@
   "license": "MIT",
   "devDependencies": {
     "@react-native-async-storage/async-storage": "^1.15.9",
+    "@react-native-clipboard/clipboard": "^1.8.5",
     "@types/lodash": "^4.14.175",
     "@types/react": "^17.0.20",
     "@types/react-native": "^0.65.0",
@@ -27,10 +28,12 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-localize": "^2.1.5",
     "react-native-permissions": "^3.0.5",
+    "react-native-share": "^7.3.9",
     "react-native-svg": "^12.1.1",
     "react-native-theme-component": "https://github.com/101digital/react-native-theme-component.git",
-    "typescript": "^4.4.2",
-    "@react-native-clipboard/clipboard": "^1.8.5"
+    "react-native-view-shot": "^3.1.2",
+    "rn-fetch-blob": "^0.12.0",
+    "typescript": "^4.4.2"
   },
   "dependencies": {
     "@types/react-native-snap-carousel": "^3.8.5",

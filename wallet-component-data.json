@@ -364,6 +364,32 @@
       "lbl_money_out": "Money out",
       "msg_no_wallet": "No bank account linked",
       "btn_link_bank_account": "Link bank account"
+    },
+    "recent_transaction_component": {
+      "lbl_transaction": "Transactions",
+      "btn_load_more": "Load more",
+      "lbl_no_transactions": "You have no transactions yet.",
+      "msg_no_transactions": "Try adding money to your %s and enjoy the rest of the UnionDigital features.",
+      "btn_add_money_now": "Add money now",
+      "lbl_error_transactions": "Something went wrong",
+      "msg_error_transactions": "We're having difficulty trying to connect to our server. Please try again.",
+      "btn_swipe_refresh": "Swipe down to refresh",
+      "btn_save_gallery": "Save to gallery",
+      "btn_share": "Share",
+      "lbl_type_transaction": "Type of transaction",
+      "lbl_transaction_details": "Transaction Details",
+      "lbl_send_money_from": "Send money from",
+      "lbl_send_money_to": "Send money to",
+      "lbl_received_from": "Received from",
+      "lbl_note_to_recipient": "Note to recipient",
+      "lbl_purpose_transfer": "Purpose of transfer",
+      "lbl_send_via": "Send via",
+      "lbl_when": "When",
+      "lbl_amount": "Amount",
+      "lbl_transaction_fee": "Transaction Fee",
+      "lbl_total_amount": "Total amount",
+      "lbl_transaction_date": "Transaction Date / Time",
+      "lbl_reference_no": "Reference No."
     }
   }
 }

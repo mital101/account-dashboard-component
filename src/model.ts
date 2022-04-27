@@ -77,15 +77,36 @@ export interface Transaction {
     amount: number;
     currency: string;
   };
-  destinationAccount: {
-    walletId?: string;
-    accountName: string;
-    accountNumber: string;
+  totalFeeAmount?: {
+    amount: number;
+    currency: string;
   };
-  sourceAccount: {
-    walletId?: string;
-  };
+  destinationAccount: TransactionAccount;
+  sourceAccount: TransactionAccount;
   recipientDescription?: string;
+  paymentTerminal: {
+    name: PaymentTerminalName;
+  };
+}
+
+export enum PaymentTerminalName {
+  pesonet = 'PNT',
+  ud = 'UD',
+  instapay = 'ITP',
+}
+
+export interface TransactionAccount {
+  accountNumber: string;
+  walletId: string;
+  accountName: string;
+  isDefaultAccount: boolean;
+  bankInfo: {
+    code: string;
+    openBankingSupport: boolean;
+    legalName?: string;
+  };
+  isJoinedAccount: boolean;
+  multiCurrencySupported: boolean;
 }
 
 export interface WalletTransaction {

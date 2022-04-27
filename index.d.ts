@@ -7,6 +7,7 @@ export { default as WalletCardComponent } from './src/components/wallet-card-com
 export { default as TransactionListComponent } from './src/components/transaction-list-component';
 export { default as NoWalletComponent } from './src/components/no-wallet-component';
 export { default as RecentTransactionComponent } from './src/components/recent-transaction-component';
+export { default as TransactionDetailsComponent } from './src/components/transaction-details-component';
 export * from './src/assets/images';
 export * from './src/types';
 export * from './src/model';
