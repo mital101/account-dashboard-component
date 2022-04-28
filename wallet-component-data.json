@@ -236,7 +236,7 @@
     {
       "id": "wallets-card-component-template-1",
       "templateName": "Wallet Card component template 1",
-      "componentName": "WalletCardomponent",
+      "componentName": "WalletCardComponent",
       "imports": [
         "import { Dimensions } from 'react-native';",
         "import { AuthContext } from 'react-native-auth-component';",
@@ -296,6 +296,64 @@
               "type": "Wallet"
             }
           ]
+        }
+      ]
+    },
+    {
+      "id": "recent-transaction-component-template",
+      "templateName": "Recent transaction component template",
+      "componentName": "RecentTransactionComponent",
+      "imports": [
+        "import { RecentTransactionComponent, WalletContext, Wallet } from '@banking-component/wallet-component';"
+      ],
+      "headers": ["  const { wallet } = route.params;"],
+      "renders": [
+        "      <RecentTransactionComponent",
+        "        onAddMoney={() => {",
+        "          $fn-add-money",
+        "        }}",
+        "        wallet={wallet}",
+        "        onTransactionDetails={(transaction) => {",
+        "          $fn-transaction-detail",
+        "        }}",
+        "      />"
+      ],
+      "functions": [
+        {
+          "id": "fn-add-money",
+          "params": []
+        },
+        {
+          "id": "fn-transaction-detail",
+          "params": [
+            {
+              "name": "transaction",
+              "type": "Transaction"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "transaction-details-component-template",
+      "templateName": "Transaction details component template",
+      "componentName": "TransactionDetailsComponent",
+      "imports": [
+        "import { Transaction, TransactionDetailsComponent  } from '@banking-component/wallet-component';"
+      ],
+      "headers": ["  const { transaction } = route.params;"],
+      "renders": [
+        "      <TransactionDetailsComponent",
+        "        transaction={transaction}",
+        "        onBack={() => {",
+        "          $fn-on-back",
+        "        }}",
+        "      />"
+      ],
+      "functions": [
+        {
+          "id": "fn-on-back",
+          "params": []
         }
       ]
     }
