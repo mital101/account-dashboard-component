@@ -79,7 +79,7 @@ const TransactionDetailsComponent = ({
       Platform.OS === 'ios' ? RNFetchBlob.fs.dirs.LibraryDir : RNFetchBlob.fs.dirs.DownloadDir;
     const path = `${dirs}/${name}`;
     try {
-      await RNFetchBlob.fs.writeFile(path, res, 'base64');
+      await RNFetchBlob.fs.writeFile(path, res.replace(/\r?\n|\r/g, ''), 'base64');
       if (Platform.OS === 'ios') {
         RNFetchBlob.ios.previewDocument(path);
       } else {
