@@ -40,7 +40,7 @@
         "import { AccountLinkingContext } from '@banking-component/account-linking';",
         "import { ThemeContext, useCurrencyFormat } from 'react-native-theme-component';",
         "import { CompasionRequestParams, ProductContext, RecommandBannerComponent } from 'product-comparison-component';",
-        "import { isEmpty } from 'lodash"
+        "import { isEmpty } from 'lodash';"
       ],
       "headers": [
         "const accountRef = useRef<WalletListComponentRefs>();",
@@ -194,10 +194,10 @@
     {
       "id": "transaction-list-component-template-1",
       "templateName": "Transaction List component template 1",
-      "componentName": "WalletListComponent",
+      "componentName": "TransactionListComponent",
       "imports": [
         "import { Dimensions } from 'react-native';",
-        "import { TransactionListComponent, WalletContext } from '@banking-component/wallet-component';",
+        "import { TransactionListComponent, WalletContext, Wallet } from '@banking-component/wallet-component';",
         "const { width } = Dimensions.get('window');"
       ],
       "headers": [
@@ -241,7 +241,7 @@
         "import { Dimensions } from 'react-native';",
         "import { AuthContext } from 'react-native-auth-component';",
         "import { WalletCardComponent, WalletContext } from '@banking-component/wallet-component';",
-        "import { isEmpty } from 'lodash",
+        "import { isEmpty } from 'lodash';",
         "const { width } = Dimensions.get('window');"
       ],
       "headers": [
@@ -266,6 +266,9 @@
         "          }}",
         "          onViewAllTransactions={(wallet) => {",
         "            $fn-view-all-transactions",
+        "          }}",
+        "          onTransactionDetails={(transaction) => {",
+        "            $fn-transaction-details",
         "          }}",
         "        />"
       ],
@@ -294,6 +297,15 @@
             {
               "name": "wallet",
               "type": "Wallet"
+            }
+          ]
+        },
+        {
+          "id": "fn-transaction-details",
+          "params": [
+            {
+              "name": "transaction",
+              "type": "Transaction"
             }
           ]
         }
@@ -387,7 +399,14 @@
       "btn_send_money": "Send Money",
       "lbl_recent_transactions": "Recent transactions",
       "btn_view_all": "View all",
-      "msg_no_transaction": "You have no transactions yet."
+      "msg_no_transaction": "You have no transactions yet.",
+      "lbl_account_details": "UnionDigital Account Details",
+      "btn_close": "Close",
+      "lbl_account_name": "Account Name",
+      "lbl_account_number": "Account Number",
+      "lbl_mobile_number": "Mobile Number",
+      "lbl_current_balance": "Current Balance",
+      "msg_copied": "Text has been copied to your clipboard."
     },
     "share_information_component": {
       "lbl_recipient_email": "Recipient Email",
