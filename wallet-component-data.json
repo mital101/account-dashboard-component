@@ -1,0 +1,472 @@
+{
+  "id": "wallet-component",
+  "name": "Wallet Component",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/101digital/react-native-banking-components.git",
+    "directory": "packages/wallet-component"
+  },
+  "config": {
+    "env": {
+      "development": {
+        "walletBaseUrl": "https://sandbox.101digital.io/wallet-service/1.0.0",
+        "financialBaseUrl": "https://sandbox.101digital.io/financial-profile-service/1.0.0"
+      },
+      "staging": {
+        "walletBaseUrl": "https://sandbox.101digital.io/wallet-service/1.0.0",
+        "financialBaseUrl": "https://sandbox.101digital.io/financial-profile-service/1.0.0"
+      },
+      "production": {
+        "walletBaseUrl": "https://api.101digital.io/wallet-service/v1.0",
+        "financialBaseUrl": "https://sandbox.101digital.io/financial-profile-service/1.0.0"
+      }
+    }
+  },
+  "dependencies": [
+    {
+      "name": "https://github.com/101digital/react-native-theme-component.git"
+    },
+    {
+      "name": "https://gitpkg.now.sh/101digital/react-native-banking-components/packages/core"
+    }
+  ],
+  "templates": [
+    {
+      "id": "wallet-list-component-template-1",
+      "templateName": "Wallet List component template 1",
+      "componentName": "WalletListComponent",
+      "imports": [
+        "import { WalletListComponent, WalletListComponentRefs, WalletContext } from '@banking-component/wallet-component';",
+        "import { AccountLinkingContext } from '@banking-component/account-linking';",
+        "import { ThemeContext, useCurrencyFormat } from 'react-native-theme-component';",
+        "import { CompasionRequestParams, ProductContext, RecommandBannerComponent } from 'product-comparison-component';",
+        "import { isEmpty } from 'lodash';"
+      ],
+      "headers": [
+        "const accountRef = useRef<WalletListComponentRefs>();",
+        "  const {",
+        "    getWallets,",
+        "    wallets,",
+        "    errorUnlinkWallet,",
+        "    errorUpdatePrimary,",
+        "    clearWalletErrors,",
+        "    errorLinkWallet,",
+        "  } = useContext(WalletContext);",
+        "",
+        "  const { bankImages, banks, getBanks } = useContext(AccountLinkingContext);",
+        "  const { i18n, colors } = useContext(ThemeContext);",
+        "  const { getComparisons, comparisons, clearComparisons } = useContext(ProductContext);",
+        "",
+        "  useEffect(() => {",
+        "    if (isEmpty(wallets)) {",
+        "      getWallets();",
+        "    }",
+        "    if (isEmpty(banks)) {",
+        "      getBanks();",
+        "    }",
+        "  }, []);",
+        "",
+        "  useEffect(() => {",
+        "    if (!isEmpty(wallets)) {",
+        "      const params: CompasionRequestParams[] = wallets.map((w) => ({",
+        "        walletId: w.walletId,",
+        "        accountSubtype: w.bankAccount.accountSubType,",
+        "        productId: w.bankAccount.productId,",
+        "        amount: Math.abs(w.currentBalance),",
+        "        productCategory: w.bankAccount.internalProductCategory,",
+        "        countryCode: w.bankAccount.countryCode,",
+        "        bankId: w.bankAccount.bankCode,",
+        "      }));",
+        "      clearComparisons();",
+        "      getComparisons(params);",
+        "    }",
+        "  }, [wallets]);",
+        "",
+        "  useEffect(() => {",
+        "    if (!isEmpty(comparisons)) {",
+        "      for (var c of comparisons) {",
+        "        const _wallet = wallets.find((w) => w.walletId === c.walletId);",
+        "        if (_wallet) {",
+        "          accountRef?.current?.showRecommandBanner(_wallet);",
+        "        }",
+        "      }",
+        "    }",
+        "  }, [comparisons.length]);"
+      ],
+      "renders": [
+        "      <WalletListComponent",
+        "        ref={accountRef}",
+        "        Root={{ props: { bankImages: bankImages } }}",
+        "        Balance={{",
+        "          style: {",
+        "            containerStyle: { backgroundColor: colors.primaryColor },",
+        "            titleTextStyle: { color: 'white' },",
+        "            amountTextStyle: { fontSize: 35, lineHeight: 53, color: 'white' },",
+        "          },",
+        "        }}",
+        "        WalletItem={{",
+        "          props: {",
+        "            onItemPressed: (wallet) => {",
+        "              accountRef?.current?.showActionsSheet(wallet);",
+        "            },",
+        "          },",
+        "          components: {",
+        "            recommandBanner: (wallet) => (",
+        "              <RecommandBannerComponent",
+        "                i18n={i18n}",
+        "                walletId={wallet.walletId}",
+        "                formatCurrency={(amount) => useCurrencyFormat(amount, wallet.currencyCode)}",
+        "                gradientColors={['#5d21d2', '#8B5DE6']}",
+        "                onTakeLook={() => {",
+        "                  $fn-look-recommand",
+        "                }}",
+        "              />",
+        "            ),",
+        "          },",
+        "        }}",
+        "        LinkAccountButton={{",
+        "          props: {",
+        "            onLinkAccountPressed: () => {",
+        "              $fn-link-account",
+        "            },",
+        "          },",
+        "        }}",
+        "        EmptyWallet={{",
+        "          props: {",
+        "            onLinkAccountPressed: () => {",
+        "              $fn-link-account",
+        "            },",
+        "          },",
+        "          style: { buttonTextStyle: { color: colors.primaryColor } },",
+        "        }}",
+        "        ActionSheet={{",
+        "          props: {",
+        "            onSetPrimary: (wallet) => {",
+        "              accountRef?.current?.setAsPrimary(wallet);",
+        "            },",
+        "            onUnlink: (wallet) => {",
+        "              accountRef?.current?.unlinkWallet(wallet);",
+        "            },",
+        "            onViewTransactions: (wallet) => {",
+        "              $fn-view-transaction",
+        "            },",
+        "            onShare: (wallet) => {",
+        "              $fn-share-account",
+        "            },",
+        "          },",
+        "        }}",
+        "        ConfirmSetPrimaryModal={{ props: { isFullWidth: false, isShowClose: false } }}",
+        "        ConfirmUnlinkModal={{ props: { isFullWidth: false, isShowClose: false } }}",
+        "      />",
+        "      <ErrorModal error={getErrorDetails(errorUnlinkWallet)} onClose={clearWalletErrors} />",
+        "      <ErrorModal error={getErrorDetails(errorLinkWallet)} onClose={clearWalletErrors} />",
+        "      <ErrorModal error={getErrorDetails(errorUpdatePrimary)} onClose={clearWalletErrors} />"
+      ],
+      "functions": [
+        {
+          "id": "fn-look-recommand",
+          "params": []
+        },
+        {
+          "id": "fn-link-account",
+          "params": []
+        },
+        {
+          "id": "fn-view-transaction",
+          "params": [
+            {
+              "name": "wallet",
+              "type": "Wallet"
+            }
+          ]
+        },
+        {
+          "id": "fn-share-account",
+          "params": [
+            {
+              "name": "wallet",
+              "type": "Wallet"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "transaction-list-component-template-1",
+      "templateName": "Transaction List component template 1",
+      "componentName": "TransactionListComponent",
+      "imports": [
+        "import { Dimensions } from 'react-native';",
+        "import { TransactionListComponent, WalletContext, Wallet } from '@banking-component/wallet-component';",
+        "const { width } = Dimensions.get('window');"
+      ],
+      "headers": [
+        "  const initWallet = route?.params?.wallet;",
+        "  const { transactionError, clearTransactionError } = useContext(WalletContext);"
+      ],
+      "renders": [
+        "      <TransactionListComponent",
+        "        CarouselItem={{ props: { carouselItemWidth: width - 32, carouselWidth: width } }}",
+        "        Root={{",
+        "          props: {",
+        "            initWallet,",
+        "          },",
+        "        }}",
+        "        EmptyWallet={{",
+        "          props: {",
+        "            onLinkAccountPressed: () => {",
+        "              $fn-link-account",
+        "            },",
+        "          },",
+        "        }}",
+        "      />",
+        "      <ErrorModal",
+        "        error={getErrorDetails(transactionError)}",
+        "        onClose={clearTransactionError}",
+        "        timeOut",
+        "      />"
+      ],
+      "functions": [
+        {
+          "id": "fn-link-account",
+          "params": []
+        }
+      ]
+    },
+    {
+      "id": "wallets-card-component-template-1",
+      "templateName": "Wallet Card component template 1",
+      "componentName": "WalletCardComponent",
+      "imports": [
+        "import { Dimensions } from 'react-native';",
+        "import { AuthContext } from 'react-native-auth-component';",
+        "import { WalletCardComponent, WalletContext } from '@banking-component/wallet-component';",
+        "import { isEmpty } from 'lodash';",
+        "const { width } = Dimensions.get('window');"
+      ],
+      "headers": [
+        "  const { profile } = useContext(AuthContext);",
+        "  const { getWallets, wallets } = useContext(WalletContext);",
+        "",
+        "  useEffect(() => {",
+        "    if (isEmpty(wallets)) {",
+        "      getWallets();",
+        "    }",
+        "  }, []);"
+      ],
+      "renders": [
+        "        <WalletCardComponent",
+        "          phoneNumber={profile?.mobileNumber ?? ''}",
+        "          carouselItemWidth={width - 50}",
+        "          onAddMoney={(wallet) => {",
+        "            $fn-add-money",
+        "          }}",
+        "          onSendMoney={(wallet) => {",
+        "            $fn-send-money",
+        "          }}",
+        "          onViewAllTransactions={(wallet) => {",
+        "            $fn-view-all-transactions",
+        "          }}",
+        "          onTransactionDetails={(transaction) => {",
+        "            $fn-transaction-details",
+        "          }}",
+        "        />"
+      ],
+      "functions": [
+        {
+          "id": "fn-add-money",
+          "params": [
+            {
+              "name": "wallet",
+              "type": "Wallet"
+            }
+          ]
+        },
+        {
+          "id": "fn-send-money",
+          "params": [
+            {
+              "name": "wallet",
+              "type": "Wallet"
+            }
+          ]
+        },
+        {
+          "id": "fn-view-all-transactions",
+          "params": [
+            {
+              "name": "wallet",
+              "type": "Wallet"
+            }
+          ]
+        },
+        {
+          "id": "fn-transaction-details",
+          "params": [
+            {
+              "name": "transaction",
+              "type": "Transaction"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "recent-transaction-component-template",
+      "templateName": "Recent transaction component template",
+      "componentName": "RecentTransactionComponent",
+      "imports": [
+        "import { RecentTransactionComponent, WalletContext, Wallet } from '@banking-component/wallet-component';"
+      ],
+      "headers": ["  const { wallet } = route.params;"],
+      "renders": [
+        "      <RecentTransactionComponent",
+        "        onAddMoney={() => {",
+        "          $fn-add-money",
+        "        }}",
+        "        wallet={wallet}",
+        "        onTransactionDetails={(transaction) => {",
+        "          $fn-transaction-detail",
+        "        }}",
+        "      />"
+      ],
+      "functions": [
+        {
+          "id": "fn-add-money",
+          "params": []
+        },
+        {
+          "id": "fn-transaction-detail",
+          "params": [
+            {
+              "name": "transaction",
+              "type": "Transaction"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "transaction-details-component-template",
+      "templateName": "Transaction details component template",
+      "componentName": "TransactionDetailsComponent",
+      "imports": [
+        "import { Transaction, TransactionDetailsComponent  } from '@banking-component/wallet-component';"
+      ],
+      "headers": ["  const { transaction } = route.params;"],
+      "renders": [
+        "      <TransactionDetailsComponent",
+        "        transaction={transaction}",
+        "        onBack={() => {",
+        "          $fn-on-back",
+        "        }}",
+        "      />"
+      ],
+      "functions": [
+        {
+          "id": "fn-on-back",
+          "params": []
+        }
+      ]
+    }
+  ],
+  "texts": {
+    "wallets_list_component": {
+      "lbl_link_successfully": "Account Added Succefully",
+      "msg_link_successfully": "Your bank account is successfully linked to your profile.",
+      "btn_continue": "Continue",
+      "lbl_unlink_account": "Unlink Bank Account",
+      "msg_unlink_account": "Are you sure? once unlinked, you cannot undo this action.",
+      "btn_cancel": "Cancel",
+      "lbl_confirmation": "Confirmation",
+      "msg_set_primary": "Are you sure you want to set %s as the primary account?.",
+      "btn_set_primary": "Set as primary account",
+      "btn_unlink_account": "Unlink bank account",
+      "btn_view_transaction": "View transactions",
+      "lbl_total_balance": "Total Available Balance",
+      "btn_link_bank_account": "Link Bank Account",
+      "lbl_set_as_primary": "Set as primary",
+      "lbl_primary": "Primary",
+      "msg_no_wallet": "No Bank Account Linked",
+      "btn_view_cashflow": "View Cashflow",
+      "lbl_cashflow": "Cashflow",
+      "msg_cashflow": "View cashflow chart for your money in & money out to analyse your spending.",
+      "btn_view": "View",
+      "btn_share_information": "Share Information"
+    },
+    "wallet_card_component": {
+      "btn_add_money": "Add Money",
+      "btn_send_money": "Send Money",
+      "lbl_recent_transactions": "Recent transactions",
+      "btn_view_all": "View all",
+      "msg_no_transaction": "You have no transactions yet.",
+      "lbl_account_details": "UnionDigital Account Details",
+      "btn_close": "Close",
+      "lbl_account_name": "Account Name",
+      "lbl_account_number": "Account Number",
+      "lbl_mobile_number": "Mobile Number",
+      "lbl_current_balance": "Current Balance",
+      "msg_copied": "Text has been copied to your clipboard."
+    },
+    "share_information_component": {
+      "lbl_recipient_email": "Recipient Email",
+      "plh_enter_recipient_email": "Enter recipient email",
+      "lbl_message": "Message (Optional)",
+      "plh_enter_message": "Enter message",
+      "lbl_data_share": "Data To Share",
+      "lbl_data_account": "Account",
+      "lbl_select_account": "Select a account",
+      "lbl_account_transaction": "Account & Transaction Details",
+      "lbl_invoices": "Invoices",
+      "lbl_date_range": "Date Range",
+      "lbl_from": "From",
+      "lbl_to": "To",
+      "val_enter_email": "Recipient email is required",
+      "val_email_invalid": "Recipient email is invalid",
+      "lbl_send_copy": "Send me a copy of this",
+      "btn_cancel": "Cancel",
+      "btn_share": "Share",
+      "btn_continue": "Continue",
+      "lbl_confirmation": "Confirmation",
+      "msg_confirm_share": "Are you sure you want to share these sensitive information? Please click “Continue” to proceed.",
+      "msg_shared_successfully": "Account Information are sent successfully",
+      "lbl_unable_share": "Unable to share",
+      "msg_share_failed": "An error occured while trying to share your transaction details. Please try again."
+    },
+    "transaction_list_component": {
+      "msg_no_transaction": "No transactions found",
+      "lbl_primary": "Primary",
+      "lbl_summary": "Summary",
+      "lbl_money_in": "Money in",
+      "lbl_money_out": "Money out",
+      "msg_no_wallet": "No bank account linked",
+      "btn_link_bank_account": "Link bank account"
+    },
+    "recent_transaction_component": {
+      "lbl_transaction": "Transactions",
+      "btn_load_more": "Load more",
+      "lbl_no_transactions": "You have no transactions yet.",
+      "msg_no_transactions": "Try adding money to your %s and enjoy the rest of the UnionDigital features.",
+      "btn_add_money_now": "Add money now",
+      "lbl_error_transactions": "Something went wrong",
+      "msg_error_transactions": "We're having difficulty trying to connect to our server. Please try again.",
+      "btn_swipe_refresh": "Swipe down to refresh",
+      "btn_save_gallery": "Save to gallery",
+      "btn_share": "Share",
+      "lbl_type_transaction": "Type of transaction",
+      "lbl_transaction_details": "Transaction Details",
+      "lbl_send_money_from": "Send money from",
+      "lbl_send_money_to": "Send money to",
+      "lbl_received_from": "Received from",
+      "lbl_note_to_recipient": "Note to recipient",
+      "lbl_purpose_transfer": "Purpose of transfer",
+      "lbl_send_via": "Send via",
+      "lbl_when": "When",
+      "lbl_amount": "Amount",
+      "lbl_transaction_fee": "Transaction Fee",
+      "lbl_total_amount": "Total amount",
+      "lbl_transaction_date": "Transaction Date / Time",
+      "lbl_reference_no": "Reference No."
+    }
+  }
+}
