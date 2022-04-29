@@ -125,7 +125,7 @@ const WalletCardComponent = ({
     }
   }, [currentIndex, wallets]);
 
-  if (!isEmpty(wallets)) {
+  if (isEmpty(wallets)) {
     if (isLoadingWallets) {
       return (
         <View style={styles.loadingContainerStyle}>

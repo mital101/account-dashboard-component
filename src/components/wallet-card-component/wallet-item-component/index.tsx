@@ -1,10 +1,22 @@
-import React, { ReactNode, useContext, useState } from 'react';
-import { View, Text, StyleProp, ImageStyle, TextStyle, ViewStyle } from 'react-native';
-import { ArrowRightIcon, images } from '../../../assets/images';
-import { ThemeContext, Image, useCurrencyFormat, Button } from 'react-native-theme-component';
-import useMergeStyles from './styles';
-import { Wallet } from '../../../model';
-import WalletDetailsModal from './components/wallet-details-modal';
+import React, { ReactNode, useContext, useState } from "react";
+import {
+  View,
+  Text,
+  StyleProp,
+  ImageStyle,
+  TextStyle,
+  ViewStyle
+} from "react-native";
+import { ArrowRightIcon, images } from "../../../assets/images";
+import {
+  ThemeContext,
+  Image,
+  useCurrencyFormat,
+  Button
+} from "react-native-theme-component";
+import useMergeStyles from "./styles";
+import { Wallet } from "../../../model";
+import WalletDetailsModal from "./components/wallet-details-modal";
 
 export type WalletItemComponentProps = {
   wallet: Wallet;
@@ -12,6 +24,7 @@ export type WalletItemComponentProps = {
   onSendMoney: () => void;
   phoneNumber: string;
   arrowRightIcon?: ReactNode;
+  isWithMask?: boolean;
   style?: WalletItemComponentStyle;
 };
 
@@ -27,7 +40,15 @@ export type WalletItemComponentStyle = {
 };
 
 const WalletItemComponent = (props: WalletItemComponentProps) => {
-  const { wallet, style, onAddMoney, onSendMoney, arrowRightIcon, phoneNumber } = props;
+  const {
+    wallet,
+    style,
+    onAddMoney,
+    onSendMoney,
+    arrowRightIcon,
+    phoneNumber,
+    isWithMask
+  } = props;
   const { i18n } = useContext(ThemeContext);
   const [isShowDetail, setShowDetail] = useState(false);
 
@@ -35,10 +56,14 @@ const WalletItemComponent = (props: WalletItemComponentProps) => {
 
   const maskedNumber = (visibleCount: number) => {
     const length = wallet.bankAccount.accountNumber.length;
-    const visiblePart = wallet.bankAccount.accountNumber.substring(length - visibleCount, length);
-    return `${Array.from({ length: length - visibleCount }, (_, __) => '*').join(
-      ''
-    )}${visiblePart}`;
+    const visiblePart = wallet.bankAccount.accountNumber.substring(
+      length - visibleCount,
+      length
+    );
+    return `${Array.from(
+      { length: length - visibleCount },
+      (_, __) => "*"
+    ).join("")}${visiblePart}`;
   };
 
   return (
@@ -51,39 +76,45 @@ const WalletItemComponent = (props: WalletItemComponentProps) => {
         />
         <View style={styles.contentContainerStyle}>
           <View style={styles.headerContainerStyle}>
-            <Text style={styles.walletNameStyle}>{wallet.bankAccount.accountHolderName}</Text>
+            <Text style={styles.walletNameStyle}>{wallet.walletName}</Text>
             <Text
               onPress={() => {
                 setShowDetail(true);
               }}
               style={styles.accountNumberStyle}
             >
-              {maskedNumber(4)}
+              {maskedNumber(isWithMask ? 100 : 4)}
             </Text>
-            {arrowRightIcon ?? <ArrowRightIcon width={6} height={12} color={'#FF9800'} />}
+            {arrowRightIcon ?? (
+              <ArrowRightIcon width={6} height={12} color={"#FF9800"} />
+            )}
           </View>
           <Text style={styles.amountTextStyle}>
             {useCurrencyFormat(wallet.currentBalance, wallet.currencyCode)}
           </Text>
           <View style={styles.bottomContainerStyle}>
             <Button
-              label={i18n?.t('wallet_card_component.btn_add_money') ?? 'Add Money'}
+              label={
+                i18n?.t("wallet_card_component.btn_add_money") ?? "Add Money"
+              }
               onPress={onAddMoney}
               style={{
                 primaryContainerStyle: {
                   flex: 1,
-                  marginRight: 5.5,
-                },
+                  marginRight: 5.5
+                }
               }}
             />
             <Button
-              label={i18n?.t('wallet_card_component.btn_send_money') ?? 'Send Money'}
+              label={
+                i18n?.t("wallet_card_component.btn_send_money") ?? "Send Money"
+              }
               onPress={onSendMoney}
               style={{
                 primaryContainerStyle: {
                   flex: 1,
-                  marginLeft: 5.5,
-                },
+                  marginLeft: 5.5
+                }
               }}
             />
           </View>
