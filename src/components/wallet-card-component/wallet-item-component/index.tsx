@@ -55,15 +55,17 @@ const WalletItemComponent = (props: WalletItemComponentProps) => {
   const styles: WalletItemComponentStyle = useMergeStyles(style);
 
   const maskedNumber = (visibleCount: number) => {
-    const length = wallet.bankAccount.accountNumber.length;
-    const visiblePart = wallet.bankAccount.accountNumber.substring(
-      length - visibleCount,
-      length
-    );
-    return `${Array.from(
-      { length: length - visibleCount },
-      (_, __) => "*"
-    ).join("")}${visiblePart}`;
+    if (wallet?.bankAccount?.accountNumber) {
+      const length = wallet.bankAccount.accountNumber.length;
+      const visiblePart = wallet.bankAccount.accountNumber.substring(
+        length - visibleCount,
+        length
+      );
+      return `${Array.from(
+        { length: length - visibleCount },
+        (_, __) => "*"
+      ).join("")}${visiblePart}`;
+    }
   };
 
   return (
