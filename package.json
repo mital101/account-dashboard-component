@@ -1,7 +1,7 @@
 {
   "name": "@banking-component/wallet-component",
   "private": true,
-  "version": "1.9.18",
+  "version": "1.9.19",
   "description": "Manage wallets/transactions",
   "repository": {
     "type": "git",
@@ -42,6 +42,8 @@
     "moment": "^2.29.1",
     "react-native-snap-carousel": "^3.9.1",
     "yup": "^0.32.11",
-    "react-native-view-shot": "^3.1.2"
+    "react-native-view-shot": "^3.1.2",
+    "rn-fetch-blob": "^0.12.0",
+    "@react-native-clipboard/clipboard": "^1.10.0"
   }
 }
