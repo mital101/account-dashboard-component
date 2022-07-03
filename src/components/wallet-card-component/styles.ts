@@ -1,5 +1,5 @@
 import { defaultsDeep } from "lodash";
-import { StyleSheet } from "react-native";
+import { StyleSheet,Dimensions } from "react-native";
 import { WalletCardComponentStyles } from ".";
 import { ThemeContext } from "react-native-theme-component";
 import { useContext } from "react";
@@ -13,6 +13,7 @@ const useMergeStyles = (
     containerStyle: {
       flex: 1
     },
+    containerWrapper:{ maxHeight: Dimensions.get('window').height-180 },
     loadingContainerStyle: {
       height: 173,
       alignItems: "center",

@@ -12,12 +12,14 @@ import {
   StyleProp,
   View,
   ViewStyle,
-  Text
+  ScrollView,
+  Text,
+  Platform,
 } from "react-native";
 import Carousel from "react-native-snap-carousel";
 import { ThemeContext } from "react-native-theme-component";
 import { WalletContext } from "../../context/wallet-context";
-import { Transaction, Wallet } from "../../model";
+import { Transaction, Wallet,WalletTypeList } from "../../model";
 import EmptyWalletComponent from "../no-wallet-component";
 import useMergeStyles from "./styles";
 import TransactionCardComponent, {
@@ -26,6 +28,12 @@ import TransactionCardComponent, {
 import WalletItemComponent, {
   WalletItemComponentStyle
 } from "./wallet-item-component";
+
+import  {  CryptoItemComponent,OnboardingComponent } from "../crypto-components";
+import { CryptoLinkIcon } from "../../assets/images";
+
+// import {OnboardingComponent} from "../crypto-components/onboarding-component";
+
 const { width } = Dimensions.get("window");
 
 export type WalletCardComponentProps = {
@@ -39,7 +47,9 @@ export type WalletCardComponentProps = {
   onSendMoney: (wallet: Wallet) => void;
   onViewAllTransactions: (wallet: Wallet) => void;
   onTransactionDetails: (transaction: Transaction) => void;
+  onLinkAccount: () => void;
   children?: ReactNode;
+  walletList?:WalletTypeList[]
 };
 
 export type WalletCardComponentStyles = {
@@ -57,11 +67,13 @@ const WalletCardComponent = ({
   loadingIndicator,
   onAddMoney,
   onSendMoney,
+  onLinkAccount,
   phoneNumber,
   onViewAllTransactions,
   dateFormat,
   onTransactionDetails,
-  children
+  children,
+  walletList
 }: WalletCardComponentProps) => {
   const { colors, i18n } = useContext(ThemeContext);
   const styles: WalletCardComponentStyles = useMergeStyles(style);
@@ -75,6 +87,7 @@ const WalletCardComponent = ({
   // state
   const carouselRef: any = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isSliderShow, setSliderShow] = useState<boolean>(false);
   const [currentWallet, setCurrentWallet] = useState<Wallet | undefined>(
     undefined
   );
@@ -193,55 +206,97 @@ const WalletCardComponent = ({
     // return <EmptyWalletComponent />;
   }
 
-  return (
-    <View style={styles.containerStyle}>
-      <View style={styles.carouselContainerStyle}>
-        <Carousel
-          scrollEnabled={wallets.length > 1}
-          removeClippedSubviews={false}
-          ref={carouselRef}
-          data={wallets}
-          keyExtractor={(item: Wallet) => item.walletId}
-          extraData={wallets}
-          renderItem={({ item }: any) => {
-            return (
-              <WalletItemComponent
-                wallet={item}
-                onAddMoney={() => onAddMoney(item)}
-                onSendMoney={() => onSendMoney(item)}
-                phoneNumber={phoneNumber}
-                style={styles.walletItemComponentStyle}
-              />
-            );
-          }}
-          sliderWidth={_carouselWidth}
-          itemWidth={_carouselItemWidth}
-          inactiveSlideScale={1}
-          loop={false}
-          activeSlideAlignment="center"
-          layout="default"
-          onSnapToItem={(index: number) => {
-            if (_initialWallet) {
-              setInitialWallet(undefined);
-            }
-            setCurrentIndex(index);
-          }}
-        />
+  if (isSliderShow) {
+    return (
+      < View style={{flex:1,marginTop:-250,minHeight:Dimensions.get('window').height}}>
+      <OnboardingComponent  onFinished={()=>{
+        onLinkAccount()
+        setSliderShow(false)
+      }}  />
       </View>
-      {currentWallet && (
-        <TransactionCardComponent
-          wallet={currentWallet}
-          dateFormat={dateFormat}
-          onViewAllTransactions={() => {
-            onViewAllTransactions(currentWallet);
-          }}
-          onTransactionDetails={onTransactionDetails}
-          style={styles.transactionCardComponentStyle}
-        />
-      )}
-      {children && <View>{children}</View>}
-    </View>
-  );
+    )
+  }else{
+    return (
+      <View style={styles.containerStyle}>
+        {<ScrollView   style={styles.containerWrapper}    >
+        {walletList && walletList.map((item:WalletTypeList,key:number)=>{
+          if (item.itemName === 'Pitaka') {
+            return (
+              <>
+                <View key={key} style={styles.carouselContainerStyle}>
+                  <Carousel
+                    scrollEnabled={wallets.length > 1}
+                    removeClippedSubviews={false}
+                    ref={carouselRef}
+                    data={wallets}
+                    keyExtractor={(item: Wallet) => item.walletId}
+                    extraData={wallets}
+                    renderItem={({ item }: any) => {
+                      return (
+                        <WalletItemComponent
+                          wallet={item}
+                          onAddMoney={() => onAddMoney(item)}
+                          onSendMoney={() => onSendMoney(item)}
+                          phoneNumber={phoneNumber}
+                          style={styles.walletItemComponentStyle}
+                        />
+                      );
+                    }}
+                    sliderWidth={_carouselWidth}
+                    itemWidth={_carouselItemWidth}
+                    inactiveSlideScale={1}
+                    loop={false}
+                    activeSlideAlignment="center"
+                    layout="default"
+                    onSnapToItem={(index: number) => {
+                      if (_initialWallet) {
+                        setInitialWallet(undefined);
+                      }
+                      setCurrentIndex(index);
+                    }}
+                  />
+                </View>
+                {currentWallet && (
+                  <TransactionCardComponent
+                    wallet={currentWallet}
+                    dateFormat={dateFormat}
+                    onViewAllTransactions={() => {
+                      onViewAllTransactions(currentWallet);
+                    }}
+                    onTransactionDetails={onTransactionDetails}
+                    style={styles.transactionCardComponentStyle}
+                  />
+                )}
+              </>
+            )
+          }else if (item.itemName === 'Crypto') {
+            return(
+              <View  key={key} style={styles.emptyCarouselContainerStyle}>
+                <CryptoItemComponent
+                  wallet={[]}
+                  style={styles.walletItemComponentStyle}
+                  title={"Buy and sell crypto now!"}
+                  message={"Buy for as low as ₱50."}
+                  buttonText={"Activate my crypto account"}
+                  leftIcon={<CryptoLinkIcon width={100} height={82} />}
+                  onLinkAccount={()=>{
+                    setSliderShow(true)
+                  }}
+                />
+              </View>
+            )
+          }
+        })}
+
+        {children && <View>{children}</View>}
+        </ScrollView>}
+
+      </View>
+    );
+  }
+
+
+
 };
 
 export default WalletCardComponent;
