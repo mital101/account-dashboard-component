@@ -8,6 +8,7 @@ export { default as TransactionListComponent } from './src/components/transactio
 export { default as NoWalletComponent } from './src/components/no-wallet-component';
 export { default as RecentTransactionComponent } from './src/components/recent-transaction-component';
 export { default as TransactionDetailsComponent } from './src/components/transaction-details-component';
+export { default as OnboardingComponent } from './src/components/crypto-components/onboarding-component';
 export * from './src/assets/images';
 export * from './src/types';
 export * from './src/model';
