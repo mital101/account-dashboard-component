@@ -22,6 +22,7 @@ const useMergeStyles = (style?: CryptoItemComponentStyle) => {
       shadowOpacity: 0.1,
       shadowRadius: 1,
       margin: 1,
+      marginTop: 20
     },
     cardContainerStyle: {
       flex:1,
