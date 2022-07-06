@@ -8,7 +8,9 @@ const { width } = Dimensions.get('window');
 const horizontalPaddingTotal = 40;
 const itemWidth = width - horizontalPaddingTotal;
 
-const useMergeStyles = (style?: OnboardingComponentStyles): OnboardingComponentStyles => {
+const useMergeStyles = (
+  style?: OnboardingComponentStyles
+): OnboardingComponentStyles => {
   const { colors, fonts } = useContext(ThemeContext);
 
   const defaultStyles: OnboardingComponentStyles = StyleSheet.create({
