@@ -46,6 +46,9 @@ export * from './crypto-link-account.icon';
 
 export * from './oncompleted.icon';
 export * from './info.icon';
+export * from './onboarding-01.icon';
+export * from './onboarding-02.icon';
+export * from './onboarding-03.icon';
 export * from './tooltip.icon';
 export * from './pytaka-currency.icon';
 export * from './eyes.icon';
