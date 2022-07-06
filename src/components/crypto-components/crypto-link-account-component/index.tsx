@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { StyleProp, TextStyle, ViewStyle,StyleSheet, SafeAreaView, View, Text,TouchableOpacity  } from 'react-native';
 import { Button, ThemeContext,CheckBox } from 'react-native-theme-component';
 import useMergeStyles from './styles';
-
+import WebView from 'react-native-webview';
 
 
 // import { AccountLinkingContext } from '@banking-component/account-linking';
@@ -41,20 +41,22 @@ const CryptoLinkAccountComponent = ({ style, onNext,onPressBack }: CryptoLinkAcc
   const { i18n,colors } = useContext(ThemeContext);
 
   const { profile } = useContext(AuthContext);
-  // const { getBanks } = useContext(AccountLinkingContext); //eslint-disable-line  @typescript-eslint/no-unused-vars
 
-  const [isMount, setIsMount] = useState<boolean>(false);
+  const { getCryptoTcData, cryptoTC,isLoadingCryptoTC } = useContext(WalletContext);
+
+  // const [isMount, setIsMount] = useState<boolean>(false);
   const [isSelected1, setSelected1] = useState(false);
   const [isSelected2, setSelected2] = useState(false);
   const [isSelected3, setSelected3] = useState(false);
+  const [isShowTc, setShowTc] = useState(false);
 
   useEffect(() => {
-    if (isMount) {
-      // getWallets();
-    }
-  }, [isMount]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    getCryptoTcData("pdax-terms-conditions","UnionDigital","UD","HTML");
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const firstName = `${profile?.firstName}`.trim();
+
 
   // return (
   //   <ErrorVerificationComponent
@@ -74,6 +76,37 @@ const CryptoLinkAccountComponent = ({ style, onNext,onPressBack }: CryptoLinkAcc
   //   />
   // );
   //
+
+  if (isShowTc) {
+    return (
+      <>
+        <View style={styles.tcContentWrapper}>
+          <SafeAreaView>
+            <View style={styles.webViewmainContainerStyle}>
+              <TouchableOpacity onPress={()=>{
+                // onPressBack()
+                setShowTc(false)
+              }} style={styles.webViewheader}>
+                <ArrowBack color={'#3E2D68'} />
+              </TouchableOpacity>
+              {isLoadingCryptoTC ? (
+                <View><Text>Loading</Text></View>
+              ) : (
+              <WebView
+                  startInLoadingState
+                  scalesPageToFit
+                  originWhitelist={['*']}
+                  source={{ html:cryptoTC?.content}}
+                />
+              )}
+            </View>
+
+
+          </SafeAreaView>
+        </View>
+      </>
+    );
+  }else{
     return (
       <>
         <View style={styles.container}>
@@ -127,6 +160,7 @@ const CryptoLinkAccountComponent = ({ style, onNext,onPressBack }: CryptoLinkAcc
                     isSelected={isSelected3}
                     onChanged={() => {
                       setSelected3(!isSelected3);
+                      setShowTc(true)
                     }}
                     style={styles.checkBoxInputFieldStyle}
                     // disabled
@@ -147,6 +181,13 @@ const CryptoLinkAccountComponent = ({ style, onNext,onPressBack }: CryptoLinkAcc
         </View>
       </>
     );
+  }
+
+
+
+
+
+
   };
 
 export default CryptoLinkAccountComponent;

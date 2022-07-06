@@ -96,6 +96,20 @@ const useMergeStyles = (
         alignItems: 'flex-start',
       },
     },
+    tcContentWrapper: {
+      flex:1,
+      backgroundColor:'#F1F6FC',
+
+    },
+    webViewmainContainerStyle: {
+      height: Dimensions.get('window').height - 95,
+    },
+    webViewheader: {
+      flexDirection: 'row',
+      marginHorizontal: 25,
+      justifyContent: 'space-between',
+      marginVertical: 14,
+    },
   });
 
   return defaultsDeep(style, defaultStyles);

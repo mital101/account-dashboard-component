@@ -20,7 +20,7 @@ const useMergeStyles = (
       justifyContent: "center"
     },
     emptyCarouselContainerStyle: {
-      marginHorizontal: 25
+      // marginHorizontal: 25
     },
     emptyWalletItemComponentStyle: {
       accountNumberStyle2: {

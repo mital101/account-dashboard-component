@@ -65,9 +65,11 @@ const CryptoItemComponent = (props: CryptoItemComponentProps) => {
 
 
   return (
-    <TouchableOpacity onPress={()=>{
-      onLinkAccount()
-    }}>
+    <TouchableOpacity
+      onPress={()=>{
+        onLinkAccount()
+      }} 
+    >
     <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}}  colors={['#000', '#3E2D68', '#3E2D68']} style={styles.containerStyle}>
 
       <View style={styles.cardContainerStyle}>

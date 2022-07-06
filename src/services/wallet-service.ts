@@ -1,6 +1,7 @@
 type WalletClient = {
   walletClient: any;
   financialClient: any;
+  contentTemplateClient: any;
 };
 
 export class WalletService {
@@ -8,6 +9,7 @@ export class WalletService {
 
   private _walletClient?: any;
   private _financialClient?: any;
+  private _contentTemplateClient?: any;
 
   constructor() {
     if (WalletService._instance) {
@@ -25,6 +27,7 @@ export class WalletService {
   public initClients = (clients: WalletClient) => {
     this._walletClient = clients.walletClient;
     this._financialClient = clients.financialClient;
+    this._contentTemplateClient = clients.contentTemplateClient;
   };
 
   getWallets = async () => {
@@ -124,6 +127,23 @@ export class WalletService {
       return response.data;
     } else {
       throw new Error('Wallet Client is not registered');
+    }
+  };
+
+  getCryptoTC = async (templateName:string,appId:string,entityId:string,format:string) => {
+    if (this._contentTemplateClient) {
+      const response = await this._contentTemplateClient.post('contents',{
+      	appId: appId,
+      	documentFormat: format,
+      	entityId: entityId,
+      	templateName: templateName,
+        data: {}
+      });
+      return response.data;
+    } else {
+      console.log('eeeeeeeeeeeeee');
+
+      throw new Error('Content Template Client is not registered');
     }
   };
 }

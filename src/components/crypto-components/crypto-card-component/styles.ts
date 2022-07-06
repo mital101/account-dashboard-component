@@ -12,13 +12,12 @@ const useMergeStyles = (
   const defaultStyles: CryptoCardComponentStyles = StyleSheet.create({
     containerStyle: {
       flex: 1,
-    },
-    marginHorizontalView: {
-      width: 5,
+      height:'100%',
     },
     containerWrapper: {
+      flex:1,
       maxHeight: Dimensions.get('window').height - 180,
-      paddingHorizontal: 15,
+      // paddingHorizontal: 15,
     },
     loadingContainerStyle: {
       height: 173,
@@ -84,7 +83,7 @@ const useMergeStyles = (
     pointerView: {
       position: 'absolute',
       left: 0,
-      bottom: 50,
+      bottom: 200,
       right: 0,
       alignItems: 'center',
       height: 100,
@@ -112,9 +111,24 @@ const useMergeStyles = (
     titleTooltip: {
       fontWeight: '700',
       fontSize: 14,
+      lineHeight:16,
+      marginLeft:10
     },
-    viewTooltip: { flexDirection: 'column' },
-    viewTooltipHeader: { flexDirection: 'row' },
+    messageTooltip: {
+      fontWeight: '500',
+      fontSize: 12,
+      lineHeight:21,
+    },
+    viewTooltip: { paddingVertical:15,flexDirection: 'column',paddingHorizontal:5 },
+    viewTooltipHeader: { flexDirection: 'row',paddingBottom:10, },
+    TopPointerView: {
+      position: 'absolute',
+      left: 0,
+      bottom: 500,
+      right: 0,
+      alignItems: 'center',
+      height: 100,
+    },
   });
 
   return defaultsDeep(style, defaultStyles);

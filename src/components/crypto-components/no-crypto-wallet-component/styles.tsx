@@ -1,6 +1,6 @@
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet,Dimensions } from 'react-native';
 import { EmptyWalletThemeStyles } from '.';
 import { ThemeContext } from 'react-native-theme-component';
 
@@ -9,12 +9,18 @@ const useMergeStyles = (style?: EmptyWalletThemeStyles) => {
 
   const defaultStyles = StyleSheet.create({
     containerStyle: {
-      justifyContent: 'center',
-      alignItems: 'center',
       backgroundColor: '#3E2D68',
       borderRadius: 10,
       paddingVertical: 20,
-      width: '100%'
+      marginHorizontal:15,
+      flex:1,
+      paddingHorizontal: 22,
+      width: Dimensions.get('window').width - 30,
+
+    },
+    containerWrapperStyle:{
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     messageTextStyle: {
       // fontFamily: fonts.medium,
@@ -60,10 +66,11 @@ const useMergeStyles = (style?: EmptyWalletThemeStyles) => {
       opacity: 0.2,
     },
     buttonWrapper:{
-      paddingTop: 15,
-      width: '75%',
+      flex:1,
       flexDirection: 'row',
+      alignItems:'center',
       justifyContent: 'space-between',
+      marginTop: 20,
     }
   });
   return defaultsDeep(style, defaultStyles);

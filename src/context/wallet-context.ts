@@ -11,6 +11,7 @@ import {
   Wallet,
   WalletSummary,
   WalletTransaction,
+  CryptoTCData
 } from '../model';
 import _, { chain, groupBy, isEmpty, orderBy } from 'lodash';
 
@@ -62,6 +63,9 @@ export interface WalletContextData {
   getTransactionByWalletId: (walletId: string) => WalletTransaction | undefined;
   getTransactionSummary: (walletId?: string) => TransactionSummary | undefined;
   clearTransactions: () => void;
+  getCryptoTcData: (templateName:string,appId:string,entityId:string,format:string) => void;
+  isLoadingCryptoTC: boolean;
+  cryptoTC: CryptoTCData;
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -96,6 +100,9 @@ export const walletDefaultValue: WalletContextData = {
   getTransactionSummary: () => undefined,
   clearTransactions: () => undefined,
   getTransactionByWalletId: () => undefined,
+  getCryptoTcData: () => null,
+  isLoadingCryptoTC: true,
+  cryptoTC:undefined
 };
 
 export const WalletContext = React.createContext<WalletContextData>(walletDefaultValue);
@@ -120,6 +127,9 @@ export function useWalletContextValue(): WalletContextData {
   const [_transactionError, setTransactionError] = useState<Error | undefined>(undefined);
   const [_isLoadingTransaction, setLoadingTransaction] = useState(false);
   const [_isRefreshingTransaction, setRefreshingTransaction] = useState(false);
+
+  const [_isLoadingCryptoTC, setIsLoadingCryptoTC] = useState(true);
+  const [_cryptoTC, setCryptoTC] = useState<CryptoTCData| undefined>();
 
   const getWallets = useCallback(async () => {
     try {
@@ -152,6 +162,24 @@ export function useWalletContextValue(): WalletContextData {
       setSummary(resp.summary);
     }
   };
+
+
+  const getCryptoTcData = useCallback(async (templateName:string,appId:string,entityId:string,format:string) => {
+    try {
+      setIsLoadingCryptoTC(true);
+      //await _fetchWallets();
+      // templateName:string,appId:string,entityId:string,format:string
+      const resp = await walletService.getCryptoTC(templateName,appId,entityId,format);
+      setIsLoadingCryptoTC(false);
+      setCryptoTC(resp.data)
+      // clearWalletErrors();
+    } catch (err) {
+      console.log('err ',err);
+
+      setIsLoadingCryptoTC(false);
+      setLoadError(err as Error);
+    }
+  }, []);
 
   const sleep = (ms: number) => {
     return new Promise((resolve) => setTimeout(() => resolve(true), ms));
@@ -533,6 +561,9 @@ export function useWalletContextValue(): WalletContextData {
       getTransactionSummary,
       clearTransactions,
       getTransactionByWalletId,
+      isLoadingCryptoTC: _isLoadingCryptoTC,
+      cryptoTC: _cryptoTC,
+      getCryptoTcData,
     }),
     [
       _isLinkedSuccessfully,
@@ -555,6 +586,8 @@ export function useWalletContextValue(): WalletContextData {
       _isLoadingTransaction,
       _isRefreshingTransaction,
       _isLoadingWallets,
+      _isLoadingCryptoTC,
+      _cryptoTC
     ]
   );
 }

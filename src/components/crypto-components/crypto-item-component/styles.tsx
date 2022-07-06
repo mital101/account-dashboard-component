@@ -13,6 +13,7 @@ const useMergeStyles = (style?: CryptoItemComponentStyle) => {
       borderRadius: 5,
       justifyContent: 'center',
       height: 110,
+      // width:'80%',
       elevation: 2,
       shadowColor: 'grey',
       shadowOffset: {
@@ -22,22 +23,21 @@ const useMergeStyles = (style?: CryptoItemComponentStyle) => {
       shadowOpacity: 0.1,
       shadowRadius: 1,
       margin: 1,
-      marginTop: 20
+      marginTop: 20,
+      marginHorizontal:15
     },
     cardContainerStyle: {
       flex:1,
       flexDirection:'row',
       justifyContent:'center',
       alignItems:'center',
+      paddingLeft:20
     },
     cardBackgroundStyle: {
-      position: 'absolute',
-      width: '100%',
-      height: '100%',
     },
     contentContainerStyle: {
-      flex: 1,
-      paddingHorizontal: 20,
+      // flex: 1,
+      paddingHorizontal: 50,
       paddingTop: 18,
       paddingBottom: 20,
       justifyContent: 'space-between',

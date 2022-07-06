@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useState } from 'react';
+import React, { ReactNode, useContext, useState,useEffect } from 'react';
 import {
   TouchableOpacity,
   Dimensions,
@@ -16,11 +16,12 @@ import {
   InfoIcon,
   PointerIcon,
 } from '../../../assets/images';
-import Tooltip from 'react-native-walkthrough-tooltip';
+import Tooltip, { TooltipChildrenContext } from 'react-native-walkthrough-tooltip';
+
 import EmptyWalletComponent from '../no-crypto-wallet-component';
 import CryptoItemComponent from '../crypto-item-component/index';
 import AccountInfoCard from '../../crypto-components/crypto-account-info-card';
-import MarketPricesComponent from '../../market-price-component';
+import { MarketPricesComponent } from 'crypto-account-component';
 import { Wallet, Transaction } from '../../../model';
 import { WalletItemComponentStyle } from '../../wallet-card-component/wallet-item-component';
 import { TransactionCardComponentStyles } from '../../wallet-card-component/transaction-card-component';
@@ -77,7 +78,23 @@ const CryptoCardComponent = ({
   const { colors, i18n } = useContext(ThemeContext);
 
   const styles: CryptoCardComponentStyles = useMergeStyles(style);
-  const [tooltipVisible, setTooltipVisible] = useState<boolean>(true);
+  const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
+  const [showTransferTips, setTransferTips] = useState<boolean>(false);
+  const [showHelpTips, setHelpTips] = useState<boolean>(false);
+  const [showSliderTips, setSliderTips] = useState<boolean>(false);
+
+  const [ref, setRef] = useState(null);
+
+  // useEffect(() => {
+  //   if (ref) {
+  //     ref.scrollTo({
+  //       x: 0,
+  //       y: 400,
+  //       animated: true,
+  //     });
+  //   }
+  //
+  // },[ref]);
 
   return (
     <View style={styles.containerStyle}>
@@ -85,65 +102,208 @@ const CryptoCardComponent = ({
         <ScrollView
           style={styles.containerWrapper}
           showsVerticalScrollIndicator={false}
+          ref={(ref) => {
+            setRef(ref);
+          }}
         >
-          <Tooltip
+
+        {<EmptyWalletComponent
+          onLinkAccountPressed={()=>{
+            onLinkAccount()
+          }}
+          onLayout={()=>{
+            //onLayout()
+          }}
+        />}
+
+          {/*<Tooltip
             isVisible={tooltipVisible}
+            allowChildInteraction={false}
+            showChildInTooltip={true}
+            useInteractionManager={true}
+            displayInsets={{ top: 20, bottom: 20, left: 10, right: 10 }}
+            placement="bottom"
+            tooltipStyle={{alignItems:'center'}}
             arrowSize={{ width: 40, height: 15 }}
             content={
               <View style={styles.viewTooltip}>
                 <View style={styles.viewTooltipHeader}>
                   <InfoIcon width={20} height={20} color={'#3E2D68'} />
-                  <View style={styles.marginHorizontalView} />
                   <Text style={styles.titleTooltip}>Main Actions</Text>
                 </View>
-                <Text>
+                <Text style={styles.messageTooltip}>
                   Transfer pesos or crypto in and out of your account, to start
                   trading
                 </Text>
               </View>
             }
-            placement="bottom"
             extraView={
               <>
                 <View style={styles.pointerView}>
-                  <View style={styles.column}>
+                  <TouchableOpacity
+                    onPress={()=>{
+                      setTooltipVisible(false)
+                      setTransferTips(true)
+                    }}
+                    style={styles.column}>
                     <PointerIcon width={40} height={40} />
                     <Text style={styles.pointerText}>Tap to Continue</Text>
-                  </View>
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.skipView}>
-                  <TouchableOpacity style={styles.skipBtn}>
+                  <TouchableOpacity
+                    onPress={()=>{
+                      setTooltipVisible(false)
+                    }}
+                    style={styles.skipBtn}>
                     <Text style={styles.skipText}>Skip Walkthrough</Text>
                   </TouchableOpacity>
                 </View>
               </>
             }
-            pointerPosition={{}}
-            onClose={() => setTooltipVisible(false)}
           >
-            {/* <EmptyWalletComponent
-            onLinkAccountPressed={()=>{
-              onLinkAccount()
-            }} 
-            onLayout={onLayout}
-          /> */}
-            <AccountInfoCard />
-          </Tooltip>
+            <TooltipChildrenContext.Consumer>
+                {({ tooltipDuplicate }) => (
+                  <AccountInfoCard
+                    onTipsCompleted={()=>{
+                      setTransferTips(false)
+                      ref.scrollTo({
+                        x: 0,
+                        y: 400,
+                        animated: true,
+                      });
+                      setTimeout(() => setHelpTips(true), 1000);
+
+                    }}
+                    onTipsTerminated={()=>{
+                      setTransferTips(false)
+                    }}
+                    isShowTips={showTransferTips}
+                  />
+                )}
+            </TooltipChildrenContext.Consumer>
+          </Tooltip>*/}
           <View style={styles.emptyCarouselContainerStyle}>
-            <MarketPricesComponent />
-            <CryptoItemComponent
-              wallet={[]}
-              style={styles.walletItemComponentStyle}
-              title={'Have questions?'}
-              message={'Let us know how we can help!'}
-              buttonText={'Visit Help Center'}
-              leftIcon={<CryptoHelpLinkIcon width={100} height={82} />}
-              onLinkAccount={() => {
-                onLinkAccount();
-              }}
-            />
+            <View style={{marginHorizontal:15}}><MarketPricesComponent /></View>
+            <Tooltip
+              isVisible={showHelpTips}
+              allowChildInteraction={false}
+              showChildInTooltip={true}
+              useInteractionManager={true}
+              displayInsets={{ top: 20, bottom: 15, left: 10, right: 15 }}
+              placement="top"
+              tooltipStyle={{alignItems:'center'}}
+              arrowSize={{ width: 40, height: 15 }}
+              content={
+                <View style={styles.viewTooltip}>
+                  <View style={styles.viewTooltipHeader}>
+                    <InfoIcon width={20} height={20} color={'#3E2D68'} />
+                    <Text style={styles.titleTooltip}>Help Center</Text>
+                  </View>
+                  <Text style={styles.messageTooltip}>
+                    For questions, please read through our Frequently Asked
+                    Questions (FAQs) or submit a ticket to contact our customer
+                    support champion directly.
+                  </Text>
+                </View>
+              }
+              extraView={
+                <>
+                  <View style={styles.pointerView}>
+                    <TouchableOpacity
+                      onPress={()=>{
+                        setHelpTips(false)
+                        setSliderTips(true)
+                      }}
+                      style={styles.column}>
+                      <PointerIcon width={40} height={40} />
+                      <Text style={styles.pointerText}>Tap to Continue</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.skipView}>
+                    <TouchableOpacity
+                    onPress={()=>{
+                      setHelpTips(false)
+                    }}
+                    style={styles.skipBtn}>
+                      <Text style={styles.skipText}>Skip Walkthrough</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              }
+            >
+
+              <TooltipChildrenContext.Consumer>
+                  {({ tooltipDuplicate }) => (
+                    <CryptoItemComponent
+                      wallet={[]}
+                      style={styles.walletItemComponentStyle}
+                      title={'Have questions?'}
+                      message={'Let us know how we can help!'}
+                      buttonText={'Visit Help Center'}
+                      leftIcon={<CryptoHelpLinkIcon width={100} height={82} />}
+                      onLinkAccount={() => {
+                        onLinkAccount();
+                      }}
+                    />
+                  )}
+              </TooltipChildrenContext.Consumer>
+          </Tooltip>
           </View>
-          {children && <View>{children}</View>}
+          {children && <>
+            <Tooltip
+              isVisible={showSliderTips}
+              allowChildInteraction={false}
+              showChildInTooltip={true}
+              useInteractionManager={true}
+
+              // isShowPointer={true}
+              // pointerPosition={{ marginTop: 140 }}
+              displayInsets={{ top: 20, bottom: 15, left: 10, right: 15 }}
+              placement="top"
+              tooltipStyle={{alignItems:'center'}}
+              arrowSize={{ width: 40, height: 15 }}
+              content={
+                <View style={styles.viewTooltip}>
+                  <View style={styles.viewTooltipHeader}>
+                    <InfoIcon width={20} height={20} color={'#3E2D68'} />
+                    <Text style={styles.titleTooltip}>Learn more about cryptocurrencies</Text>
+                  </View>
+                  <Text style={styles.messageTooltip}>
+                    Check out our articles to understand crypto more and how to
+                    how you can manage your risk properly.
+                  </Text>
+                </View>
+              }
+              extraView={
+                <>
+                  <View style={styles.TopPointerView}>
+                    <TouchableOpacity style={styles.column}>
+                      <PointerIcon width={40} height={40} />
+                      <Text style={styles.pointerText}>Tap to Continue</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.skipView}>
+                    <TouchableOpacity style={styles.skipBtn}>
+                      <Text style={styles.skipText}>Skip Walkthrough</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              }
+              // pointerPosition={{}}
+              onClose={() => {
+                setSliderTips(false)
+              }}
+            >
+
+            <TooltipChildrenContext.Consumer>
+                {({ tooltipDuplicate }) => (
+                  <View >{children}</View>
+                )}
+            </TooltipChildrenContext.Consumer>
+          </Tooltip>
+          </>}
+
         </ScrollView>
       }
     </View>

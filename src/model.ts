@@ -216,3 +216,11 @@ export interface ConsentData {
   Permissions: string[];
   Status: string;
 }
+
+export interface CryptoTCData {
+  documentFormat: string;
+  version: string;
+  summaryContent: string;
+  content: string;
+  title: string;
+}
