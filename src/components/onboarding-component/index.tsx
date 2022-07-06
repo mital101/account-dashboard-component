@@ -12,7 +12,7 @@ import {
   Onboarding01Icon,
   Onboarding02Icon,
   Onboarding03Icon,
-} from '@banking-component/assets/images';
+} from '../../assets/images';
 
 const defaultOnboardingData: OnboardingItem[] = [
   {
@@ -20,21 +20,21 @@ const defaultOnboardingData: OnboardingItem[] = [
     subtitle: 'Trade directly with PHP!',
     description:
       'Experience a more seamless crypto trading process with the UnionDigital Bank app where you can directly transfer PHP from your Pitaka Account to your My Crypto Account.',
-    imageSvg: <Onboarding01Icon size={130} />,
+    imageSvg: <Onboarding01Icon size={150} />,
   },
   {
     title: 'Welcome to your UnionDigital Bank Crypto Account',
     subtitle: 'Save money on fees!',
     description:
       'Crypto trading shouldn’t be expensive! Here in the UnionDigital Bank App, your cash-in and cash-out transactions are free.',
-    imageSvg: <Onboarding02Icon size={130} />,
+    imageSvg: <Onboarding02Icon size={150} />,
   },
   {
     title: 'Welcome to your UnionDigital Bank Crypto Account',
     subtitle: 'Secured Transactions',
     description:
       'All transactions made in the UnionDigital Bank app are safe and secure. We are a digital bank regulated and licensed by the Bangko Sentral ng Pilipinas as well as our exchange partner, PDAX.',
-    imageSvg: <Onboarding03Icon size={130} />,
+    imageSvg: <Onboarding03Icon size={150} />,
   },
 ];
 
@@ -61,7 +61,9 @@ const OnboardingComponent = forwardRef(({ Root }: OnboardingComponentProps) => {
           />
         </View>
       ) : item.imageSvg ? (
-        item.imageSvg
+        <View style={styles.imageWrapper}>
+          <>{item.imageSvg}</>
+        </View>
       ) : null}
       {item.subtitle && <Text style={styles.subTitle}>{item.subtitle}</Text>}
       {item.description && (
