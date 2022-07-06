@@ -8,6 +8,11 @@ import {
 } from 'react-native-theme-component';
 import { OnboardingComponentProps, OnboardingItem } from './types';
 import useMergeStyles from './styles';
+import {
+  Onboarding01Icon,
+  Onboarding02Icon,
+  Onboarding03Icon,
+} from '@banking-component/assets/images';
 
 const defaultOnboardingData: OnboardingItem[] = [
   {
@@ -15,21 +20,21 @@ const defaultOnboardingData: OnboardingItem[] = [
     subtitle: 'Trade directly with PHP!',
     description:
       'Experience a more seamless crypto trading process with the UnionDigital Bank app where you can directly transfer PHP from your Pitaka Account to your My Crypto Account.',
-    image: require('../../assets/Onboarding01.png'),
+    imageSvg: <Onboarding01Icon size={130} />,
   },
   {
     title: 'Welcome to your UnionDigital Bank Crypto Account',
     subtitle: 'Save money on fees!',
     description:
       'Crypto trading shouldn’t be expensive! Here in the UnionDigital Bank App, your cash-in and cash-out transactions are free.',
-    image: require('../../assets/Onboarding02.png'),
+    imageSvg: <Onboarding02Icon size={130} />,
   },
   {
     title: 'Welcome to your UnionDigital Bank Crypto Account',
     subtitle: 'Secured Transactions',
     description:
       'All transactions made in the UnionDigital Bank app are safe and secure. We are a digital bank regulated and licensed by the Bangko Sentral ng Pilipinas as well as our exchange partner, PDAX.',
-    image: require('../../assets/Onboarding03.png'),
+    imageSvg: <Onboarding03Icon size={130} />,
   },
 ];
 
@@ -48,14 +53,16 @@ const OnboardingComponent = forwardRef(({ Root }: OnboardingComponentProps) => {
   const renderOnboardingItem = (item: OnboardingItem) => (
     <View style={styles.sliderWrapper}>
       <Text style={styles.title}>{item.title}</Text>
-      {(item.image || item.imageUrl) && (
+      {item.image || item.imageUrl ? (
         <View style={styles.imageWrapper}>
           <Image
             style={styles.image}
             source={item.image ? item.image : { uri: item.imageUrl }}
           />
         </View>
-      )}
+      ) : item.imageSvg ? (
+        item.imageSvg
+      ) : null}
       {item.subtitle && <Text style={styles.subTitle}>{item.subtitle}</Text>}
       {item.description && (
         <Text style={styles.description}>{item.description}</Text>

@@ -41,5 +41,8 @@ export * from './crypto-finLint-card4.icon';
 export * from './crypto-finLint-card5.icon';
 export * from './crypto-link-account.icon';
 
-export * from "./oncompleted.icon";
-export * from "./info.icon";
+export * from './oncompleted.icon';
+export * from './info.icon';
+export * from './onboarding-01.icon';
+export * from './onboarding-02.icon';
+export * from './onboarding-03.icon';

@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import {
   ImageSourcePropType,
   ImageStyle,
@@ -32,4 +33,5 @@ export type OnboardingItem = {
   imageUrl?: string;
   subtitle?: string;
   description?: string;
+  imageSvg?: ReactNode;
 };
