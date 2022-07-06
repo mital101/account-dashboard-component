@@ -20,7 +20,7 @@ import Tooltip from 'react-native-walkthrough-tooltip';
 import EmptyWalletComponent from '../no-crypto-wallet-component';
 import CryptoItemComponent from '../crypto-item-component/index';
 import AccountInfoCard from '../../crypto-components/crypto-account-info-card';
-import { MarketPricesComponent } from 'crypto-account-component';
+import MarketPricesComponent from '../../market-price-component';
 import { Wallet, Transaction } from '../../../model';
 import { WalletItemComponentStyle } from '../../wallet-card-component/wallet-item-component';
 import { TransactionCardComponentStyles } from '../../wallet-card-component/transaction-card-component';
