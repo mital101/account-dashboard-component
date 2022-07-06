@@ -9,13 +9,12 @@ const useMergeStyles = (style?: EmptyWalletThemeStyles) => {
 
   const defaultStyles = StyleSheet.create({
     containerStyle: {
-      flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor:'#3E2D68',
-      marginHorizontal:15,
-      borderRadius:10,
-      paddingVertical:20
+      backgroundColor: '#3E2D68',
+      borderRadius: 10,
+      paddingVertical: 20,
+      width: '100%'
     },
     messageTextStyle: {
       // fontFamily: fonts.medium,
@@ -36,15 +35,15 @@ const useMergeStyles = (style?: EmptyWalletThemeStyles) => {
       paddingVertical: 10,
       flexDirection: 'row',
       alignItems: 'center',
-      width:260
+      width: 260
     },
     buttonStyle:{
       // height:40,
       backgroundColor: '#F8981D',
-      width:'90%',
-      paddingVertical:12,
-      borderRadius:5,
-      marginVertical:10
+      width: '90%',
+      paddingVertical: 12,
+      borderRadius: 5,
+      marginVertical: 10
     },
     buttonLabelTextStyle:{
       fontSize: 14,
@@ -54,16 +53,16 @@ const useMergeStyles = (style?: EmptyWalletThemeStyles) => {
       textAlign:'center'
     },
     lineSeperatorStyle:{
-      marginTop:10,
+      marginTop: 10,
       backgroundColor: '#fff',
-      height:1,
-      width:'100%',
+      height: 1,
+      width: '100%',
       opacity: 0.2,
     },
     buttonWrapper:{
-      paddingTop:15,
+      paddingTop: 15,
+      width: '75%',
       flexDirection: 'row',
-      width:'80%',
       justifyContent: 'space-between',
     }
   });

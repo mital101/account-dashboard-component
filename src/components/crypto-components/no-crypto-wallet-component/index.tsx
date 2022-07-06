@@ -36,7 +36,7 @@ const EmptyWalletComponent = (props: EmptyWalletComponentProps) => {
 
   return (
     <View style={styles.containerStyle}>
-      <CryptoLinkIcon2 width={60} height={60}  />
+      <CryptoLinkIcon2 width={60} height={60} />
       <Text style={styles.messageTextStyle}>{message ?? 'Buy and sell crypto now!'}</Text>
       <View
         style={styles.messageContainerStyle}
@@ -49,10 +49,10 @@ const EmptyWalletComponent = (props: EmptyWalletComponentProps) => {
         style={styles.lineSeperatorStyle}
       >
       </View>
-      <View style={styles.buttonWrapper} >
-        <TransferinIcon width={60} height={60} / >
-        <TransferoutIcon width={60} height={60} / >
-        <TradeIcon width={60} height={60} / >
+      <View style={styles.buttonWrapper}>
+        <TransferinIcon width={70} height={70} />
+        <TransferoutIcon width={70} height={70} />
+        <TradeIcon width={70} height={70} />
       </View>
     </View>
   );
