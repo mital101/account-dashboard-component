@@ -24,7 +24,7 @@ const HelpCenterSubmitTicketIcon: React.FC<Props> = ({
       </clipPath>
       </defs>
       </svg>           
-`}
+      `}
       width={width}
       height={height}
       fill={color}
