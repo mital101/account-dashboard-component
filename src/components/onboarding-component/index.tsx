@@ -38,7 +38,7 @@ const defaultOnboardingData: OnboardingItem[] = [
   },
 ];
 
-const OnboardingComponent = forwardRef(({ Root }: OnboardingComponentProps) => {
+const OnboardingComponent = forwardRef(({ Root }: OnboardingComponentProps,ref) => {
   const { style, data = defaultOnboardingData, props } = Root || {};
   const { onFinished } = props || {};
 

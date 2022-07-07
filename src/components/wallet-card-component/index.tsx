@@ -203,94 +203,92 @@ const WalletCardComponent = ({
         </View>
       );
     }
-    // return <EmptyWalletComponent />;
   }
 
   if (isSliderShow) {
     return (
       < View style={{flex:1,marginTop:-250,minHeight:Dimensions.get('window').height}}>
-      <OnboardingComponent  onFinished={()=>{
-        onLinkAccount()
-        setSliderShow(false)
-      }}  />
+        <OnboardingComponent  onFinished={()=>{
+          onLinkAccount()
+          setSliderShow(false)
+        }}  />
       </View>
     )
   }else{
     return (
       <View style={styles.containerStyle}>
-        {<ScrollView   style={styles.containerWrapper}    >
-        {walletList && walletList.map((item:WalletTypeList,key:number)=>{
-          if (item.itemName === 'Pitaka') {
-            return (
-              <>
-                <View key={key} style={styles.carouselContainerStyle}>
-                  <Carousel
-                    scrollEnabled={wallets.length > 1}
-                    removeClippedSubviews={false}
-                    ref={carouselRef}
-                    data={wallets}
-                    keyExtractor={(item: Wallet) => item.walletId}
-                    extraData={wallets}
-                    renderItem={({ item }: any) => {
-                      return (
-                        <WalletItemComponent
-                          wallet={item}
-                          onAddMoney={() => onAddMoney(item)}
-                          onSendMoney={() => onSendMoney(item)}
-                          phoneNumber={phoneNumber}
-                          style={styles.walletItemComponentStyle}
-                        />
-                      );
-                    }}
-                    sliderWidth={_carouselWidth}
-                    itemWidth={_carouselItemWidth}
-                    inactiveSlideScale={1}
-                    loop={false}
-                    activeSlideAlignment="center"
-                    layout="default"
-                    onSnapToItem={(index: number) => {
-                      if (_initialWallet) {
-                        setInitialWallet(undefined);
-                      }
-                      setCurrentIndex(index);
+        <ScrollView   style={styles.containerWrapper}    >
+          {walletList && walletList.map((item:WalletTypeList,key:number)=>{
+            if (item.itemName === 'Pitaka') {
+              return (
+                < View key={key}>
+                  <View  style={styles.carouselContainerStyle}>
+                    <Carousel
+                      scrollEnabled={wallets.length > 1}
+                      removeClippedSubviews={false}
+                      ref={carouselRef}
+                      data={wallets}
+                      keyExtractor={(item: Wallet) => item.walletId}
+                      extraData={wallets}
+                      renderItem={({ item }: any) => {
+                        return (
+                          <WalletItemComponent
+                            wallet={item}
+                            onAddMoney={() => onAddMoney(item)}
+                            onSendMoney={() => onSendMoney(item)}
+                            phoneNumber={phoneNumber}
+                            style={styles.walletItemComponentStyle}
+                          />
+                        );
+                      }}
+                      sliderWidth={_carouselWidth}
+                      itemWidth={_carouselItemWidth}
+                      inactiveSlideScale={1}
+                      loop={false}
+                      activeSlideAlignment="center"
+                      layout="default"
+                      onSnapToItem={(index: number) => {
+                        if (_initialWallet) {
+                          setInitialWallet(undefined);
+                        }
+                        setCurrentIndex(index);
+                      }}
+                    />
+                  </View>
+                  {currentWallet && (
+                    <TransactionCardComponent
+                      wallet={currentWallet}
+                      dateFormat={dateFormat}
+                      onViewAllTransactions={() => {
+                        onViewAllTransactions(currentWallet);
+                      }}
+                      onTransactionDetails={onTransactionDetails}
+                      style={styles.transactionCardComponentStyle}
+                    />
+                  )}
+                </View>
+              )
+            }else if (item.itemName === 'Crypto') {
+              return(
+                <View  key={key} style={styles.emptyCarouselContainerStyle}>
+                  <CryptoItemComponent
+                    wallet={[]}
+                    style={styles.walletItemComponentStyle}
+                    title={"Buy and sell crypto now!"}
+                    message={"Buy for as low as ₱50."}
+                    buttonText={"Activate my crypto account"}
+                    leftIcon={<CryptoLinkIcon width={100} height={82} />}
+                    onLinkAccount={()=>{
+                      setSliderShow(true)
                     }}
                   />
                 </View>
-                {currentWallet && (
-                  <TransactionCardComponent
-                    wallet={currentWallet}
-                    dateFormat={dateFormat}
-                    onViewAllTransactions={() => {
-                      onViewAllTransactions(currentWallet);
-                    }}
-                    onTransactionDetails={onTransactionDetails}
-                    style={styles.transactionCardComponentStyle}
-                  />
-                )}
-              </>
-            )
-          }else if (item.itemName === 'Crypto') {
-            return(
-              <View  key={key} style={styles.emptyCarouselContainerStyle}>
-                <CryptoItemComponent
-                  wallet={[]}
-                  style={styles.walletItemComponentStyle}
-                  title={"Buy and sell crypto now!"}
-                  message={"Buy for as low as ₱50."}
-                  buttonText={"Activate my crypto account"}
-                  leftIcon={<CryptoLinkIcon width={100} height={82} />}
-                  onLinkAccount={()=>{
-                    setSliderShow(true)
-                  }}
-                />
-              </View>
-            )
-          }
-        })}
+              )
+            }
+          })}
 
-        {children && <View>{children}</View>}
-        </ScrollView>}
-
+          {children && <View>{children}</View>}
+        </ScrollView>
       </View>
     );
   }

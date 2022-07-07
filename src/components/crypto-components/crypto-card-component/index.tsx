@@ -39,6 +39,7 @@ export type CryptoCardComponentProps = {
   onTransactionDetails: (transaction: Transaction) => void;
   onLinkAccount: () => void;
   children?: ReactNode;
+  isActive?:boolean;
 };
 
 export type CryptoCardComponentStyles = {
@@ -74,6 +75,7 @@ const CryptoCardComponent = ({
   dateFormat,
   onTransactionDetails,
   children,
+  isActive
 }: CryptoCardComponentProps) => {
   const { colors, i18n } = useContext(ThemeContext);
 
@@ -96,6 +98,13 @@ const CryptoCardComponent = ({
   //
   // },[ref]);
 
+  useEffect(() => {
+    if (isActive) {
+      setTooltipVisible(true)
+    }
+
+  },[isActive]);
+
   return (
     <View style={styles.containerStyle}>
       {
@@ -107,7 +116,7 @@ const CryptoCardComponent = ({
           }}
         >
 
-        {<EmptyWalletComponent
+        {!isActive && <EmptyWalletComponent
           onLinkAccountPressed={()=>{
             onLinkAccount()
           }}
@@ -116,7 +125,7 @@ const CryptoCardComponent = ({
           }}
         />}
 
-          {/*<Tooltip
+          {isActive && <Tooltip
             isVisible={tooltipVisible}
             allowChildInteraction={false}
             showChildInTooltip={true}
@@ -182,7 +191,7 @@ const CryptoCardComponent = ({
                   />
                 )}
             </TooltipChildrenContext.Consumer>
-          </Tooltip>*/}
+          </Tooltip>}
           <View style={styles.emptyCarouselContainerStyle}>
             <View style={{marginHorizontal:15}}><MarketPricesComponent /></View>
             <Tooltip

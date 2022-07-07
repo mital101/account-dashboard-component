@@ -65,6 +65,7 @@ const useMergeStyles = (
       justifyContent: 'flex-start',
       flexDirection: 'row',
     },
+    tcLink:{color:'#F8981D',textDecorationLine: 'underline'},
     checkBoxInputFieldStyle: {
       selectedBoxStyle: {
         width: 20,
@@ -110,6 +111,9 @@ const useMergeStyles = (
       justifyContent: 'space-between',
       marginVertical: 14,
     },
+    disableButtonWrapper:{ paddingHorizontal: 15, bottom: 5,opacity:0.5 },
+    buttonWrapper:{ paddingHorizontal: 15, bottom: 5 }
+
   });
 
   return defaultsDeep(style, defaultStyles);

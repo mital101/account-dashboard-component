@@ -35,7 +35,7 @@ const ErrorVerificationComponent = ({ style, onHome,retry }: ErrorVerificationCo
         </Text>
       </View>
       <View style={styles.footerContainerStyle}>
-        <Button label={'Try Again'} onPress={onHome} />
+        <Button label={'Try Again'} onPress={retry} />
         <TouchableOpacity onPress={onHome} >
           <Text style={styles.errorTextStyle}>
             {'Back to My Pitaka'}
