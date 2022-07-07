@@ -53,3 +53,13 @@ export * from './tooltip.icon';
 export * from './pytaka-currency.icon';
 export * from './eyes.icon';
 export * from './pointer.icon';
+
+export * from './help-center-faq.icon';
+export * from './help-center-submit-ticket.icon';
+
+export * from './contact-mail.icon';
+export * from './contact-clock.icon';
+export * from './contact-map.icon';
+export * from './contact-globe.icon';
+export * from './contact-copy.icon';
+
