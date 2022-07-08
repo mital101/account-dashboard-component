@@ -20,7 +20,7 @@ const HelpCenterComponent = forwardRef(({ Root }: HelpCenterComponentProps) => {
 
   const styles = useMergeStyles(style);
 
-  const helpOtions = {
+  const helpOptions = {
     [SupportTypes.FAQs]: {
       icon: <HelpCenterFAQIcon width={50} height={40} />,
       title: 'Find an answer quickly',
@@ -47,7 +47,7 @@ const HelpCenterComponent = forwardRef(({ Root }: HelpCenterComponentProps) => {
         <Text style={styles.subTitle}>
           We’re here to help you for better understanding.
         </Text>
-        {Object.values(helpOtions).map((val: HelpOptionItem) => (
+        {Object.values(helpOptions).map((val: HelpOptionItem) => (
           <HelpOptionComponent key={val.title} data={val} />
         ))}
         <Text style={styles.title}>Contact us</Text>
