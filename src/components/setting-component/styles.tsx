@@ -11,6 +11,7 @@ const useMergeStyles = (
 
   const defaultStyles: SettingComponentStyles = StyleSheet.create({
     container: {
+      flex: 1,
       paddingHorizontal: 25,
       backgroundColor: '#F1F6FC',
     },
@@ -19,6 +20,10 @@ const useMergeStyles = (
       fontSize: 24,
       fontFamily: fonts.medium,
       color: '#3E2D68',
+    },
+    paddingBottomView: {
+      height: 50,
+      backgroundColor: 'transparent',
     },
   });
   return defaultsDeep(style, defaultStyles);

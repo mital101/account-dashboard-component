@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useContext } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { SettingComponentProps, SettingItem, SettingOptions } from './types';
 import useMergeStyles from './styles';
@@ -12,9 +12,12 @@ import {
 import ProfileCardComponent from './profile-card';
 import SettingOptionCard from './setting-option-card';
 import { Button } from 'react-native-theme-component';
+import { AuthContext } from 'react-native-auth-component';
+import moment from 'moment';
 
 const SettingComponent = forwardRef(({ Root }: SettingComponentProps) => {
   const { props, style } = Root || {};
+  const { profile, logout } = useContext(AuthContext);
   const {
     onSelectAccountLimits,
     onSelectLoginAndSecure,
@@ -24,8 +27,12 @@ const SettingComponent = forwardRef(({ Root }: SettingComponentProps) => {
     onViewProfile,
     onLogout,
   } = props || {};
-
+  console.log('profile', profile);
   const styles = useMergeStyles(style);
+  moment.locale('en');
+
+  const fullName = `${profile?.firstName} ${profile?.lastName}`.trim();
+  const lastLoginDateTime = moment(profile?.lastLoginAt).format('LLL');
 
   const settingOptions = {
     [SettingOptions.Language]: {
@@ -66,6 +73,11 @@ const SettingComponent = forwardRef(({ Root }: SettingComponentProps) => {
     },
   };
 
+  const onLogoutHandler = () => {
+    logout();
+    onLogout && onLogout();
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -74,16 +86,16 @@ const SettingComponent = forwardRef(({ Root }: SettingComponentProps) => {
       >
         <Text style={styles.title}>Settings</Text>
         <ProfileCardComponent
-          username="Ben Santos"
-          lastLoginDateTime="Last Login: Nov 11, 2022 3:35 PM"
+          username={fullName}
+          lastLoginDateTime={`Last Login: ${lastLoginDateTime}`}
           onViewProfile={onViewProfile}
         />
         {Object.values(settingOptions).map((itm: SettingItem) => (
           <SettingOptionCard data={itm} />
         ))}
-        <Button label="Logout" onPress={onLogout} />
+        <View style={styles.paddingBottomView} />
+        <Button label="Logout" onPress={onLogoutHandler} />
       </ScrollView>
-      <View></View>
     </View>
   );
 });

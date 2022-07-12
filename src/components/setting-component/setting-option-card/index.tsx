@@ -6,6 +6,7 @@ import {
   StyleSheet,
   View,
   ViewStyle,
+  Image,
   TouchableOpacity,
 } from 'react-native';
 import { ThemeContext } from 'react-native-theme-component';

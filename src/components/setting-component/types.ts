@@ -21,6 +21,7 @@ export type SettingComponentStyles = {
   container?: StyleProp<ViewStyle>;
   title?: StyleProp<TextStyle>;
   scrollView?: StyleProp<ViewStyle>;
+  paddingBottomView?: StyleProp<ViewStyle>;
 };
 
 export type SettingItem = {
