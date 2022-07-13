@@ -12,6 +12,7 @@ export { default as OnboardingComponent } from './src/components/onboarding-comp
 export { default as MarketPricesComponent } from './src/components/market-price-component';
 export { default as HelpCenterComponent } from './src/components/help-center-component';
 export { default as SettingComponent } from './src/components/setting-component';
+export { default as AccountLimitsComponent } from './src/components/account-limits-component';
 
 export * from './src/assets/images';
 export * from './src/types';
