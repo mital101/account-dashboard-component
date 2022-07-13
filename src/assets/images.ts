@@ -63,3 +63,9 @@ export * from './contact-map.icon';
 export * from './contact-globe.icon';
 export * from './contact-copy.icon';
 
+export * from './setting-language.icon';
+export * from './setting-login-secure.icon';
+export * from './setting-account-limits.icon';
+export * from './setting-data-privacy.icon';
+export * from './setting-language.icon';
+export * from './setting-term-conditions.icon';
