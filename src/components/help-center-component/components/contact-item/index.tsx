@@ -20,7 +20,7 @@ const ContactInfoItemComponent = ({ data }: ContactInfoItemParams) => {
 
   return (
     <View style={styles.container}>
-      <>{<data.icon width={15} height={15} />}</>
+      <>{<data.icon width={20} height={20} />}</>
       <View style={styles.horizontalPadding} />
       <View style={styles.row}>
         <View style={styles.rowBetween}>
@@ -30,7 +30,7 @@ const ContactInfoItemComponent = ({ data }: ContactInfoItemParams) => {
           <Text style={styles.subTitle}>{data.subTitle}</Text>
           {data.showCopyToClipboardOption && (
             <TouchableOpacity onPress={copyToClipboard}>
-              <ContactCopyIcon width={15} height={15} />
+              <ContactCopyIcon width={20} height={20} />
             </TouchableOpacity>
           )}
         </View>
