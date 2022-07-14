@@ -49,11 +49,11 @@ const useMergeStyles = (
       flex: 1,
       paddingVertical: 8,
       marginVertical: 15,
-      alignItems: 'center'
+      alignItems: 'center',
     },
     headerSelectedBg: {
       backgroundColor: '#FFF0D9',
-      borderRadius: 4
+      borderRadius: 4,
     },
     headerTitle: {
       color: '#F8981D',
@@ -66,38 +66,42 @@ const useMergeStyles = (
       borderRadius: 8,
       marginTop: 10,
       paddingTop: 22,
-      paddingBottom: 15
+      paddingBottom: 15,
     },
     rowBetween: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginBottom: 10
+      marginBottom: 10,
     },
-    rowFialItem: {
-      marginBottom: 18
+    rowItem: {
+      marginBottom: 18,
     },
     remainTitle: {
       fontSize: 10,
       color: '#1D1C1D',
-      fontFamily: fonts.regular
+      fontFamily: fonts.regular,
     },
     limitTitle: {
       fontSize: 12,
       fontFamily: fonts.semiBold,
-      color: '#020000'
+      color: '#020000',
     },
     logoContainer: {
       alignItems: 'center',
-      marginTop: 20
+      marginTop: 20,
     },
     titleLogo: {
       fontSize: 8,
-      color: '#1F2452'
+      color: '#1F2452',
     },
-    imageWrapper: {width: 40, height: 40},
-    rowTitle: {flexDirection: 'row'},
-    iconCrypto: {width: '100%', height: '100%'},
-    titleSection: {flexDirection: 'column', marginLeft: 10, justifyContent: 'space-between'}
+    imageWrapper: { width: 40, height: 40 },
+    rowTitle: { flexDirection: 'row' },
+    iconCrypto: { width: '100%', height: '100%' },
+    titleSection: {
+      flexDirection: 'column',
+      marginLeft: 10,
+      justifyContent: 'space-between',
+    },
   });
   return defaultsDeep(style, defaultStyles);
 };

@@ -23,7 +23,7 @@ export type AccountLimitsComponentStyles = {
   limitTitle?: StyleProp<TextStyle>;
   remainTitle?: StyleProp<TextStyle>;
   rowBetween?: StyleProp<ViewStyle>;
-  rowFialItem?: StyleProp<ViewStyle>;
+  rowItem?: StyleProp<ViewStyle>;
   logoContainer?: StyleProp<ViewStyle>;
   titleLogo?: StyleProp<TextStyle>;
   imageWrapper?: StyleProp<ViewStyle>;
@@ -32,12 +32,11 @@ export type AccountLimitsComponentStyles = {
   titleSection?: StyleProp<ImageStyle>;
 };
 
-
 export type FiatLimitItem = {
   title: string;
   limit: number;
   remain: number;
-}
+};
 
 export type CryptoLimitItem = {
   name: string;
@@ -45,5 +44,4 @@ export type CryptoLimitItem = {
   symbol: string;
   remain: number;
   imageUrl?: string;
-
-}
+};
