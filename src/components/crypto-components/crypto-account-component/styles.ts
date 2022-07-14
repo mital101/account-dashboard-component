@@ -47,7 +47,7 @@ const useMergeStyles = (
       fontFamily: fonts.bold,
       fontSize: 24,
       lineHeight: 36,
-      color: colors.primaryColor,
+      color: "#3E2D68",
       paddingHorizontal: 25,
       // marginTop: 12,
       marginBottom:10,

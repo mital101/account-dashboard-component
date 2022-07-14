@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import useMergeStyles from './styles';
 import { ThemeContext } from 'react-native-theme-component';
+import { AuthContext } from 'react-native-auth-component';
+
 import {
   CryptoHelpLinkIcon,
   InfoIcon,
@@ -40,6 +42,7 @@ export type CryptoCardComponentProps = {
   onViewAllTransactions: (wallet: Wallet) => void;
   onTransactionDetails: (transaction: Transaction) => void;
   onLinkAccount: () => void;
+  onViewAccount: () => void;
   children?: ReactNode;
   isActive?: boolean;
 };
@@ -76,6 +79,7 @@ const CryptoCardComponent = ({
   onViewAllTransactions,
   dateFormat,
   onTransactionDetails,
+  onViewAccount,
   children,
   isActive,
 }: CryptoCardComponentProps) => {
@@ -88,6 +92,9 @@ const CryptoCardComponent = ({
   const [showSliderTips, setSliderTips] = useState<boolean>(false);
 
   const [ref, setRef] = useState(null);
+
+  const { profile } = useContext(AuthContext);
+
 
   // useEffect(() => {
   //   if (ref) {
@@ -106,6 +113,7 @@ const CryptoCardComponent = ({
     }
   }, [isActive]);
 
+  const firstName = `${profile?.firstName}`.trim();
   return (
     <View style={styles.containerStyle}>
       {
@@ -116,6 +124,7 @@ const CryptoCardComponent = ({
             setRef(ref);
           }}
         >
+          <Text style={styles.userName}>{`${firstName}’s Crypto`}</Text>
           {!isActive && (
             <EmptyWalletComponent
               onLinkAccountPressed={() => {
@@ -191,6 +200,7 @@ const CryptoCardComponent = ({
                     onTipsTerminated={() => {
                       setTransferTips(false);
                     }}
+                    onViewAccount={()=>{onViewAccount()}}
                     isShowTips={showTransferTips}
                   />
                 )}

@@ -38,10 +38,11 @@ export type AccountInfoCardProps = {
   isShowTips?:boolean;
   onTipsCompleted?: () => void;
   onTipsTerminated?: () => void;
+  onViewAccount?:()=>void;
 };
 
 const AccountInfoCard = (props: AccountInfoCardProps) => {
-  const { style,isShowTips,onTipsCompleted,onTipsTerminated } = props;
+  const { style,isShowTips,onTipsCompleted,onTipsTerminated,onViewAccount } = props;
   const styles = useMergeStyles(style);
 
   const [showTip1, setTip1] = useState<boolean>(false);
@@ -61,14 +62,10 @@ const AccountInfoCard = (props: AccountInfoCardProps) => {
           <Text style={styles.text}>My Balance</Text>
           <TooltipIcon width={12} height={12} />
         </View>
-        <View style={styles.marginHorizontalView}>
-          <Text
-            style={styles.profileLink}
-          >
-            My Portfolio
-          </Text>
-          <ArrowRightIcon width={15} height={15} color={'#F8981D'} />
-        </View>
+        <TouchableOpacity onPress={()=>{onViewAccount()}} style={styles.marginHorizontalView}>
+          <Text style={styles.profileLink}>View </Text>
+          <ArrowRightIcon width={14} height={14} color={'#F8981D'} />
+        </TouchableOpacity>
       </View>
       <View style={styles.rowSpaceBetween}>
         <View style={styles.rowCurrency}>

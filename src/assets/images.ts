@@ -52,6 +52,7 @@ export * from './onboarding-03.icon';
 export * from './tooltip.icon';
 export * from './pytaka-currency.icon';
 export * from './eyes.icon';
+export * from './close-eyes.icon';
 export * from './pointer.icon';
 
 export * from './help-center-faq.icon';
@@ -69,3 +70,8 @@ export * from './setting-account-limits.icon';
 export * from './setting-data-privacy.icon';
 export * from './setting-language.icon';
 export * from './setting-term-conditions.icon';
+
+export * from './bit-coin.icon';
+export * from './bit-coin2.icon';
+export * from './bit-coin3.icon';
+export * from './bit-coin4.icon';
