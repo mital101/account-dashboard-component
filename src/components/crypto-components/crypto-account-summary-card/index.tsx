@@ -9,7 +9,8 @@ import {
   TransferoutActiveIcon,
   InfoIcon,
   PointerIcon,
-  CloseEyesIcon
+  CloseEyesIcon,
+  PytakaBitcoinIcon
 } from '../../../assets/images';
 import useMergeStyles from './styles';
 import Tooltip, { TooltipChildrenContext } from 'react-native-walkthrough-tooltip';
@@ -75,7 +76,7 @@ const AccountSummaryCard = (props: AccountSummaryCardProps) => {
         </View>
         <View style={styles.itemSpaceBetween}>
           <View style={styles.rowCurrency}>
-            <View style={styles.currencyWrapper}><PytakaCurrencyIcon width={10} height={10} color="#3E2D68"/></View>
+            <View style={styles.currencyWrapper}><PytakaCurrencyIcon width={15} height={15} color="#3E2D68"/></View>
             <Text style={styles.currencyMessage}> Peso:</Text>
           </View>
           <View style={styles.rowCurrency}>
@@ -84,7 +85,7 @@ const AccountSummaryCard = (props: AccountSummaryCardProps) => {
         </View>
         <View style={styles.itemSpaceBetween}>
           <View style={styles.rowCurrency}>
-            <View style={styles.currencyWrapper}><PytakaCurrencyIcon width={10} height={10} color="#3E2D68"/></View>
+            <View style={styles.currencyWrapper}><PytakaBitcoinIcon width={15} height={15} color="#3E2D68"/></View>
             <Text style={styles.currencyMessage}> Crypto:</Text>
           </View>
           <View style={styles.rowCurrency}>

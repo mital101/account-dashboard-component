@@ -14,7 +14,8 @@ import {
   BitCoinIcon,
   BitCoinIcon2,
   BitCoinIcon3,
-  BitCoinIcon4
+  BitCoinIcon4,
+  BitCoinIcon5,
 } from '../../../assets/images';
 import useMergeStyles from './styles';
 import Tooltip, { TooltipChildrenContext } from 'react-native-walkthrough-tooltip';
@@ -90,6 +91,13 @@ const MyCryptoCard = (props: MyCryptoCardProps) => {
       fullName:'Smooth Love Potion',
       rate:'≈ ₱ 510.00'
     },
+    {
+      icon:<BitCoinIcon5 width={40} height={40} />,
+      shortName:'AXS',
+      currentValue:'0.2198',
+      fullName:'Axie Infinity',
+      rate:'≈ ₱ 264.33'
+    },
   ]
 
   const cryptoItems =(item:any)=>{
@@ -127,7 +135,16 @@ const MyCryptoCard = (props: MyCryptoCardProps) => {
 
             {!isEmpty ? <>
               {data && data.map((obj,key)=>{
-                return(<View key={key}>{cryptoItems(obj)}</View>)
+                if (!isList) {
+                  if (key < 4) {
+                    return(<View key={key}>{cryptoItems(obj)}</View>)
+                  }else{
+                    return(<View key={key}></View>)
+                  }
+                }else{
+                  return(<View key={key}>{cryptoItems(obj)}</View>)
+                }
+
               })}
             </> :
             <View style={styles.placeHolderWrapper}>

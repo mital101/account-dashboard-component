@@ -75,3 +75,6 @@ export * from './bit-coin.icon';
 export * from './bit-coin2.icon';
 export * from './bit-coin3.icon';
 export * from './bit-coin4.icon';
+export * from './bit-coin5.icon';
+
+export * from './pytaka-bitcoin.icon';

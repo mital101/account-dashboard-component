@@ -91,10 +91,7 @@ const SettingComponent = forwardRef(({ Root }: SettingComponentProps) => {
           onViewProfile={onViewProfile}
         />
         {Object.values(settingOptions).map((itm: SettingItem) => (
-          <SettingOptionCard
-            key={`SettingOptionCard-${itm.title}`}
-            data={itm}
-          />
+          <SettingOptionCard data={itm} />
         ))}
         <View style={styles.paddingBottomView} />
         <Button label="Logout" onPress={onLogoutHandler} />
