@@ -40,7 +40,7 @@ export type CryptoCardComponentProps = {
   onAddMoney: (wallet: Wallet) => void;
   onSendMoney: (wallet: Wallet) => void;
   onViewAllTransactions: (wallet: Wallet) => void;
-  onTransactionDetails: (transaction: Transaction) => void;
+  onTrade: () => void;
   onLinkAccount: () => void;
   onViewAccount: () => void;
   children?: ReactNode;
@@ -78,7 +78,7 @@ const CryptoCardComponent = ({
   phoneNumber,
   onViewAllTransactions,
   dateFormat,
-  onTransactionDetails,
+  onTrade,
   onViewAccount,
   children,
   isActive,
@@ -200,6 +200,7 @@ const CryptoCardComponent = ({
                     onTipsTerminated={() => {
                       setTransferTips(false);
                     }}
+                    onClickTrade={()=>{onTrade()}}
                     onViewAccount={()=>{onViewAccount()}}
                     isShowTips={showTransferTips}
                   />

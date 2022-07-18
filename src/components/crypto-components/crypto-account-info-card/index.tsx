@@ -39,10 +39,11 @@ export type AccountInfoCardProps = {
   onTipsCompleted?: () => void;
   onTipsTerminated?: () => void;
   onViewAccount?:()=>void;
+  onClickTrade?:()=>void;
 };
 
 const AccountInfoCard = (props: AccountInfoCardProps) => {
-  const { style,isShowTips,onTipsCompleted,onTipsTerminated,onViewAccount } = props;
+  const { style,isShowTips,onTipsCompleted,onTipsTerminated,onViewAccount,onClickTrade } = props;
   const styles = useMergeStyles(style);
 
   const [showTip1, setTip1] = useState<boolean>(false);
@@ -220,7 +221,9 @@ const AccountInfoCard = (props: AccountInfoCardProps) => {
             >
           <TooltipChildrenContext.Consumer>
             {({ tooltipDuplicate }) => (
-              <TradeActiveIcon width={70} height={70} />
+              <TouchableOpacity onPress={()=>{onClickTrade()}}>
+                <TradeActiveIcon width={70} height={70} />
+              </TouchableOpacity>
             )}
           </TooltipChildrenContext.Consumer>
         </Tooltip>
