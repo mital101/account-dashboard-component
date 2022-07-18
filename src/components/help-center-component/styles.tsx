@@ -18,6 +18,7 @@ const useMergeStyles = (
       fontSize: 24,
       fontFamily: fonts.semiBold,
       color: '#3E2D68',
+      marginTop: 20
     },
     title: {
       color: '#020000',

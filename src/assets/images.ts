@@ -78,3 +78,6 @@ export * from './bit-coin4.icon';
 export * from './bit-coin5.icon';
 
 export * from './pytaka-bitcoin.icon';
+export * from './transaction-filter.icon';
+export * from './separateLine.icon';
+export * from './logo-union-bank.icon';
