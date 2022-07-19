@@ -1,4 +1,4 @@
-import { StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { StyleProp, TextStyle, ViewStyle } from "react-native";
 
 export type CryptoTransactionsHistoryComponentProps = {
   style?: CryptoTransactionsHistoryComponentStyles;
@@ -21,3 +21,13 @@ export type CryptoTransactionsHistoryComponentStyles = {
   seperateView?: StyleProp<ViewStyle>;
   headerWrapper?: StyleProp<ViewStyle>;
 };
+
+export type TransactionTypes = {
+  id: string;
+  title: string;
+}
+
+export type TransactionStatus = {
+  id: string;
+  title: string;
+}
