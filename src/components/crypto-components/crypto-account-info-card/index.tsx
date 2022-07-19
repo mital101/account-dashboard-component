@@ -40,10 +40,12 @@ export type AccountInfoCardProps = {
   onTipsTerminated?: () => void;
   onViewAccount?:()=>void;
   onClickTrade?:()=>void;
+  onTransferIn?: () => void;
+  onTransferOut?: () => void;
 };
 
 const AccountInfoCard = (props: AccountInfoCardProps) => {
-  const { style,isShowTips,onTipsCompleted,onTipsTerminated,onViewAccount,onClickTrade } = props;
+  const { style,isShowTips,onTipsCompleted,onTipsTerminated,onViewAccount,onClickTrade, onTransferIn, onTransferOut  } = props;
   const styles = useMergeStyles(style);
 
   const [showTip1, setTip1] = useState<boolean>(false);
@@ -123,7 +125,9 @@ const AccountInfoCard = (props: AccountInfoCardProps) => {
             >
           <TooltipChildrenContext.Consumer>
             {({ tooltipDuplicate }) => (
-              <TransferinActiveIcon width={70} height={70} />
+              <TouchableOpacity onPress={onTransferIn}>
+                <TransferinActiveIcon width={70} height={70} />
+              </TouchableOpacity>
             )}
           </TooltipChildrenContext.Consumer>
         </Tooltip>
@@ -172,7 +176,9 @@ const AccountInfoCard = (props: AccountInfoCardProps) => {
             >
           <TooltipChildrenContext.Consumer>
             {({ tooltipDuplicate }) => (
-              <TransferoutActiveIcon width={70} height={70} />
+              <TouchableOpacity onPress={onTransferOut}>
+                <TransferoutActiveIcon width={70} height={70} />
+              </TouchableOpacity>
             )}
           </TooltipChildrenContext.Consumer>
         </Tooltip>

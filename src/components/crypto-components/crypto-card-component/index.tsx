@@ -43,6 +43,8 @@ export type CryptoCardComponentProps = {
   onTrade: () => void;
   onLinkAccount: () => void;
   onViewAccount: () => void;
+  onTransferIn: () => void;
+  onTransferOut: () => void;
   children?: ReactNode;
   isActive?: boolean;
 };
@@ -82,6 +84,8 @@ const CryptoCardComponent = ({
   onViewAccount,
   children,
   isActive,
+  onTransferIn,
+  onTransferOut
 }: CryptoCardComponentProps) => {
   const { colors, i18n } = useContext(ThemeContext);
 
@@ -90,9 +94,7 @@ const CryptoCardComponent = ({
   const [showTransferTips, setTransferTips] = useState<boolean>(false);
   const [showHelpTips, setHelpTips] = useState<boolean>(false);
   const [showSliderTips, setSliderTips] = useState<boolean>(false);
-
   const [ref, setRef] = useState(null);
-
   const { profile } = useContext(AuthContext);
 
 
@@ -203,6 +205,8 @@ const CryptoCardComponent = ({
                     onClickTrade={()=>{onTrade()}}
                     onViewAccount={()=>{onViewAccount()}}
                     isShowTips={showTransferTips}
+                    onTransferIn={onTransferIn}
+                    onTransferOut={onTransferOut}
                   />
                 )}
               </TooltipChildrenContext.Consumer>
