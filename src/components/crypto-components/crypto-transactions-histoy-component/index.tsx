@@ -1,15 +1,18 @@
 import { CryptoTransactionsHistoryComponentProps } from './types';
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, SectionList, SafeAreaView } from 'react-native';
 import useMergeStyles from './styles';
+import { TransactionTypes } from './types';
 import { ArrowDownIcon, TransactionFilterIcon, SeperateLineIcon } from '../../../assets/images';
-import  CryptoTransactionsCardComponent from '@banking-component/wallet-component/src/components/crypto-components/crypto-transactions-histoy-component/components/crypto-transaction-card';
 import { Button } from 'react-native-theme-component';
-import SelectTransactionTypeModal from './components/select-type-bottom-sheet';
-import Clipboard from '@react-native-clipboard/clipboard';
+import { CryptoTransactionsCardComponent, SelectTransactionTypeModal, FilterTransactionModal } from './components'
+import { typeOfTransaction, statusOfTransaction } from '../../../constants/common';
 
 const CryptoTransactionsHistoryComponent = ({props, style}: CryptoTransactionsHistoryComponentProps) => {
   const { onSelectTransactionItem, isDownloadMode } = props || {};
+  const [isShowFilterModel, setIsShowFilterModel] = useState<boolean>(false);
+  const [isShowSelectTypeModel, setIsShowSelectTypeModel] = useState<boolean>(false);
+  const [selectedTypesTransaction, setSelectedTypesTransaction] = useState<TransactionTypes[]>([]);
 
   const styles = useMergeStyles(style);
 
@@ -32,19 +35,32 @@ const CryptoTransactionsHistoryComponent = ({props, style}: CryptoTransactionsHi
     },
   ];
 
-  const onSelectType = () => {
-    
+  const onShowSelectTypeModel = () => {
+    setIsShowSelectTypeModel(true);
   }
+
+  const onCloseSelectTypeModel = () => {
+    setIsShowSelectTypeModel(false);
+  }
+
+  const onShowFilterModel = () => {
+    setIsShowFilterModel(true);
+  }
+
+  const onCloseFilterModel = () => {
+    setIsShowFilterModel(false);
+  }
+
 
   const renderHeader = () =>  <View style={styles.header}>
   <Text style={styles.pageTitle}>{isDownloadMode ? 'Download Transaction History' : 'My Crypto Transactions'}</Text>
   <View style={styles.rowBetween}>
-    <TouchableOpacity style={styles.row} onPress={onSelectType}>
+    <TouchableOpacity style={styles.row} onPress={onShowSelectTypeModel}>
         <Text style={styles.selectTypeTitle}>All type of transactions</Text>
         <View style={styles.horizontalMargin}/>
         <ArrowDownIcon size={15} color='#020000' />
     </TouchableOpacity>
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onShowFilterModel}>
       <TransactionFilterIcon size={23} />
     </TouchableOpacity>
     </View>
@@ -89,15 +105,34 @@ const CryptoTransactionsHistoryComponent = ({props, style}: CryptoTransactionsHi
     />
   }
 
+  const onSelectTransactionTypes = (types: TransactionTypes[]) => {
+    console.log('onSelectTransactionTypes: ', types);
+    setSelectedTypesTransaction(types);
+  }
+
+  const onSubmitFilter = () => {
+    console.log('onSubmitFilter')
+  }
+
   return (
     <SafeAreaView style={styles.container}>
         {renderGroupTransaction()}
         {isDownloadMode && <View style={styles.loadMoreWrapper}>
           <Button label="Download to this device" onPress={() => {}} />
         </View>}
-        <SelectTransactionTypeModal isVisible={true} onClose={() => {
-          console.log('close')
-        }} />
+        <SelectTransactionTypeModal 
+          isVisible={isShowSelectTypeModel}
+          onClose={onCloseSelectTypeModel}
+          initialValue={selectedTypesTransaction}
+          onSelectTransactionTypes={onSelectTransactionTypes} 
+          dataTransactionTypes={typeOfTransaction}          
+        />
+        <FilterTransactionModal 
+          isVisible={isShowFilterModel} 
+          onClose={onCloseFilterModel} 
+          dataTransactionStatus={statusOfTransaction}
+          onSubmitFilter={onSubmitFilter}
+        />
     </SafeAreaView>
   );
 } ;

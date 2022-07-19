@@ -58,7 +58,7 @@ const CryptoTransactionDetailsComponent = forwardRef(
         onSave: async () => {
           if (refViewShot?.current?.capture) {
             const uri = await refViewShot.current.capture();
-            savePictureToGallery(uri);
+            savePictureToGallery(`${uri}`);
           }
         },
       })

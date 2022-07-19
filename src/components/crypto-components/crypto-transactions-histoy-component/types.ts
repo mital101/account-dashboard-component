@@ -21,3 +21,13 @@ export type CryptoTransactionsHistoryComponentStyles = {
   seperateView?: StyleProp<ViewStyle>;
   headerWrapper?: StyleProp<ViewStyle>;
 };
+
+export type TransactionTypes = {
+  id: string;
+  title: string;
+}
+
+export type TransactionStatus = {
+  id: string;
+  title: string;
+}
