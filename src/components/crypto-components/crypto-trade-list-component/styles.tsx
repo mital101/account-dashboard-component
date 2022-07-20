@@ -26,94 +26,77 @@ const useMergeStyles = (style?: AccountInfoCardThemeStyles) => {
       lineHeight:36,
     },
     subTitle:{
-      fontWeight: '500',
-      fontSize: 14,
+      fontWeight: '700',
+      fontSize: 12,
       color: '#7F7B82',
-      lineHeight:24,
+      lineHeight:21,
     },
-    exchangeRate:{
+    tableHeader:{
+      justifyContent:'space-between',
+      flexDirection:'row',
+      flex:1,
+      alignItems:'center',
+    },
+    tableHeaderText:{
       fontWeight: '500',
+      fontSize: 10,
+      color: '#4E4B50',
+      lineHeight:18,
+    },
+    tableEndHeaderText:{
+      fontWeight: '500',
+      fontSize: 10,
+      color: '#4E4B50',
+      lineHeight:18,
+      marginRight:10
+    },
+    positiveRate:{
+      fontWeight: '700',
       fontSize: 12,
       color: '#2E7D32',
-      lineHeight:21,
+      marginRight:5
     },
-    nagativeExchangeRate:{
-      fontWeight: '500',
+    nagativeRate:{
+      fontWeight: '700',
       fontSize: 12,
       color: '#D32F2F',
-      lineHeight:21,
+      marginRight:5
     },
-    exchangePrecentage:{
-      fontWeight: '500',
-      fontSize: 14,
-      color: '#1D1C1D',
-      lineHeight:24,
+
+
+
+    text: {
+      fontSize: 12,
+      color: '#3E2D68',
+      marginRight:10
     },
-    headerWrapper:{
-      justifyContent:'space-between',
-      flexDirection:'row',
-      paddingVertical:5
-    },
-    chartActiveButton:{
-      backgroundColor:'#FFF0D9',
-      padding:12,
-    },
-    chartInaActiveButton:{
-      padding:12,
-    },
-    chartButtonText:{
-      fontWeight: '700',
-      fontSize: 14,
+    viewAll:{
       color: '#F8981D',
+      fontWeight: '700',
+      fontSize:14,
       lineHeight:16,
-    },
-    rowWrapper: {
-      justifyContent:'space-between',
-      flexDirection:'row',
-      alignItems:'center',
-      marginTop: 20,
-      marginBottom: 15,
-    },
-    rowSpaceBetween: {
-      justifyContent:'space-between',
-      flexDirection:'row',
-      alignItems:'center',
-      marginTop: 10,
+      textDecorationLine: 'underline',
+      paddingRight:3
+
     },
     rowCurrency: {
       flexDirection: 'row',
       alignItems: 'center',
       marginTop: 10,
     },
-    title2: {
-      fontWeight: '700',
-      fontSize: 16,
-      color: '#1D1C1D',
-      lineHeight:24,
-      marginVertical:15
-    },
-    message:{
-      fontWeight: '500',
-      fontSize: 12,
-      color: '#4E4B50',
-      lineHeight:21,
-    },
-    message2:{
-      fontWeight: '500',
-      fontSize: 11,
-      color: '#4E4B50',
-      lineHeight:21,
-    },
-    footerContainerStyle: {
-      paddingVertical: 24,
-      backgroundColor: 'rgba(246, 250, 255, 0.8)',
-      flexDirection:'row',
+
+    rowSpaceBetween: {
       justifyContent:'space-between',
-      width:'100%'
+      flexDirection:'row',
+      alignItems:'center',
+      marginTop: 10,
     },
-    footerButtonWrapper : {flex:1,paddingHorizontal:6},
-
-
+    rowWrapper: {
+      justifyContent:'space-between',
+      flexDirection:'row',
+      alignItems:'center',
+      marginTop: 20,
+    },
     mainLabel:{
       fontWeight: '500',
       fontSize: 14,
