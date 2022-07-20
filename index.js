@@ -17,6 +17,7 @@ export { default as CryptoTransactionsHistoryComponent } from './src/components/
 export { default as CryptoTransactionDetailsComponent, CryptoTransactionDetailsRef } from './src/components/crypto-components/crypto-transaction-details-component';
 export { default as CryptoTransferInComponent } from './src/components/crypto-components/crypto-transfer-in-component';
 export { default as CryptoReceiveSummaryComponent, CryptoReceiveSummaryRef } from './src/components/crypto-components/crypto-receive-summary';
+export { default as CryptoReviewSummaryComponent, CryptoReviewSummaryRef} from './src/components/crypto-components/crypto-review-summary';
 
 
 export * from './src/assets/images';

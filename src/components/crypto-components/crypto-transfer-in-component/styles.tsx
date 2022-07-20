@@ -30,7 +30,7 @@ const useMergeStyles = (
     },
     subTitle: {
       color: '#4E4B50',
-      fontFamily: fonts.medium,
+      fontFamily: fonts.regular,
       fontSize: 14,
       marginVertical: 15,
     },
@@ -238,6 +238,8 @@ const useMergeStyles = (
       fontSize: 10,
       color: '#D32F2F',
       fontFamily: fonts.regular,
+      maxWidth: '80%',
+      textAlign: 'center',
     },
     errorRow: {
       alignItems: 'center',

@@ -3,8 +3,10 @@ import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
 export type CryptoTransferInComponentProps = {
   style?: CryptoTransferInComponentStyles;
   props?: {
-    onSelectCrypto: () => void;
-    isError: boolean;
+    onSelectCrypto?: () => void;
+    onTransferPHP?: () => void;
+    goToAccountLimit?: () => void;
+    isError?: boolean;
   };
 };
 

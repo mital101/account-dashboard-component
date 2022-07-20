@@ -96,11 +96,18 @@ const CryptoTransferInComponent = ({
   props,
   style,
 }: CryptoTransferInComponentProps) => {
-  const { onSelectCrypto, isError = true } = props || {};
+  const {
+    onSelectCrypto,
+    isError = true,
+    onTransferPHP,
+    goToAccountLimit,
+  } = props || {};
   const styles = useMergeStyles(style);
-  const [index, setIndex] = useState<number>(0);
+  const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [transferValue, setTransferValue] = useState<number>(0);
   const [selectedCrypto, setSelectedCrypto] = React.useState<string>();
+  const isValidToSubmit =
+    selectedTabIndex === 0 ? transferValue > 0 : !!selectedCrypto;
 
   const transferValueFormated =
     transferValue > 0 ? useCurrencyFormat(transferValue, '', '') : '';
@@ -109,9 +116,9 @@ const CryptoTransferInComponent = ({
     <TouchableOpacity
       style={[
         styles.headerView,
-        indexTabbar === index && styles.headerSelectedBg,
+        indexTabbar === selectedTabIndex && styles.headerSelectedBg,
       ]}
-      onPress={() => setIndex(indexTabbar)}
+      onPress={() => setSelectedTabIndex(indexTabbar)}
     >
       <Text style={styles.headerTitle}>{title}</Text>
     </TouchableOpacity>
@@ -182,7 +189,7 @@ const CryptoTransferInComponent = ({
             <Text style={styles.dailyLimitLabel}>
               Daily Limit (₱ 100,000.00)
             </Text>
-            <TouchableOpacity style={styles.row}>
+            <TouchableOpacity style={styles.row} onPress={goToAccountLimit}>
               <Text style={styles.aboutLimitLabel}>About Limit</Text>
               <ArrowRightIcon width={15} height={15} color={'#F8981D'} />
             </TouchableOpacity>
@@ -225,15 +232,17 @@ const CryptoTransferInComponent = ({
             {renderTabbar('Crypto', 1)}
           </View>
           <View style={styles.content}>
-            {index === 0 ? renderPHPContent() : renderCryptoContent()}
+            {selectedTabIndex === 0
+              ? renderPHPContent()
+              : renderCryptoContent()}
           </View>
         </View>
       </ScrollView>
       <View style={styles.actionWrapper}>
         <Button
-          label="Select"
-          onPress={onSelectCrypto}
-          disabled={!selectedCrypto}
+          label={selectedTabIndex === 0 ? 'Transfer-in PHP' : 'Select'}
+          onPress={selectedTabIndex === 0 ? onTransferPHP : onSelectCrypto}
+          disabled={!isValidToSubmit}
           disableColor={'#EAEAEB'}
         />
       </View>
