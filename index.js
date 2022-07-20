@@ -16,6 +16,8 @@ export { default as AccountLimitsComponent } from './src/components/account-limi
 export { default as CryptoTransactionsHistoryComponent } from './src/components/crypto-components/crypto-transactions-histoy-component';
 export { default as CryptoTransactionDetailsComponent } from './src/components/crypto-components/crypto-transaction-details-component';
 export * from './src/components/crypto-components/crypto-transaction-details-component';
+export { default as CryptoTransferInComponent } from './src/components/crypto-components/crypto-transfer-in-component';
+export { default as CryptoReceiveSummaryComponent } from './src/components/crypto-components/crypto-receive-summary';
 
 
 export * from './src/assets/images';
