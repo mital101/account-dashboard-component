@@ -10,7 +10,7 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import useMergeStyles from './styles';
-import {  Button } from 'react-native-theme-component';
+import { Button } from 'react-native-theme-component';
 import QRCode from 'react-native-qrcode-svg';
 import RowInfo from '../../row-info';
 import ViewShot from 'react-native-view-shot';
@@ -22,11 +22,12 @@ export type CryptoReceiveSummaryRef = {
   onSaveToGallery: () => void;
 };
 
-const CryptoReceiveSummaryComponent = forwardRef(({ props, style }: CryptoReceiveSummaryComponentProps, ref) => {
+const CryptoReceiveSummaryComponent = forwardRef(
+  ({ props, style }: CryptoReceiveSummaryComponentProps, ref) => {
     const { onBackToDashboard } = props || {};
     const refViewShot = useRef<ViewShot>(null);
     const styles = useMergeStyles(style);
-    
+
     const hasAndroidPermission = async () => {
       const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
 
@@ -51,7 +52,6 @@ const CryptoReceiveSummaryComponent = forwardRef(({ props, style }: CryptoReceiv
       })
     );
 
-
     const savePictureToGallery = async (url: string) => {
       if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
         return;
@@ -64,13 +64,10 @@ const CryptoReceiveSummaryComponent = forwardRef(({ props, style }: CryptoReceiv
       });
     };
 
-
-
-
     const onShare = async () => {
       if (refViewShot?.current?.capture) {
         const url = await refViewShot.current.capture();
-        RNFS.readFile(url, 'base64').then((base64Value) => {
+        RNFS.readFile(url, 'base64').then((base64Value: string) => {
           const options = {
             title: 'Title',
             subject: 'subject',
@@ -85,50 +82,58 @@ const CryptoReceiveSummaryComponent = forwardRef(({ props, style }: CryptoReceiv
 
     return (
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-        >
+        <ScrollView showsVerticalScrollIndicator={false}>
           <ViewShot ref={refViewShot} style={styles.container}>
-            <Text style={styles.pageTitle}>{'Receive BTC'}</Text> 
+            <Text style={styles.pageTitle}>{'Receive BTC'}</Text>
             <View style={styles.pageSubTitleView}>
-              <Text style={styles.pageSubTitle}>Scan the QR code or share the address to receive the Bitcoin (BTC).</Text>
+              <Text style={styles.pageSubTitle}>
+                Scan the QR code or share the address to receive the Bitcoin
+                (BTC).
+              </Text>
             </View>
             <View style={styles.content}>
               <View style={styles.rowCenter}>
-                <QRCode
-                  value="http://awesome.link.qr"
-                  size={170}
-                />
+                <QRCode value="http://awesome.link.qr" size={170} />
               </View>
               <View style={styles.infoView}>
-                <RowInfo props={{
-                  title: 'Crypto Address',
-                  value: '32ii4zr1P7TACFzZHY62y4Kz8zvGPEmrCl',
-                  copyable: true
-                }} />
-                <RowInfo props={{
-                  title: 'Network',
-                  value: 'Bitcoin',
-                }} />
+                <RowInfo
+                  props={{
+                    title: 'Crypto Address',
+                    value: '32ii4zr1P7TACFzZHY62y4Kz8zvGPEmrCl',
+                    copyable: true,
+                  }}
+                />
+                <RowInfo
+                  props={{
+                    title: 'Network',
+                    value: 'Bitcoin',
+                  }}
+                />
               </View>
             </View>
             <View style={styles.noteView}>
-                <Text style={styles.noteLabel}>
-                NOTE: Please only send Bitcoin (BTC) and its network to this address. Sending any other coins may result to permanent loss.
-                </Text>
+              <Text style={styles.noteLabel}>
+                NOTE: Please only send Bitcoin (BTC) and its network to this
+                address. Sending any other coins may result to permanent loss.
+              </Text>
             </View>
           </ViewShot>
           <View style={styles.actionWrapper}>
-          <Button label='Share' onPress={onShare} />
-          <Button label='Back to Crypto Dashboard' onPress={onBackToDashboard} bgColor={'white'} style={{
-            primaryContainerStyle: styles.btnBackToDashboard,
-            primaryLabelStyle: styles.labelBackToDashboard
-          }} />
-        </View>
+            <Button label="Share" onPress={onShare} />
+            <Button
+              label="Back to Crypto Dashboard"
+              onPress={onBackToDashboard}
+              bgColor={'white'}
+              style={{
+                primaryContainerStyle: styles.btnBackToDashboard,
+                primaryLabelStyle: styles.labelBackToDashboard,
+              }}
+            />
+          </View>
         </ScrollView>
       </SafeAreaView>
     );
-  });
+  }
+);
 
 export default CryptoReceiveSummaryComponent;
-

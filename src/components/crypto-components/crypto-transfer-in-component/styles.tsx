@@ -11,7 +11,7 @@ const useMergeStyles = (
 
   const defaultStyles = StyleSheet.create({
     safeArea: {
-      flex: 1
+      flex: 1,
     },
     container: {
       paddingHorizontal: 25,
@@ -24,9 +24,9 @@ const useMergeStyles = (
     },
     title: {
       color: '#020000',
-      fontFamily: fonts.semiBold,
-      fontSize: 16,
-      marginVertical: 25,
+      fontFamily: fonts.medium,
+      fontSize: 12,
+      marginBottom: 20,
     },
     subTitle: {
       color: '#4E4B50',
@@ -70,10 +70,11 @@ const useMergeStyles = (
     rowBetween: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+      alignItems: 'center',
       marginBottom: 10,
     },
     rowItem: {
-      width: '85%'
+      width: '85%',
     },
     remainTitle: {
       fontSize: 10,
@@ -102,16 +103,16 @@ const useMergeStyles = (
       justifyContent: 'space-between',
     },
     rowWrapper: {
-      justifyContent:'space-between',
-      flexDirection:'row',
-      alignItems:'center',
+      justifyContent: 'space-between',
+      flexDirection: 'row',
+      alignItems: 'center',
     },
-    mainLabel:{
+    mainLabel: {
       fontWeight: '500',
       fontSize: 14,
       color: '#000000',
     },
-    subLabel:{
+    subLabel: {
       fontWeight: '500',
       fontSize: 10,
       color: '#7F7B82',
@@ -119,24 +120,130 @@ const useMergeStyles = (
     text: {
       fontSize: 10,
       color: '#7F7B82',
-      textAlign:'center',
-      marginVertical:15,
+      textAlign: 'center',
+      marginVertical: 15,
       fontWeight: '500',
-      lineHeight:18,
+      lineHeight: 18,
     },
-    linkText:{
+    linkText: {
       color: '#F8981D',
       fontWeight: '700',
-      fontSize:14,
-      lineHeight:16,
+      fontSize: 14,
+      lineHeight: 16,
       textDecorationLine: 'underline',
-      marginVertical:15
+      marginVertical: 15,
     },
-    item:{flexDirection:'row'},
-    itemWrapper:{justifyContent:'space-between',paddingBottom:2,flex:1},
-    itemContainer:{flexDirection:'row',justifyContent:'space-between',paddingLeft:10},
-    placeHolderWrapper:{flex:1,justifyContent:'center',alignItems:'center'},
-    actionWrapper: {paddingHorizontal: 23}
+    item: { flexDirection: 'row' },
+    itemWrapper: { justifyContent: 'space-between', paddingBottom: 2, flex: 1 },
+    itemContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingLeft: 10,
+    },
+    placeHolderWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    actionWrapper: { paddingHorizontal: 23 },
+    rowInput: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    balanceLabel: {
+      fontSize: 16,
+      fontFamily: fonts.medium,
+      color: '#1D1C1D',
+    },
+    smallBalanceLabel: {
+      fontSize: 10,
+      fontFamily: fonts.medium,
+      color: '#1D1C1D',
+    },
+    currentBalanceWrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 15,
+      paddingLeft: 22,
+    },
+    cardInputBalance: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: 8,
+      width: '100%',
+    },
+    inputBalanceWrapper: {
+      borderBottomWidth: 1,
+      borderBottomColor: '#EAEAEB',
+      alignItems: 'center',
+      paddingTop: 28,
+    },
+    paddingBottomView: {
+      paddingBottom: 28,
+    },
+    dailyLimitLabel: {
+      fontSize: 12,
+      color: '#020000',
+      fontFamily: fonts.regular,
+    },
+    balanceTitle: {
+      fontSize: 10,
+      color: '#7F7B82',
+      fontFamily: fonts.regular,
+    },
+    purchaseOptionView: {
+      alignItems: 'center',
+      marginTop: 10,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    labelPurchase: {
+      fontSize: 10,
+      fontFamily: fonts.regular,
+      color: '#4E4B50',
+      marginTop: 2,
+    },
+    horizontalPadding: {
+      width: 5,
+    },
+    dailyLimit: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: 8,
+      padding: 20,
+      marginTop: 28,
+    },
+    aboutLimitLabel: {
+      color: '#F8981D',
+      textDecorationLine: 'underline',
+      fontFamily: fonts.medium,
+      marginRight: 5,
+    },
+    input: {
+      marginLeft: 5,
+      fontSize: 16,
+      fontFamily: fonts.medium,
+      color: '#1D1C1D',
+    },
+    remainingWrapper: {
+      alignItems: 'center',
+      marginTop: 10,
+    },
+    remainLabel: {
+      color: '#BAB7BB',
+      fontSize: 10,
+      fontFamily: fonts.regular,
+    },
+    errorText: {
+      fontSize: 10,
+      color: '#D32F2F',
+      fontFamily: fonts.regular,
+    },
+    errorRow: {
+      alignItems: 'center',
+      marginTop: 8,
+      paddingBottom: 12,
+    },
   });
   return defaultsDeep(style, defaultStyles);
 };
