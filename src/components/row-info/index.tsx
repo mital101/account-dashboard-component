@@ -11,7 +11,7 @@ import {
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { ThemeContext } from 'react-native-theme-component';
-import { ContactCopyIcon } from '@banking-component/wallet-component/src/assets/images';
+import { ContactCopyIcon } from '../../assets/images';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 export type RowInfoProps = {
