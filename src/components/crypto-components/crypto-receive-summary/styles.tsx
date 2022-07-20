@@ -7,15 +7,16 @@ import { ThemeContext } from 'react-native-theme-component';
 const useMergeStyles = (
   style?: CryptoReceiveSummaryComponentStyles
 ): CryptoReceiveSummaryComponentStyles => {
-  const { fonts } = useContext(ThemeContext);
+  const { fonts, colors } = useContext(ThemeContext);
 
   const defaultStyles = StyleSheet.create({
     safeArea: {
-      flex: 1
+      flex: 1,
     },
     container: {
       paddingHorizontal: 25,
       flex: 1,
+      backgroundColor: '#F1F6FC'
     },
     pageTitle: {
       fontSize: 24,
@@ -23,7 +24,9 @@ const useMergeStyles = (
       color: '#3E2D68',
     },
     actionWrapper: {
-      paddingHorizontal: 20
+      marginTop: 40,
+      marginBottom: 20,
+      paddingHorizontal: 25,
     },
     pageSubTitleView: {
       marginTop: 20
@@ -37,8 +40,30 @@ const useMergeStyles = (
       backgroundColor: '#FFFFFF',
       padding: 20,
       marginTop: 20,
-      borderRadius: 8
-    }
+      borderRadius: 8,
+    },
+    infoView: {
+      marginTop: 25
+    },
+    rowCenter: {
+      flexDirection: 'row', 
+      alignItems: 'center', 
+      justifyContent: 'space-around',
+      marginTop: 15
+    },
+    noteView: {
+      padding: 20,
+      marginTop: 20,
+      borderRadius: 8,
+      backgroundColor: '#DDD9E4'
+    },
+    noteLabel: {
+      color: '#1D1C1D',
+      fontFamily: fonts.regular,
+      fontSize: 10
+    },
+    btnBackToDashboard: {borderColor: colors.primaryButtonColor, borderWidth: 1, marginTop: 10},
+    labelBackToDashboard: {color: colors.primaryButtonColor}
   });
   return defaultsDeep(style, defaultStyles);
 };

@@ -14,4 +14,5 @@ export type CryptoTransactionDetailsComponentStyles = {
   shareContainer?: StyleProp<ViewStyle>;
   infoTitle?: StyleProp<TextStyle>;
   infoSubTitle?: StyleProp<TextStyle>;
+  marginVertical?: StyleProp<ViewStyle>;
 };

@@ -3,7 +3,7 @@ import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
 export type CryptoReceiveSummaryComponentProps = {
   style?: CryptoReceiveSummaryComponentStyles;
   props?: { 
-    onSelectCrypto: () => void; 
+    onBackToDashboard?: () => void;
   };
 };
 
@@ -15,6 +15,12 @@ export type CryptoReceiveSummaryComponentStyles = {
   pageSubTitle?: StyleProp<TextStyle>;
   pageSubTitleView?: StyleProp<ViewStyle>;
   content?: StyleProp<ViewStyle>;
+  rowCenter?: StyleProp<ViewStyle>;
+  infoView?: StyleProp<ViewStyle>;
+  btnBackToDashboard?: StyleProp<ViewStyle>;
+  noteView?: StyleProp<ViewStyle>;
+  noteLabel?: StyleProp<TextStyle>;
+  labelBackToDashboard?: StyleProp<TextStyle>;
 };
 
 

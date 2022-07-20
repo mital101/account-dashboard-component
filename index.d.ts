@@ -14,10 +14,9 @@ export { default as HelpCenterComponent } from './src/components/help-center-com
 export { default as SettingComponent } from './src/components/setting-component';
 export { default as AccountLimitsComponent } from './src/components/account-limits-component';
 export { default as CryptoTransactionsHistoryComponent } from './src/components/crypto-components/crypto-transactions-histoy-component';
-export { default as CryptoTransactionDetailsComponent } from './src/components/crypto-components/crypto-transaction-details-component';
-export * from './src/components/crypto-components/crypto-transaction-details-component';
+export { default as CryptoTransactionDetailsComponent, CryptoTransactionDetailsRef } from './src/components/crypto-components/crypto-transaction-details-component';
 export { default as CryptoTransferInComponent } from './src/components/crypto-components/crypto-transfer-in-component';
-export { default as CryptoReceiveSummaryComponent } from './src/components/crypto-components/crypto-receive-summary';
+export { default as CryptoReceiveSummaryComponent, CryptoReceiveSummaryRef } from './src/components/crypto-components/crypto-receive-summary';
 
 export * from './src/assets/images';
 export * from './src/types';

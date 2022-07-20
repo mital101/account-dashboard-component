@@ -55,13 +55,37 @@ const cryptoDummyData: CryptoItem[] = [
       fullName:'Axie Infinity',
       rate:'≈ ₱ 264.33'
     },
+    {
+      id: '6',
+      imageUrl: randomCryptoImgUrl,
+      shortName:'AXS',
+      currentValue:'0.2198',
+      fullName:'Axie Infinity',
+      rate:'≈ ₱ 264.33'
+    },
+    {
+      id: '7',
+      imageUrl: randomCryptoImgUrl,
+      shortName:'AXS',
+      currentValue:'0.2198',
+      fullName:'Axie Infinity',
+      rate:'≈ ₱ 264.33'
+    },
+    {
+      id: '8',
+      imageUrl: randomCryptoImgUrl,
+      shortName:'AXS',
+      currentValue:'0.2198',
+      fullName:'Axie Infinity',
+      rate:'≈ ₱ 264.33'
+    },
 ];
 
 const CryptoTransferInComponent = ({ props, style }: CryptoTransferInComponentProps) => {
     const { onSelectCrypto } = props || {};
     const styles = useMergeStyles(style);
     const [index, setIndex] = React.useState<number>(0);
-    const [selectedCrypto, setSelectedCrypto] = React.useState<string>('');
+    const [selectedCrypto, setSelectedCrypto] = React.useState<string>();
 
     const renderTabbar = (title: string, indexTabbar: number) => (
       <TouchableOpacity
@@ -118,7 +142,7 @@ const CryptoTransferInComponent = ({ props, style }: CryptoTransferInComponentPr
           </View>
         </ScrollView>
         <View style={styles.actionWrapper}>
-          <Button label='Select' onPress={onSelectCrypto} />
+          <Button label='Select' onPress={onSelectCrypto} disabled={!selectedCrypto} disableColor={'#EAEAEB'} />
         </View>
       </SafeAreaView>
     );
