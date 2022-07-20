@@ -46,12 +46,12 @@ export type CryptoTradeComponentProps = {
   onLinkAccountPressed?: () => void;
   style?: CryptoTradeComponentThemeStyles;
   isEmpty?:boolean;
-  onClickItem?:(data:any)=>void;
+  onClick?:(data:any)=>void;
   isList?:boolean;
 };
 
 const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
-  const { style,itemData,isEmpty,onClickItem,isList } = props;
+  const { style,itemData,isEmpty,onClick,isList } = props;
   const styles = useMergeStyles(style);
 
   const [isActive, setIsActive] = useState<number>(0);
@@ -72,6 +72,19 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
     { value: 500, date: '8 Apr 2022' },
     { value: 200, date: '9 Apr 2022' ,labelTextStyle: { color: 'gray', width: 60 }, label: '9 Apr' },
     { value: 440, date: '10 Apr 2022'},
+  ];
+
+  const ptData2 = [
+    { value: 110, date: '1 Apr 2022' ,labelTextStyle: { color: 'gray', width: 60 }, label: '1 Apr' },
+    { value: 380, date: '2 Apr 2022'  },
+    { value: 490, date: '3 Apr 2022' ,labelTextStyle: { color: 'gray', width: 60 }, label: '3 Apr' },
+    { value: 280, date: '4 Apr 2022'  },
+    { value: 440, date: '5 Apr 2022' ,labelTextStyle: { color: 'gray', width: 60 }, label: '5 Apr' },
+    { value: 545, date: '6 Apr 2022'  },
+    { value: 160, date: '7 Apr 2022' ,labelTextStyle: { color: 'gray', width: 60 }, label: '7 Apr' },
+    { value: 200, date: '8 Apr 2022' },
+    { value: 300, date: '9 Apr 2022' ,labelTextStyle: { color: 'gray', width: 60 }, label: '9 Apr' },
+    { value: 140, date: '10 Apr 2022'},
   ];
 
 
@@ -95,7 +108,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
             </View>
             <View style={styles.headerWrapper}>
               <Text style={styles.exchangePrecentage}>{`1 BTC ≈ ₱ 2,444,810.00`}</Text>
-              <Text style={styles.exchangeRate}>{`+6.33% from yesterday`}</Text>
+              <Text style={itemData.fullName === 'USD Coin' ? styles.nagativeExchangeRate:styles.exchangeRate}>{`+6.33% from yesterday`}</Text>
             </View>
             <View style={styles.rowWrapper}>
                <TouchableOpacity onPress={()=>{setIsActive(0)}} style={isActive ===0 ?styles.chartActiveButton:styles.chartInaActiveButton}><Text style={styles.chartButtonText}>{`24H`}</Text></TouchableOpacity>
@@ -113,14 +126,14 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
             <>
               <LineChart
                 areaChart
-                data={ptData}
+                data={itemData.fullName === 'USD Coin' ? ptData2:ptData}
                 width={310}
                 hideDataPoints
                 spacing={50}
-                color="#2E7D32"
+                color={itemData.fullName === 'USD Coin' ? "#D32F2F" :"#2E7D32"}
                 thickness={2}
-                startFillColor="rgba(140,183,142,0.3)"
-                endFillColor="rgba(140,183,142,0.01)"
+                startFillColor={itemData.fullName === 'USD Coin' ? "rgba(211, 47, 47,0.01)" : "rgba(140,183,142,0.3)"}
+                endFillColor={itemData.fullName === 'USD Coin' ? "rgba(211, 47, 47,0.01)" : "rgba(140,183,142,0.01)"}
                 startOpacity={0.9}
                 endOpacity={0.1}
                 initialSpacing={0}
@@ -207,18 +220,18 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
       <View style={styles.footerContainerStyle}>
         <View style={styles.footerButtonWrapper}>
           <Button
-            onPress={()=>{}}
+            onPress={()=>{onClick({type:'Buy',item:itemData})}}
             // label={
             //   i18n?.t("customer_invoke_component.lbl_continue") ??
             //   "Continue"
             // }
-            label={ "Continue"}
+            label={ "Buy"}
           />
         </View>
         <View style={styles.footerButtonWrapper}>
           <Button
-            onPress={()=>{}}
-            label={ "Continue"}
+            onPress={()=>{onClick({type:'Sell',item:itemData})}}
+            label={ "Sell"}
           />
           </View>
         </View>
