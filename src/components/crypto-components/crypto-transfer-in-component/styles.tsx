@@ -239,7 +239,7 @@ const useMergeStyles = (
       color: '#D32F2F',
       fontFamily: fonts.regular,
       maxWidth: '80%',
-      textAlign: 'center',
+      textAlign: 'center'
     },
     errorRow: {
       alignItems: 'center',

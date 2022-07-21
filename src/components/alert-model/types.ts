@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
-
+    
 export type AlertModalStyles = {
   containerStyle?: StyleProp<ViewStyle>;
   iconWrapper?: StyleProp<ViewStyle>;
@@ -24,5 +24,5 @@ export type AlertModalProps = {
   onBackdropPress?: () => void;
   isVisible?: boolean;
   style?: AlertModalStyles;
-  backdropOpacity?: number;
+  backdropOpacity?: number
 };

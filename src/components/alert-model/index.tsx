@@ -15,9 +15,8 @@ import { Button, ThemeContext } from 'react-native-theme-component';
 const deviceHeight =
   Platform.OS === 'ios'
     ? Dimensions.get('window').height
-    : require('react-native-extra-dimensions-android').get(
-        'REAL_WINDOW_HEIGHT'
-      );
+    : require('react-native-extra-dimensions-android').get('REAL_WINDOW_HEIGHT');
+
 
 const AlertModal = (props: AlertModalProps) => {
   const {
@@ -41,20 +40,16 @@ const AlertModal = (props: AlertModalProps) => {
 
   useEffect(() => {
     if (isVisible) {
-      setIsVisible(true);
+        setIsVisible(true);
     } else {
       setIsVisible(false);
     }
   }, [isVisible]);
 
   const styles = useMergeStyles(style);
-
+  
   const Icon = icon ?? (
-    <InfoIcon
-      width={60}
-      height={60}
-      color={iconColor ? iconColor : colors.primaryColor}
-    />
+    <InfoIcon width={60} height={60} color={iconColor ? iconColor : colors.primaryColor} />
   );
 
   return (
@@ -73,23 +68,18 @@ const AlertModal = (props: AlertModalProps) => {
     >
       <View style={styles.containerStyle}>
         <View style={styles.iconWrapper}>
-          <>{Icon}</>
+          <>
+          {Icon}
+          </>
         </View>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>{subtitle}</Text>
-        {btnLabel && (
-          <View style={styles.buttonAction}>
-            <Button label={btnLabel} onPress={onConfirmed} />
-          </View>
-        )}
-        {secondaryBtnLabel && (
-          <TouchableOpacity
-            onPress={onCancel}
-            style={styles.secondaryBtnAction}
-          >
-            <Text style={styles.secondaryBtnLabel}>{secondaryBtnLabel}</Text>
-          </TouchableOpacity>
-        )}
+        {btnLabel && <View style={styles.buttonAction}>
+         <Button label={btnLabel} onPress={onConfirmed} />
+        </View>}
+        {secondaryBtnLabel && <TouchableOpacity onPress={onCancel} style={styles.secondaryBtnAction}>
+          <Text style={styles.secondaryBtnLabel}>{secondaryBtnLabel}</Text>
+        </TouchableOpacity>}
       </View>
     </Modal>
   );

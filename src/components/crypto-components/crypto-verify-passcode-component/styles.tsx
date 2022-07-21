@@ -1,12 +1,12 @@
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
-import { CryptoReviewSummaryComponentStyles } from './types';
+import { CryptoVerifyPasscodeComponentStyles } from './types';
 import { ThemeContext } from 'react-native-theme-component';
 
 const useMergeStyles = (
-  style?: CryptoReviewSummaryComponentStyles
-): CryptoReviewSummaryComponentStyles => {
+  style?: CryptoVerifyPasscodeComponentStyles
+): CryptoVerifyPasscodeComponentStyles => {
   const { fonts, colors } = useContext(ThemeContext);
 
   const defaultStyles = StyleSheet.create({
@@ -15,6 +15,7 @@ const useMergeStyles = (
     },
     container: {
       paddingHorizontal: 25,
+      flex: 1,
       backgroundColor: '#F1F6FC'
     },
     pageTitle: {
@@ -32,20 +33,28 @@ const useMergeStyles = (
     },
     pageSubTitle: {
       fontSize: 14,
-      fontFamily: fonts.regular,
+      fontFamily: fonts.medium,
       color: '#4E4B50'
     },
     content: {
-      backgroundColor: '#FFFFFF',
-      padding: 20,
       marginTop: 20,
-      borderRadius: 8,
+    },
+    infoView: {
+      marginTop: 25
     },
     rowCenter: {
       flexDirection: 'row', 
       alignItems: 'center', 
       justifyContent: 'space-around',
-      marginTop: 15
+      marginTop: 30
+    },
+    receiveOTPOptionBtn: {},
+    receiveOTPOptionLabel: {
+      color: colors.primaryButtonColor,
+      textDecorationLine: 'underline',
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      lineHeight: 16
     },
     noteView: {
       padding: 20,

@@ -96,18 +96,12 @@ const CryptoTransferInComponent = ({
   props,
   style,
 }: CryptoTransferInComponentProps) => {
-  const {
-    onSelectCrypto,
-    isError = true,
-    onTransferPHP,
-    goToAccountLimit,
-  } = props || {};
+  const { onSelectCrypto, isError = true, onTransferPHP, goToAccountLimit } = props || {};
   const styles = useMergeStyles(style);
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [transferValue, setTransferValue] = useState<number>(0);
   const [selectedCrypto, setSelectedCrypto] = React.useState<string>();
-  const isValidToSubmit =
-    selectedTabIndex === 0 ? transferValue > 0 : !!selectedCrypto;
+  const isValidToSubmit = selectedTabIndex === 0 ? transferValue > 0 : !!selectedCrypto;
 
   const transferValueFormated =
     transferValue > 0 ? useCurrencyFormat(transferValue, '', '') : '';
@@ -232,15 +226,13 @@ const CryptoTransferInComponent = ({
             {renderTabbar('Crypto', 1)}
           </View>
           <View style={styles.content}>
-            {selectedTabIndex === 0
-              ? renderPHPContent()
-              : renderCryptoContent()}
+            {selectedTabIndex === 0 ? renderPHPContent() : renderCryptoContent()}
           </View>
         </View>
       </ScrollView>
       <View style={styles.actionWrapper}>
         <Button
-          label={selectedTabIndex === 0 ? 'Transfer-in PHP' : 'Select'}
+          label={selectedTabIndex === 0 ? "Transfer-in PHP" : "Select"}
           onPress={selectedTabIndex === 0 ? onTransferPHP : onSelectCrypto}
           disabled={!isValidToSubmit}
           disableColor={'#EAEAEB'}

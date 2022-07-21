@@ -123,7 +123,7 @@ const CryptoReceiveSummaryComponent = forwardRef(
             <Button
               label="Back to Crypto Dashboard"
               onPress={onBackToDashboard}
-              bgColor={'white'}
+              bgColor={'#FFFFFF'}
               style={{
                 primaryContainerStyle: styles.btnBackToDashboard,
                 primaryLabelStyle: styles.labelBackToDashboard,

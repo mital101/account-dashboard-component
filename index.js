@@ -18,6 +18,9 @@ export { default as CryptoTransactionDetailsComponent, CryptoTransactionDetailsR
 export { default as CryptoTransferInComponent } from './src/components/crypto-components/crypto-transfer-in-component';
 export { default as CryptoReceiveSummaryComponent, CryptoReceiveSummaryRef } from './src/components/crypto-components/crypto-receive-summary';
 export { default as CryptoReviewSummaryComponent, CryptoReviewSummaryRef} from './src/components/crypto-components/crypto-review-summary';
+export { default as CryptoVerifyOTPComponent } from './src/components/crypto-components/crypto-verify-otp-component';
+export { default as CryptoVerifyPasscodeComponent } from './src/components/crypto-components/crypto-verify-passcode-component';
+export { default as CryptoTransactionPostingComponent } from './src/components/crypto-components/crypto-transaction-posting-component';
 
 
 export * from './src/assets/images';

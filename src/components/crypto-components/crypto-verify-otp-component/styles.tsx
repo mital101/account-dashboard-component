@@ -1,12 +1,12 @@
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
-import { CryptoReviewSummaryComponentStyles } from './types';
+import { CryptoVerifyOTPComponentStyles } from '@banking-component/wallet-component/src/components/crypto-components/crypto-verify-otp-component/types';
 import { ThemeContext } from 'react-native-theme-component';
 
 const useMergeStyles = (
-  style?: CryptoReviewSummaryComponentStyles
-): CryptoReviewSummaryComponentStyles => {
+  style?: CryptoVerifyOTPComponentStyles
+): CryptoVerifyOTPComponentStyles => {
   const { fonts, colors } = useContext(ThemeContext);
 
   const defaultStyles = StyleSheet.create({
@@ -15,6 +15,7 @@ const useMergeStyles = (
     },
     container: {
       paddingHorizontal: 25,
+      flex: 1,
       backgroundColor: '#F1F6FC'
     },
     pageTitle: {
@@ -32,20 +33,28 @@ const useMergeStyles = (
     },
     pageSubTitle: {
       fontSize: 14,
-      fontFamily: fonts.regular,
+      fontFamily: fonts.medium,
       color: '#4E4B50'
     },
     content: {
-      backgroundColor: '#FFFFFF',
-      padding: 20,
       marginTop: 20,
-      borderRadius: 8,
+    },
+    infoView: {
+      marginTop: 25
     },
     rowCenter: {
       flexDirection: 'row', 
       alignItems: 'center', 
       justifyContent: 'space-around',
-      marginTop: 15
+      marginTop: 30
+    },
+    receiveOTPOptionBtn: {},
+    receiveOTPOptionLabel: {
+      color: colors.primaryButtonColor,
+      textDecorationLine: 'underline',
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      lineHeight: 16
     },
     noteView: {
       padding: 20,
@@ -59,7 +68,32 @@ const useMergeStyles = (
       fontSize: 10
     },
     btnBackToDashboard: {borderColor: colors.primaryButtonColor, borderWidth: 1, marginTop: 10},
-    labelBackToDashboard: {color: colors.primaryButtonColor}
+    labelBackToDashboard: {color: colors.primaryButtonColor},
+    countdownWrapper: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      paddingTop: 40,
+    },
+    notReceivedCodeLabel: {
+      fontFamily: fonts.regular,
+      fontSize: 14,
+      lineHeight: 24,
+      color: '#020000',
+    },
+    sendAnotherLabel: {
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      lineHeight: 24,
+      textDecorationLine: 'underline',
+      color: colors.primaryButtonColor,
+    },
+    durationLabel: {
+      fontFamily: fonts.regular,
+      fontSize: 14,
+      lineHeight: 24,
+      color: '#BAB7BB',
+    },
   });
   return defaultsDeep(style, defaultStyles);
 };

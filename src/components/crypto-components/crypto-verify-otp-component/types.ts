@@ -1,14 +1,13 @@
-import { StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
-export type CryptoReviewSummaryComponentProps = {
-  style?: CryptoReviewSummaryComponentStyles;
+export type CryptoVerifyOTPComponentProps = {
+  style?: CryptoVerifyOTPComponentStyles;
   props?: { 
-    onGoBack?: () => void;
-    onSuccess?: () => void;
+    onConfirmed: () => void;
   };
 };
 
-export type CryptoReviewSummaryComponentStyles = {
+export type CryptoVerifyOTPComponentStyles = {
   safeArea?: StyleProp<ViewStyle>;
   container?: StyleProp<ViewStyle>;
   pageTitle?: StyleProp<TextStyle>;
@@ -22,14 +21,8 @@ export type CryptoReviewSummaryComponentStyles = {
   noteView?: StyleProp<ViewStyle>;
   noteLabel?: StyleProp<TextStyle>;
   labelBackToDashboard?: StyleProp<TextStyle>;
+  sendAnotherLabel?: StyleProp<TextStyle>;
+  durationLabel?: StyleProp<TextStyle>;
+  notReceivedCodeLabel?: StyleProp<TextStyle>;
+  countdownWrapper?: StyleProp<ViewStyle>;
 };
-
-
-export type CryptoItem = {
-  id: string;
-  imageUrl: string;
-  shortName: string,
-  currentValue: string,
-  fullName: string,
-  rate: string
-}
