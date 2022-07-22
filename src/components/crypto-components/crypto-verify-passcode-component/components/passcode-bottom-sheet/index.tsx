@@ -1,7 +1,7 @@
 import ProgressCircle from '../progress-circle';
 import React, { useEffect, useState } from 'react';
-import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
-import { BottomSheet, Button, CheckBox } from 'react-native-theme-component';
+import { StyleProp, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { BottomSheet, Button } from 'react-native-theme-component';
 import useMergeStyles from './styles';
 
 export type PasscodeModalProps = {
@@ -23,7 +23,7 @@ export type PasscodeModalStyles = {
   actionsView?: StyleProp<ViewStyle>;
   btnCancel?: StyleProp<ViewStyle>;
   countdownCircleWrapper?: StyleProp<ViewStyle>;
-  labelBtnCancel?: StyleProp<TextStyle>; 
+  labelBtnCancel?: StyleProp<TextStyle>;
 };
 
 const PasscodeModal = ({
@@ -31,30 +31,31 @@ const PasscodeModal = ({
   isVisible,
   onClose,
   passcode,
-  countdownTime = 60
+  countdownTime = 60,
 }: PasscodeModalProps) => {
   const styles: PasscodeModalStyles = useMergeStyles(style);
   const maxCountDownTime = 60;
   const [cdTime, setCDTime] = useState<number>(countdownTime);
-  const progressPercent = (maxCountDownTime - cdTime) / maxCountDownTime * 100;
+  const progressPercent =
+    ((maxCountDownTime - cdTime) / maxCountDownTime) * 100;
 
   useEffect(() => {
-    if(cdTime > 0) {
+    if (cdTime > 0) {
       setTimeout(() => {
         setCDTime(cdTime - 1);
-      }, 1000)
+      }, 1000);
     }
   }, [cdTime]);
 
   const onContinue = () => {
-    console.log('onContinue')
+    console.log('onContinue');
     onClose();
-  }
+  };
 
   const onCancel = () => {
-    console.log('onContinue')
+    console.log('onContinue');
     onClose();
-  }
+  };
 
   return (
     <BottomSheet onBackButtonPress={onClose} isVisible={isVisible}>
@@ -65,24 +66,25 @@ const PasscodeModal = ({
         <View style={styles.content}>
           <Text style={styles.passcode}>{passcode}</Text>
           <View style={styles.countdownCircleWrapper}>
-            <ProgressCircle 
-              width={125} 
-              label={`${cdTime}`} 
-              percent={progressPercent} color={'#3E2D68'} 
+            <ProgressCircle
+              width={125}
+              label={`${cdTime}`}
+              percent={progressPercent}
+              color={'#3E2D68'}
             />
           </View>
         </View>
         <View style={styles.actionsView}>
           <Button label={'Continue'} onPress={onContinue} />
-          <Button 
-            label={'Cancel'} 
-            onPress={onCancel} 
+          <Button
+            label={'Cancel'}
+            onPress={onCancel}
             bgColor={'#FFFFFF'}
             style={{
               primaryContainerStyle: styles.btnCancel,
               primaryLabelStyle: styles.labelBtnCancel,
             }}
-            />
+          />
         </View>
       </View>
     </BottomSheet>

@@ -6,7 +6,7 @@ import useMergeStyles from './styles';
 import { ArrowRightIcon } from '../../assets/images';
 
 const MarketPricesComponent = forwardRef(
-  ({ Root }: MarketPriceComponentProps,ref) => {
+  ({ Root }: MarketPriceComponentProps, ref) => {
     const { style, props } = Root || {};
 
     const styles = useMergeStyles(style);

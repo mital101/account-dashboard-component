@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import {StyleSheet, View, Text, ColorValue} from 'react-native';
-import Svg, {G, Circle, Color} from 'react-native-svg';
+import { StyleSheet, View, Text } from 'react-native';
+import Svg, { G, Circle } from 'react-native-svg';
 import { ThemeContext } from 'react-native-theme-component';
 
 type LoadingTransactionProps = {
@@ -10,12 +10,11 @@ type LoadingTransactionProps = {
   width?: number;
 };
 
-
 const LoadingTransaction: React.FC<LoadingTransactionProps> = ({
   percent = 0,
   color,
   width,
-  label
+  label,
 }) => {
   const { fonts, colors } = useContext(ThemeContext);
   const diameter = width ? width / 2 : 100;
@@ -40,7 +39,7 @@ const LoadingTransaction: React.FC<LoadingTransactionProps> = ({
     valueProgress: {
       fontFamily: fonts.medium,
       fontSize: 16,
-      color: strokeColor
+      color: strokeColor,
     },
   });
 
@@ -49,7 +48,8 @@ const LoadingTransaction: React.FC<LoadingTransactionProps> = ({
       <Svg
         width={diameter}
         height={diameter}
-        viewBox={`0 0 ${viewBox * 2} ${viewBox * 2}`}>
+        viewBox={`0 0 ${viewBox * 2} ${viewBox * 2}`}
+      >
         <G rotation={'-90'} origin={`${viewBox}, ${viewBox}`}>
           <Circle
             cx="50%"

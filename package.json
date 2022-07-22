@@ -1,7 +1,7 @@
 {
   "name": "@banking-component/wallet-component",
   "private": true,
-  "version": "1.9.43",
+  "version": "1.9.44",
   "description": "Manage wallets/transactions",
   "repository": {
     "type": "git",
@@ -45,5 +45,13 @@
     "react-native-view-shot": "^3.1.2",
     "rn-fetch-blob": "^0.12.0",
     "yup": "^0.32.11"
+  },
+  "peerDependencies": {
+    "react-native-snap-carousel": "^3.9.1",
+    "react-native-view-shot": "^3.1.2",
+    "@react-native-community/cameraroll": "^4.1.2",
+    "react-native-fs": "^2.19.0",
+    "react-native-share": "7.3.2",
+    "react-native-progress": "^5.0.0"
   }
 }

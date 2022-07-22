@@ -1,8 +1,8 @@
-import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 export type CryptoVerifyOTPComponentProps = {
   style?: CryptoVerifyOTPComponentStyles;
-  props?: { 
+  props?: {
     onConfirmed: () => void;
   };
 };

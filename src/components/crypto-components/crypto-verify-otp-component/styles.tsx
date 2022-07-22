@@ -1,7 +1,7 @@
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
-import { CryptoVerifyOTPComponentStyles } from '@banking-component/wallet-component/src/components/crypto-components/crypto-verify-otp-component/types';
+import { CryptoVerifyOTPComponentStyles } from './types';
 import { ThemeContext } from 'react-native-theme-component';
 
 const useMergeStyles = (
@@ -16,7 +16,7 @@ const useMergeStyles = (
     container: {
       paddingHorizontal: 25,
       flex: 1,
-      backgroundColor: '#F1F6FC'
+      backgroundColor: '#F1F6FC',
     },
     pageTitle: {
       fontSize: 24,
@@ -29,24 +29,24 @@ const useMergeStyles = (
       paddingHorizontal: 25,
     },
     pageSubTitleView: {
-      marginTop: 20
+      marginTop: 20,
     },
     pageSubTitle: {
       fontSize: 14,
       fontFamily: fonts.medium,
-      color: '#4E4B50'
+      color: '#4E4B50',
     },
     content: {
       marginTop: 20,
     },
     infoView: {
-      marginTop: 25
+      marginTop: 25,
     },
     rowCenter: {
-      flexDirection: 'row', 
-      alignItems: 'center', 
+      flexDirection: 'row',
+      alignItems: 'center',
       justifyContent: 'space-around',
-      marginTop: 30
+      marginTop: 30,
     },
     receiveOTPOptionBtn: {},
     receiveOTPOptionLabel: {
@@ -54,21 +54,25 @@ const useMergeStyles = (
       textDecorationLine: 'underline',
       fontFamily: fonts.medium,
       fontSize: 14,
-      lineHeight: 16
+      lineHeight: 16,
     },
     noteView: {
       padding: 20,
       marginTop: 20,
       borderRadius: 8,
-      backgroundColor: '#DDD9E4'
+      backgroundColor: '#DDD9E4',
     },
     noteLabel: {
       color: '#1D1C1D',
       fontFamily: fonts.regular,
-      fontSize: 10
+      fontSize: 10,
     },
-    btnBackToDashboard: {borderColor: colors.primaryButtonColor, borderWidth: 1, marginTop: 10},
-    labelBackToDashboard: {color: colors.primaryButtonColor},
+    btnBackToDashboard: {
+      borderColor: colors.primaryButtonColor,
+      borderWidth: 1,
+      marginTop: 10,
+    },
+    labelBackToDashboard: { color: colors.primaryButtonColor },
     countdownWrapper: {
       flex: 1,
       flexDirection: 'row',

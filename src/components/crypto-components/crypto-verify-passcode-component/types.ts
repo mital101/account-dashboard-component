@@ -1,10 +1,10 @@
-import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 export type CryptoVerifyPasscodeComponentProps = {
   style?: CryptoVerifyPasscodeComponentStyles;
-  props?: { 
-    onSwitchToVerifyOTP?: () => void,
-    onConfirmed?: () => void
+  props?: {
+    onSwitchToVerifyOTP?: () => void;
+    onConfirmed?: () => void;
   };
 };
 

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import {StyleSheet, View, Text, ColorValue} from 'react-native';
-import Svg, {G, Circle, Color} from 'react-native-svg';
+import { StyleSheet, View, Text } from 'react-native';
+import Svg, { G, Circle } from 'react-native-svg';
 import { ThemeContext } from 'react-native-theme-component';
 
 type ProgressCircleProps = {
@@ -10,18 +10,16 @@ type ProgressCircleProps = {
   width?: number;
 };
 
-
 const ProgressCircle: React.FC<ProgressCircleProps> = ({
   percent = 0,
   color,
   width,
-  label
+  label,
 }) => {
   const { fonts, colors } = useContext(ThemeContext);
   const diameter = width ? width / 2 : 100;
   const radius = diameter / 2;
   const circleStrokeWidth = 7;
-  const inActiveStrokeOpacity = 0.2;
   const viewBox = radius + circleStrokeWidth;
   const circleCircumference = 2 * Math.PI * radius;
   const strokeColor = color || colors.primaryButtonColor || '#000000';
@@ -41,7 +39,7 @@ const ProgressCircle: React.FC<ProgressCircleProps> = ({
     valueProgress: {
       fontFamily: fonts.medium,
       fontSize: 16,
-      color: strokeColor
+      color: strokeColor,
     },
   });
 
@@ -50,7 +48,8 @@ const ProgressCircle: React.FC<ProgressCircleProps> = ({
       <Svg
         width={diameter}
         height={diameter}
-        viewBox={`0 0 ${viewBox * 2} ${viewBox * 2}`}>
+        viewBox={`0 0 ${viewBox * 2} ${viewBox * 2}`}
+      >
         <G rotation={'-90'} origin={`${viewBox}, ${viewBox}`}>
           <Circle
             cx="50%"
