@@ -81,12 +81,10 @@ const CryptoTransactionDetailsComponent = forwardRef(
     };
 
     return (
-      <SafeAreaView>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-        >
+      <View style={styles.containerWrapper}>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <ViewShot ref={refViewShot} style={styles.container}>
-          <Text style={styles.pageTitle}>{'Transaction Details'}</Text>
+            <Text style={styles.pageTitle}>{'Transaction Details'}</Text>
             <View style={styles.content}>
               <RowInfo
                 props={{
@@ -127,27 +125,26 @@ const CryptoTransactionDetailsComponent = forwardRef(
                 }}
               />
             </View>
-          <View>
-            <View style={styles.rowBetween}>
-              <Text style={styles.infoTitle}>Transaction Date / Time</Text>
-              <Text style={styles.infoSubTitle}>Nov 2, 2021 / 07:10 AM</Text>
+            <View>
+              <View style={styles.rowBetween}>
+                <Text style={styles.infoTitle}>Transaction Date / Time</Text>
+                <Text style={styles.infoSubTitle}>Nov 2, 2021 / 07:10 AM</Text>
+              </View>
+              <View style={styles.rowBetween}>
+                <Text style={styles.infoTitle}>Reference No.</Text>
+                <Text style={styles.infoSubTitle}>ABCDE12345676789</Text>
+              </View>
             </View>
-            <View style={styles.rowBetween}>
-              <Text style={styles.infoTitle}>Reference No.</Text>
-              <Text style={styles.infoSubTitle}>ABCDE12345676789</Text>
+            <View style={styles.logoContainer}>
+              <UnionDigitalBankIcon height={40} width={150} />
             </View>
-          </View>
-          <View style={styles.logoContainer}>
-            <UnionDigitalBankIcon height={40} width={150} />
-          </View>
+            <View style={styles.marginVertical} />
           </ViewShot>
-          <View style={styles.marginVertical} />
-          <View style={styles.shareContainer}>
-            <Button label="Share" onPress={onShare} />
-          </View>
-          <View style={styles.marginVertical} />
         </ScrollView>
-      </SafeAreaView>
+        <View style={styles.shareContainer}>
+          <Button label="Share" onPress={onShare} />
+        </View>
+      </View>
     );
   }
 );
