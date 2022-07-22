@@ -1,5 +1,5 @@
 import ProgressCircle from '../progress-circle';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleProp, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { BottomSheet, Button, CheckBox } from 'react-native-theme-component';
 import useMergeStyles from './styles';
@@ -35,7 +35,16 @@ const PasscodeModal = ({
 }: PasscodeModalProps) => {
   const styles: PasscodeModalStyles = useMergeStyles(style);
   const maxCountDownTime = 60;
-  const progressPercent = (maxCountDownTime - countdownTime) / maxCountDownTime * 100;
+  const [cdTime, setCDTime] = useState<number>(countdownTime);
+  const progressPercent = (maxCountDownTime - cdTime) / maxCountDownTime * 100;
+
+  useEffect(() => {
+    if(cdTime > 0) {
+      setTimeout(() => {
+        setCDTime(cdTime - 1);
+      }, 1000)
+    }
+  }, [cdTime]);
 
   const onContinue = () => {
     console.log('onContinue')
@@ -58,7 +67,7 @@ const PasscodeModal = ({
           <View style={styles.countdownCircleWrapper}>
             <ProgressCircle 
               width={125} 
-              label={`${countdownTime}`} 
+              label={`${cdTime}`} 
               percent={progressPercent} color={'#3E2D68'} 
             />
           </View>

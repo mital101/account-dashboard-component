@@ -14,6 +14,9 @@ const useMergeStyles = (
       paddingHorizontal: 25,
       backgroundColor: '#F1F6FC'
     },
+    containerWrapper: {
+      flex: 1
+    },
     pageTitle: {
       fontSize: 24,
       fontFamily: fonts.medium,
@@ -39,6 +42,7 @@ const useMergeStyles = (
     },
     shareContainer: {
       marginTop: 15,
+      paddingHorizontal: 20
     },
     infoTitle: {
       color: '#7F7B82',
