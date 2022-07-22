@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import useMergeStyles from './styles';
-import RowInfo from './row-info/';
+import RowInfo from '../../row-info';
 import { UnionDigitalBankIcon } from '../../../assets/images';
 import { Button } from 'react-native-theme-component';
 import ViewShot from 'react-native-view-shot';
@@ -83,11 +83,10 @@ const CryptoTransactionDetailsComponent = forwardRef(
     return (
       <SafeAreaView>
         <ScrollView
-          style={styles.container}
           showsVerticalScrollIndicator={false}
         >
+          <ViewShot ref={refViewShot} style={styles.container}>
           <Text style={styles.pageTitle}>{'Transaction Details'}</Text>
-          <ViewShot ref={refViewShot}>
             <View style={styles.content}>
               <RowInfo
                 props={{
@@ -128,7 +127,6 @@ const CryptoTransactionDetailsComponent = forwardRef(
                 }}
               />
             </View>
-          </ViewShot>
           <View>
             <View style={styles.rowBetween}>
               <Text style={styles.infoTitle}>Transaction Date / Time</Text>
@@ -142,11 +140,12 @@ const CryptoTransactionDetailsComponent = forwardRef(
           <View style={styles.logoContainer}>
             <UnionDigitalBankIcon height={40} width={150} />
           </View>
-          <View style={{ height: 70 }} />
+          </ViewShot>
+          <View style={styles.marginVertical} />
           <View style={styles.shareContainer}>
             <Button label="Share" onPress={onShare} />
           </View>
-          <View style={{ height: 70 }} />
+          <View style={styles.marginVertical} />
         </ScrollView>
       </SafeAreaView>
     );

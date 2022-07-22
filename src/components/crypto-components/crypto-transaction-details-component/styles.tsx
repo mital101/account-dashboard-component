@@ -11,8 +11,8 @@ const useMergeStyles = (
 
   const defaultStyles = StyleSheet.create({
     container: {
-      height: '100%',
       paddingHorizontal: 25,
+      backgroundColor: '#F1F6FC'
     },
     pageTitle: {
       fontSize: 24,
@@ -50,6 +50,7 @@ const useMergeStyles = (
       fontSize: 12,
       fontFamily: fonts.regular,
     },
+    marginVertical: { height: 70 }
   });
   return defaultsDeep(style, defaultStyles);
 };

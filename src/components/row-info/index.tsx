@@ -11,7 +11,7 @@ import {
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { ThemeContext } from 'react-native-theme-component';
-import { ContactCopyIcon } from '../../../../../src/assets/images';
+import { ContactCopyIcon } from '../../assets/images';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 export type RowInfoProps = {
@@ -71,6 +71,7 @@ const useMergeStyles = (style?: RowInfoStyle): RowInfoStyle => {
       fontSize: 14,
       fontFamily: fonts.regular,
       maxWidth: '85%',
+      lineHeight: 27
     },
     rowBetween: {
       flexDirection: 'row',
