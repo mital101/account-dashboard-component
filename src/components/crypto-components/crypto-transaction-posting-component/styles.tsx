@@ -15,50 +15,50 @@ const useMergeStyles = (
     },
     container: {
       padding: 20,
-      flex: 1
+      flex: 1,
     },
     columnBetween: {
-      flex: 1, 
-      justifyContent: 'space-around'
+      flex: 1,
+      justifyContent: 'space-around',
     },
     errorContentWrapper: {
       flex: 1,
       alignItems: 'center',
-      paddingBottom: 50
+      paddingBottom: 50,
     },
     errorTitleWrapper: {
       alignItems: 'center',
     },
     errorMessageWrapper: {
-      marginTop: 24
+      marginTop: 24,
     },
     errorMessageLabel: {
       color: '#FFFFFF',
       fontSize: 16,
       fontFamily: fonts.medium,
-      textAlign: 'center'
+      textAlign: 'center',
     },
     iconErrorWrapper: {
-      marginBottom: 30
+      marginBottom: 30,
     },
     statusLabel: {
       color: '#E06D6D',
       fontSize: 24,
       fontFamily: fonts.medium,
-      lineHeight: 36
+      lineHeight: 36,
     },
     containerFailed: {
       padding: 20,
       flex: 1,
-      backgroundColor: '#3E2D68'
+      backgroundColor: '#3E2D68',
     },
     containerCenter: {
       flex: 1,
       alignItems: 'center',
-      justifyContent: 'space-around'
+      justifyContent: 'space-around',
     },
     content: {
-      alignItems: 'center'
+      alignItems: 'center',
     },
     contentSuccess: {
       marginBottom: 20,
@@ -71,46 +71,46 @@ const useMergeStyles = (
       color: '#4E4B50',
       lineHeight: 24,
       fontSize: 14,
-      fontFamily: fonts.regular
+      fontFamily: fonts.regular,
     },
     subTitleSuccessWrapper: {
-      marginTop: 25
+      marginTop: 25,
     },
     title: {
       color: '#3E2D68',
       fontSize: 24,
-      fontFamily: fonts.medium
+      fontFamily: fonts.medium,
     },
     titleSuccess: {
       fontSize: 24,
       color: '#2E7D32',
-      fontFamily: fonts.medium
+      fontFamily: fonts.medium,
     },
     subTitleWrapper: {
       marginTop: 25,
       marginBottom: 50,
-      maxWidth: '80%'
+      maxWidth: '80%',
     },
-    circleProgressWrapper:{
-      marginTop: 15
+    circleProgressWrapper: {
+      marginTop: 15,
     },
     subTitle: {
       fontSize: 16,
       color: '#7F7B82',
       fontFamily: fonts.medium,
-      textAlign: 'center'
+      textAlign: 'center',
     },
     completedTextColor: {
       color: '#2E7D32',
       fontFamily: fonts.medium,
-      fontSize: 14
+      fontSize: 14,
     },
     btnTransparent: {
-      borderColor: colors.primaryButtonColor, 
-      borderWidth: 1, 
-      marginTop: 10
+      borderColor: colors.primaryButtonColor,
+      borderWidth: 1,
+      marginTop: 10,
     },
-    labelBtnTransaprent: {color: colors.primaryButtonColor},
+    labelBtnTransaprent: { color: colors.primaryButtonColor },
     rowBetween: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -134,16 +134,16 @@ const useMergeStyles = (
       fontFamily: fonts.regular,
     },
     errorInfoTitleColor: {
-      color: '#FFFFFF'
+      color: '#FFFFFF',
     },
     logoContainer: {
       alignItems: 'center',
       marginTop: 20,
-      marginBottom: 35
+      marginBottom: 35,
     },
     btnActionsWrapper: {
-      marginBottom: 20
-    }
+      marginBottom: 20,
+    },
   });
   return defaultsDeep(style, defaultStyles);
 };
