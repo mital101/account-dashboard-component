@@ -1,7 +1,7 @@
 {
   "name": "@banking-component/wallet-component",
   "private": true,
-  "version": "1.9.41",
+  "version": "1.9.43",
   "description": "Manage wallets/transactions",
   "repository": {
     "type": "git",
