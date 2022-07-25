@@ -1,12 +1,12 @@
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
-import { CryptoReviewSummaryComponentStyles } from './types';
+import { CryptoTransferOutReviewSummaryComponentStyles } from './types';
 import { ThemeContext } from 'react-native-theme-component';
 
 const useMergeStyles = (
-  style?: CryptoReviewSummaryComponentStyles
-): CryptoReviewSummaryComponentStyles => {
+  style?: CryptoTransferOutReviewSummaryComponentStyles
+): CryptoTransferOutReviewSummaryComponentStyles => {
   const { fonts, colors } = useContext(ThemeContext);
 
   const defaultStyles = StyleSheet.create({
@@ -42,8 +42,8 @@ const useMergeStyles = (
       borderRadius: 8,
     },
     rowCenter: {
-      flexDirection: 'row', 
-      alignItems: 'center', 
+      flexDirection: 'row',
+      alignItems: 'center',
       justifyContent: 'space-around',
       marginTop: 15
     },

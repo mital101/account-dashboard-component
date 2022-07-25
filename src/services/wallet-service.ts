@@ -141,8 +141,6 @@ export class WalletService {
       });
       return response.data;
     } else {
-      console.log('eeeeeeeeeeeeee');
-
       throw new Error('Content Template Client is not registered');
     }
   };

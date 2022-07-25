@@ -1,12 +1,12 @@
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
-import { CryptoVerifyOTPComponentStyles } from './types';
+import { CryptoTransferOutVerifyOTPComponentStyles } from './types';
 import { ThemeContext } from 'react-native-theme-component';
 
 const useMergeStyles = (
-  style?: CryptoVerifyOTPComponentStyles
-): CryptoVerifyOTPComponentStyles => {
+  style?: CryptoTransferOutVerifyOTPComponentStyles
+): CryptoTransferOutVerifyOTPComponentStyles => {
   const { fonts, colors } = useContext(ThemeContext);
 
   const defaultStyles = StyleSheet.create({

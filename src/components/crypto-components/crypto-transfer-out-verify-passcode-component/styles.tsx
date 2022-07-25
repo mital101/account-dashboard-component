@@ -1,12 +1,12 @@
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
-import { CryptoVerifyPasscodeComponentStyles } from './types';
+import { CryptoTransferOutVerifyPasscodeComponentStyles } from './types';
 import { ThemeContext } from 'react-native-theme-component';
 
 const useMergeStyles = (
-  style?: CryptoVerifyPasscodeComponentStyles
-): CryptoVerifyPasscodeComponentStyles => {
+  style?: CryptoTransferOutVerifyPasscodeComponentStyles
+): CryptoTransferOutVerifyPasscodeComponentStyles => {
   const { fonts, colors } = useContext(ThemeContext);
 
   const defaultStyles = StyleSheet.create({

@@ -1,12 +1,12 @@
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
-import { CryptoTransactionPostingComponentStyles } from './types';
+import { CryptoTransferOutTransactionSuccessComponentStyles } from './types';
 import { ThemeContext } from 'react-native-theme-component';
 
 const useMergeStyles = (
-  style?: CryptoTransactionPostingComponentStyles
-): CryptoTransactionPostingComponentStyles => {
+  style?: CryptoTransferOutTransactionSuccessComponentStyles
+): CryptoTransferOutTransactionSuccessComponentStyles => {
   const { fonts, colors } = useContext(ThemeContext);
 
   const defaultStyles = StyleSheet.create({
