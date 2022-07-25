@@ -8,6 +8,7 @@ export type CryptoTransferOutDetailComponentProps = {
   onGoBack: () => void;
   isError?: boolean;
   defaultData: any;
+  onTransfer: () => void;
 };
 
 export type CryptoTransferOutDetailComponentStyles = {

@@ -51,7 +51,8 @@ const CryptoTransferOutDetailComponent = ({
   goToAccountLimit,
   onGoBack,
   isError = true,
-  defaultData
+  defaultData,
+  onTransfer
 }: CryptoTransferOutDetailComponentProps) => {
   // const { onSelectCrypto, isError = true, onTransferOutPHP, goToAccountLimit ,onGoBack} = props || {};
   const formikRef: any = useRef(null);
@@ -62,9 +63,8 @@ const CryptoTransferOutDetailComponent = ({
   const isValidToSubmit =
     selectedTabIndex === 0 ? transferValue > 0 : !!selectedCrypto;
 
-  console.log("defaultData ", defaultData);
 
-  const handleOnSignIn = async (values: SendCryptoData) => {
+  const handleOnSubmit = async (values: SendCryptoData) => {
     Keyboard.dismiss();
     const { username, password } = values;
     console.log("values ", values);
@@ -307,7 +307,7 @@ const CryptoTransferOutDetailComponent = ({
             '',
           )}
           validationSchema={SendCryptoSchema}
-          onSubmit={handleOnSignIn}
+          onSubmit={handleOnSubmit}
         >
           {renderForm}
         </Formik>*/}
@@ -315,7 +315,7 @@ const CryptoTransferOutDetailComponent = ({
           innerRef={formikRef}
           initialValues={RecipientData.init("", "", "")}
           validationSchema={RecipientSchema}
-          onSubmit={handleOnSignIn}
+          onSubmit={handleOnSubmit}
         >
           {renderRecipientForm}
         </Formik>
@@ -324,8 +324,8 @@ const CryptoTransferOutDetailComponent = ({
         <Button
           label={selectedTabIndex === 0 ? "Transfer-out PHP" : "Select"}
           onPress={() => {
-            formikRef?.current?.submitForm();
-            // selectedTabIndex === 0 ? onTransferOutPHP() : onSelectCrypto(cryptoDummyData[selectedCrypto-1])
+            // formikRef?.current?.submitForm();
+            onTransfer()
           }}
           // disabled={!isValidToSubmit}
           disableColor={"#EAEAEB"}
