@@ -5,15 +5,17 @@ export type MarketPriceComponentProps = {
   Root?: {
     style?: MarketPriceComponentStyles;
     props?: {
-      onSearchingFinished: () => void;
-      searchInputProps: SearchInputProps;
+      onSearchingCrypto?: () => void;
+      searchInputProps?: SearchInputProps;
+      onViewAllCrypto?: () => void;
+      onSelectItemCurrency?: (idCurrency: string) => void;
     };
   };
 };
 
 export type MarketPriceComponentStyles = {
   container?: StyleProp<ViewStyle>;
-  imageWrapper?: StyleProp<ViewStyle>;
+  contentWrapper?: StyleProp<ViewStyle>;
   image?: StyleProp<ImageStyle>;
   header?: StyleProp<ViewStyle>;
   title?: StyleProp<TextStyle>;

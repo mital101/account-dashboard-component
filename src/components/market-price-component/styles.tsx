@@ -12,12 +12,12 @@ const useMergeStyles = (style?: MarketPriceComponentStyles): MarketPriceComponen
       paddingHorizontal: 15,
       backgroundColor: colors.mainBackgroundColor,
     },
-    imageWrapper: {
-      height: 300,
-    },
     image: {
       width: '100%',
       height: '100%',
+    },
+    contentWrapper: {
+      paddingBottom: 20
     },
     header: {
       flexDirection: 'row',

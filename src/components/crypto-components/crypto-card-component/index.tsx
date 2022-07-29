@@ -29,6 +29,7 @@ import MarketPricesComponent from '../../market-price-component';
 import { Wallet, Transaction } from '../../../model';
 import { WalletItemComponentStyle } from '../../wallet-card-component/wallet-item-component';
 import { TransactionCardComponentStyles } from '../../wallet-card-component/transaction-card-component';
+import { WalletContext } from '@banking-component/wallet-component/src/context/wallet-context';
 
 export type CryptoCardComponentProps = {
   style?: CryptoCardComponentStyles;
@@ -40,11 +41,14 @@ export type CryptoCardComponentProps = {
   onAddMoney: (wallet: Wallet) => void;
   onSendMoney: (wallet: Wallet) => void;
   onViewAllTransactions: (wallet: Wallet) => void;
+  onViewAllCrypto: () => void;
   onTrade: () => void;
   onLinkAccount: () => void;
   onViewAccount: () => void;
   onTransferIn: () => void;
   onTransferOut: () => void;
+  onSearchingCrypto: () => void;
+  onSelectItemCurrency: (idCurrency: string) => void;
   children?: ReactNode;
   isActive?: boolean;
 };
@@ -85,7 +89,10 @@ const CryptoCardComponent = ({
   children,
   isActive,
   onTransferIn,
-  onTransferOut
+  onTransferOut,
+  onViewAllCrypto,
+  onSearchingCrypto,
+  onSelectItemCurrency,
 }: CryptoCardComponentProps) => {
   const { colors, i18n } = useContext(ThemeContext);
 
@@ -96,7 +103,7 @@ const CryptoCardComponent = ({
   const [showSliderTips, setSliderTips] = useState<boolean>(false);
   const [ref, setRef] = useState(null);
   const { profile } = useContext(AuthContext);
-
+  const { getAccountStatus } = useContext(WalletContext);
 
   // useEffect(() => {
   //   if (ref) {
@@ -110,6 +117,7 @@ const CryptoCardComponent = ({
   // },[ref]);
 
   useEffect(() => {
+    getAccountStatus();
     if (isActive) {
       setTooltipVisible(true);
     }
@@ -202,8 +210,12 @@ const CryptoCardComponent = ({
                     onTipsTerminated={() => {
                       setTransferTips(false);
                     }}
-                    onClickTrade={()=>{onTrade()}}
-                    onViewAccount={()=>{onViewAccount()}}
+                    onClickTrade={() => {
+                      onTrade();
+                    }}
+                    onViewAccount={() => {
+                      onViewAccount();
+                    }}
                     isShowTips={showTransferTips}
                     onTransferIn={onTransferIn}
                     onTransferOut={onTransferOut}
@@ -214,7 +226,15 @@ const CryptoCardComponent = ({
           )}
           <View style={styles.emptyCarouselContainerStyle}>
             <View style={{ marginHorizontal: 15 }}>
-              <MarketPricesComponent />
+              <MarketPricesComponent
+                Root={{
+                  props: {
+                    onViewAllCrypto,
+                    onSearchingCrypto,
+                    onSelectItemCurrency,
+                  },
+                }}
+              />
             </View>
             <Tooltip
               isVisible={showHelpTips}

@@ -6,6 +6,7 @@ import * as Progress from 'react-native-progress';
 import RowInfo from '../../row-info';
 import { Button } from 'react-native-theme-component';
 import { InfoIcon, UnionDigitalBankIcon } from '../../../assets/images';
+import LoadingSpinner from '../../loading-spinner';
 
 const CryptoTransactionPostingComponent = ({
   props,
@@ -35,13 +36,7 @@ const CryptoTransactionPostingComponent = ({
             </Text>
           </View>
           <View style={styles.circleProgressWrapper}>
-            <Progress.Circle
-              size={60}
-              endAngle={0.75}
-              indeterminate={true}
-              borderWidth={6}
-              borderColor={'#3E2D68'}
-            />
+            <LoadingSpinner />
           </View>
         </View>
       </View>

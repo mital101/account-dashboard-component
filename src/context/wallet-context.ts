@@ -11,7 +11,8 @@ import {
   Wallet,
   WalletSummary,
   WalletTransaction,
-  CryptoTCData
+  CryptoTCData,
+  CurrencyExchangeRateData,
 } from '../model';
 import _, { chain, groupBy, isEmpty, orderBy } from 'lodash';
 
@@ -65,7 +66,11 @@ export interface WalletContextData {
   clearTransactions: () => void;
   getCryptoTcData: (templateName:string,appId:string,entityId:string,format:string) => void;
   isLoadingCryptoTC: boolean;
-  cryptoTC: CryptoTCData;
+  cryptoTC?: CryptoTCData;
+  isLoadingCryptoExchange: boolean;
+  cryptoExchangeData?: CurrencyExchangeRateData[];
+  getCryptoExchangeData: (limit?: number) => void;
+  getAccountStatus: () => void;
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -102,7 +107,11 @@ export const walletDefaultValue: WalletContextData = {
   getTransactionByWalletId: () => undefined,
   getCryptoTcData: () => null,
   isLoadingCryptoTC: true,
-  cryptoTC:undefined
+  cryptoTC: undefined,
+  getCryptoExchangeData: () => undefined,
+  isLoadingCryptoExchange: false,
+  cryptoExchangeData: [],
+  getAccountStatus: () => undefined
 };
 
 export const WalletContext = React.createContext<WalletContextData>(walletDefaultValue);
@@ -130,6 +139,9 @@ export function useWalletContextValue(): WalletContextData {
 
   const [_isLoadingCryptoTC, setIsLoadingCryptoTC] = useState(true);
   const [_cryptoTC, setCryptoTC] = useState<CryptoTCData| undefined>();
+
+  const [_isLoadingCryptoExchange, setIsLoadingCryptoExchange] = useState(true);
+  const [_cryptoExchangeData, setCryptoExchangeData] = useState<CurrencyExchangeRateData[] | undefined>();
 
   const getWallets = useCallback(async () => {
     try {
@@ -521,6 +533,18 @@ export function useWalletContextValue(): WalletContextData {
     setTransactions([]);
   }, []);
 
+
+  const getAccountStatus = useCallback(() => {
+    walletService.getAccountStatus();
+  }, []);
+
+  const getCryptoExchangeData = useCallback(async (limit?: number) => {
+    setIsLoadingCryptoExchange(true);
+    const result = await walletService.getCurrenciesExchangeRate(1, limit ?? 100, 'PHP');
+    setCryptoExchangeData(result.data);
+    setIsLoadingCryptoExchange(false);
+  }, []);
+
   return useMemo(
     () => ({
       wallets: _wallets,
@@ -564,6 +588,10 @@ export function useWalletContextValue(): WalletContextData {
       isLoadingCryptoTC: _isLoadingCryptoTC,
       cryptoTC: _cryptoTC,
       getCryptoTcData,
+      getCryptoExchangeData,
+      isLoadingCryptoExchange: _isLoadingCryptoExchange,
+      cryptoExchangeData: _cryptoExchangeData,
+      getAccountStatus: getAccountStatus
     }),
     [
       _isLinkedSuccessfully,
@@ -587,7 +615,9 @@ export function useWalletContextValue(): WalletContextData {
       _isRefreshingTransaction,
       _isLoadingWallets,
       _isLoadingCryptoTC,
-      _cryptoTC
+      _cryptoTC,
+      _isLoadingCryptoExchange,
+      _cryptoExchangeData
     ]
   );
 }

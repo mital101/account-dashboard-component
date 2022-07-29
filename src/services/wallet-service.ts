@@ -1,8 +1,14 @@
+import { AuthServices } from "react-native-auth-component";
+
 type WalletClient = {
   walletClient: any;
   financialClient: any;
   contentTemplateClient: any;
+  exchangeRateClient: any;
 };
+
+
+
 
 export class WalletService {
   private static _instance: WalletService = new WalletService();
@@ -10,6 +16,8 @@ export class WalletService {
   private _walletClient?: any;
   private _financialClient?: any;
   private _contentTemplateClient?: any;
+  private _exchangeRateClient?: any;
+  private authService = AuthServices.instance();
 
   constructor() {
     if (WalletService._instance) {
@@ -28,6 +36,7 @@ export class WalletService {
     this._walletClient = clients.walletClient;
     this._financialClient = clients.financialClient;
     this._contentTemplateClient = clients.contentTemplateClient;
+    this._exchangeRateClient = clients.exchangeRateClient;
   };
 
   getWallets = async () => {
@@ -144,4 +153,27 @@ export class WalletService {
       throw new Error('Content Template Client is not registered');
     }
   };
+
+  getCurrenciesExchangeRate = async (pageNum?: number, pageSize?: number, toCurrency?: string) => {
+    console.log('getCurrenciesExchangeRate', this._exchangeRateClient);
+    if (this._exchangeRateClient) {
+      const response = await this._exchangeRateClient.get('currencies/exchange-rates', {
+        params: {
+          pageNum: pageNum,
+          pageSize: pageSize,
+          toCurrency: toCurrency
+        }
+      });
+      console.log('response', response)
+      return response.data;
+    } else {
+      throw new Error('Exchange rate client service is not registered');
+    }
+  };
+
+  getAccountStatus = async () => {
+    console.log('getAccountStatus -> init');
+    const token = await this.authService.fetchAppAccessToken();
+    console.log('getAccountStatus -> app token', token);
+  }
 }
