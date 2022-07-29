@@ -12,7 +12,7 @@ import {
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { ThemeContext } from 'react-native-theme-component';
-import { CurrencyExchangeRateData } from '@banking-component/wallet-component/src/model';
+import { CurrencyExchangeRateData } from '../../model';
 import { LineChart } from 'react-native-svg-charts';
 
 export type RowCurrencyProps = {
@@ -31,23 +31,6 @@ export type RowCurrencyStyle = {
 const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
   const styles = useMergeStyles(style);
 
-  const data = [
-    { x: 1453593600, y: 2.1 },
-    { x: 1453680000, y: 2.5 },
-    { x: 1453766400, y: 2.3 },
-    { x: 1453852800, y: 2.42 },
-    { x: 1453939200, y: 2.55 },
-    { x: 1454025600, y: 2.41 },
-    { x: 1454112000, y: 2.43 },
-    { x: 1454198400, y: 2.2 },
-  ];
-
-  const arrayMin = (arr: number[]) => {
-    return arr.reduce(function (p, v) {
-      return p < v ? p : v;
-    });
-  };
-
   const arrayMax = (arr: number[]) => {
     return arr.reduce(function (p, v) {
       return p > v ? p : v;
@@ -58,14 +41,12 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
     onSelect && onSelect(currency.id);
   };
 
-  const randomCryptoImgUrl =
-    'https://cdn.pixabay.com/photo/2017/03/12/02/57/bitcoin-2136339_960_720.png';
-
   const dataValue = [
     2.456, 1.2, 1.5, 1.7, 1.8, 1.9, 2.3, 2.02, 2.456, 2.556, 2.6556, 2.556,
     2.6556, 2.556, 2.006, 1.2, 1.5, 1.7, 1.8, 1.9, 2.3, 2.02, 2.456, 2.556,
     2.6556, 2.556, 2.006, 1.2, 1.5, 1.7, 1.8, 1.9, 2.3, 2.0,
   ];
+
   const max = arrayMax(dataValue);
 
   const dataLine = dataValue.map((n) => (n / max) * 100);
@@ -79,7 +60,7 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
       <View style={[styles.row, { height: '100%' }]}>
         <Image
           source={{
-            uri: currency.fromCurrency.symbolGraphic.replace('sgv', 'png'),
+            uri: currency.fromCurrency.symbolGraphic,
           }}
           style={styles.image}
         />

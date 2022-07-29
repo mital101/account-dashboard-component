@@ -71,7 +71,7 @@ const useMergeStyles = (style?: RowInfoStyle): RowInfoStyle => {
       fontSize: 14,
       fontFamily: fonts.regular,
       maxWidth: '85%',
-      lineHeight: 27
+      lineHeight: 27,
     },
     rowBetween: {
       flexDirection: 'row',

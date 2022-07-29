@@ -4,7 +4,9 @@ import { MarketPriceComponentStyles } from './types';
 import { ThemeContext } from 'react-native-theme-component';
 import { useContext } from 'react';
 
-const useMergeStyles = (style?: MarketPriceComponentStyles): MarketPriceComponentStyles => {
+const useMergeStyles = (
+  style?: MarketPriceComponentStyles
+): MarketPriceComponentStyles => {
   const { colors, fonts } = useContext(ThemeContext);
 
   const defaultStyles: MarketPriceComponentStyles = StyleSheet.create({
@@ -17,7 +19,7 @@ const useMergeStyles = (style?: MarketPriceComponentStyles): MarketPriceComponen
       height: '100%',
     },
     contentWrapper: {
-      paddingBottom: 20
+      paddingBottom: 20,
     },
     header: {
       flexDirection: 'row',

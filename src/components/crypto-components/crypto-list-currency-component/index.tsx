@@ -1,5 +1,5 @@
 import { CryptoListCurrencyComponentProps } from './types';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import useMergeStyles from './styles';
 import {

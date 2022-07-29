@@ -2,7 +2,6 @@ import { CryptoTransactionPostingComponentProps } from './types';
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import useMergeStyles from './styles';
-import * as Progress from 'react-native-progress';
 import RowInfo from '../../row-info';
 import { Button } from 'react-native-theme-component';
 import { InfoIcon, UnionDigitalBankIcon } from '../../../assets/images';
