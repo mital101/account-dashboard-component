@@ -1,47 +1,47 @@
-import { defaultsDeep } from "lodash";
-import { StyleSheet, Dimensions } from "react-native";
-import { CryptoCardComponentStyles } from "./index";
-import { ThemeContext } from "react-native-theme-component";
-import { useContext } from "react";
+import { defaultsDeep } from 'lodash';
+import { StyleSheet, Dimensions } from 'react-native';
+import { CryptoCardComponentStyles } from './index';
+import { ThemeContext } from 'react-native-theme-component';
+import { useContext } from 'react';
 
 const useMergeStyles = (
   style?: CryptoCardComponentStyles
 ): CryptoCardComponentStyles => {
   const { fonts, colors } = useContext(ThemeContext);
 
-  console.log("colors ", colors);
+  console.log('colors ', colors);
 
   const defaultStyles: CryptoCardComponentStyles = StyleSheet.create({
     containerStyle: {
       flex: 1,
-      height: "100%"
+      height: '100%',
     },
     containerWrapper: {
       flex: 1,
-      maxHeight: Dimensions.get("window").height - 180
+      maxHeight: Dimensions.get('window').height - 130,
       // paddingHorizontal: 15,
     },
     loadingContainerStyle: {
       height: 173,
-      alignItems: "center",
-      justifyContent: "center"
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     emptyCarouselContainerStyle: {
-      marginTop: 25
+      marginTop: 25,
     },
     emptyWalletItemComponentStyle: {
       accountNumberStyle2: {
         fontSize: 12,
-        color: "#7F7B82",
-        flex: 1
+        color: '#7F7B82',
+        flex: 1,
       },
       accountNumberStyle: {
         // fontFamily: fonts.bold,
         fontSize: 14,
-        color: "#7F7B82",
+        color: '#7F7B82',
         marginRight: 3,
-        textDecorationLine: "none"
-      }
+        textDecorationLine: 'none',
+      },
     },
     userName: {
       fontFamily: fonts.bold,
@@ -50,100 +50,100 @@ const useMergeStyles = (
       color: colors.primaryColor,
       paddingHorizontal: 25,
       // marginTop: 12,
-      marginBottom: 10
+      marginBottom: 10,
     },
     containerStyleMessage: {
       marginHorizontal: 25,
-      backgroundColor: "#E7DBF5",
+      backgroundColor: '#E7DBF5',
       marginVertical: 16,
       borderRadius: 8,
       elevation: 2,
-      shadowColor: "grey",
+      shadowColor: 'grey',
       shadowOffset: {
         width: 1,
-        height: 1
+        height: 1,
       },
       shadowOpacity: 0.1,
       shadowRadius: 1,
       margin: 1,
       // paddingBottom: 22,
-      padding: 15
+      padding: 15,
     },
     labelTextStyle: {
       fontSize: 10,
       lineHeight: 10,
-      color: "#5E0CBC",
-      fontWeight: "400",
-      width: 280
+      color: '#5E0CBC',
+      fontWeight: '400',
+      width: 280,
     },
     label2TextStyle: {
       fontSize: 10,
       lineHeight: 10,
-      color: "#5E0CBC",
-      fontWeight: "400",
+      color: '#5E0CBC',
+      fontWeight: '400',
       marginTop: 20,
-      width: 280
+      width: 280,
     },
     labelTitlStyle: {
       fontFamily: fonts.bold,
       fontSize: 16,
       lineHeight: 36,
       color: colors.primaryTextColor,
-      paddingLeft: 20
+      paddingLeft: 20,
     },
     pointerView: {
-      position: "absolute",
+      position: 'absolute',
       left: 0,
       bottom: 200,
       right: 0,
-      alignItems: "center",
-      height: 100
+      alignItems: 'center',
+      height: 100,
     },
     pointerText: {
-      color: "white",
+      color: 'white',
       marginTop: 8,
-      fontWeight: "700",
-      fontSize: 14
+      fontWeight: '700',
+      fontSize: 14,
     },
     skipView: {
-      position: "absolute",
+      position: 'absolute',
       bottom: 35,
-      alignItems: "center"
+      alignItems: 'center',
     },
     skipBtn: {
-      padding: 15
+      padding: 15,
     },
     skipText: {
-      color: "#FFFFFF",
-      fontWeight: "700",
-      fontSize: 14
+      color: '#FFFFFF',
+      fontWeight: '700',
+      fontSize: 14,
     },
-    column: { alignItems: "center" },
+    column: { alignItems: 'center' },
     titleTooltip: {
-      fontWeight: "700",
+      fontWeight: '700',
       fontSize: 14,
       lineHeight: 16,
-      marginLeft: 10
+      marginLeft: 10,
     },
     messageTooltip: {
-      fontWeight: "500",
+      fontWeight: '500',
       fontSize: 12,
-      lineHeight: 21
+      lineHeight: 21,
     },
     viewTooltip: {
       paddingVertical: 15,
-      flexDirection: "column",
-      paddingHorizontal: 5
+      flexDirection: 'column',
+      paddingHorizontal: 5,
     },
-    viewTooltipHeader: { flexDirection: "row", paddingBottom: 10 },
+    viewTooltipHeader: { flexDirection: 'row', paddingBottom: 10 },
     TopPointerView: {
-      position: "absolute",
+      position: 'absolute',
       left: 0,
       bottom: 500,
       right: 0,
-      alignItems: "center",
-      height: 100
-    }
+      alignItems: 'center',
+      height: 100,
+    },
   });
 
   return defaultsDeep(style, defaultStyles);

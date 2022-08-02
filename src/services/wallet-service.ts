@@ -221,9 +221,7 @@ export class WalletService {
   };
 
   getAccountStatus = async () => {
-    console.log('getAccountStatus -> init');
     const token = await this.authService.fetchAppAccessToken();
-    console.log('getAccountStatus -> app token', token);
   };
 
   getListCurrency = async () => {

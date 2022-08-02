@@ -26,7 +26,7 @@ import EmptyWalletComponent from '../no-crypto-wallet-component';
 import CryptoItemComponent from '../crypto-item-component/index';
 import AccountInfoCard from '../../crypto-components/crypto-account-info-card';
 import MarketPricesComponent from '../../market-price-component';
-import { Wallet, Transaction, Currency } from '../../../model';
+import { Wallet, Currency } from '../../../model';
 import { WalletItemComponentStyle } from '../../wallet-card-component/wallet-item-component';
 import { TransactionCardComponentStyles } from '../../wallet-card-component/transaction-card-component';
 import { WalletContext } from '../../../context/wallet-context';

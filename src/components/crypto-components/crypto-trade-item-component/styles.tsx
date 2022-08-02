@@ -86,6 +86,10 @@ const useMergeStyles = (style?: AccountInfoCardThemeStyles) => {
       alignItems: 'center',
       marginTop: 10,
     },
+    image: {
+      width: 40,
+      height: 40,
+    },
     rowCurrency: {
       flexDirection: 'row',
       alignItems: 'center',

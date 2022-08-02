@@ -234,7 +234,7 @@ export interface Currency {
   isTop: boolean;
   currencyType: string;
   description: string;
-  symbolGraphic: string;
+  logo: string;
 }
 
 export interface ExchangRateCurrency {

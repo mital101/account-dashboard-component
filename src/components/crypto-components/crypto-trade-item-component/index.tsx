@@ -130,9 +130,6 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
     getCurrencyExchangeData();
   }, [selectedFilterOptionsIndex]);
 
-  const randomCryptoImgUrl =
-    'https://cdn.pixabay.com/photo/2017/03/12/02/57/bitcoin-2136339_960_720.png';
-
   return (
     <View style={styles.containerStyle}>
       <ScrollView
@@ -145,7 +142,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
               style={styles.title}
             >{`${currency.name} (${currency.code})`}</Text>
           </View>
-          <Image source={{ uri: randomCryptoImgUrl }} style={styles.image} />
+          <Image source={{ uri: currency.logo }} style={styles.image} />
         </View>
 
         <View style={styles.rowCurrency}>

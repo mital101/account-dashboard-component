@@ -101,7 +101,7 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
       <View style={[styles.row, { height: '100%' }]}>
         <Image
           source={{
-            uri: currency.symbolGraphic,
+            uri: currency.logo,
           }}
           style={styles.image}
         />
