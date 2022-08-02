@@ -13,6 +13,7 @@ import {
   WalletTransaction,
   CryptoTCData,
   CurrencyExchangeRateData,
+  Currency,
 } from '../model';
 import _, { chain, groupBy, isEmpty, orderBy } from 'lodash';
 
@@ -33,7 +34,11 @@ export interface WalletContextData {
   getAggregatedWallets: () => Wallet[];
   deleteWallet: (wallet: Wallet) => void;
   setPrimaryWallet: (walletId: string) => void;
-  linkWallet: (bankId: string, consentId: string, accountIds?: string[]) => void;
+  linkWallet: (
+    bankId: string,
+    consentId: string,
+    accountIds?: string[]
+  ) => void;
   clearWalletErrors: () => void;
   errorLoadWallet?: Error;
   errorUnlinkWallet?: Error;
@@ -64,13 +69,25 @@ export interface WalletContextData {
   getTransactionByWalletId: (walletId: string) => WalletTransaction | undefined;
   getTransactionSummary: (walletId?: string) => TransactionSummary | undefined;
   clearTransactions: () => void;
-  getCryptoTcData: (templateName:string,appId:string,entityId:string,format:string) => void;
+  getCryptoTcData: (
+    templateName: string,
+    appId: string,
+    entityId: string,
+    format: string
+  ) => void;
   isLoadingCryptoTC: boolean;
   cryptoTC?: CryptoTCData;
   isLoadingCryptoExchange: boolean;
   cryptoExchangeData?: CurrencyExchangeRateData[];
   getCryptoExchangeData: (limit?: number) => void;
   getAccountStatus: () => void;
+  isLoadingHistoricalExchangeRate: boolean;
+  getHistoricalExchangeRate: (updateAtFrom: string, type: string) => void;
+
+  // get list currency
+  getListCurrency: () => void;
+  isLoadingListCurrency: boolean;
+  listCurrency?: Currency[];
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -111,10 +128,18 @@ export const walletDefaultValue: WalletContextData = {
   getCryptoExchangeData: () => undefined,
   isLoadingCryptoExchange: false,
   cryptoExchangeData: [],
-  getAccountStatus: () => undefined
+  getAccountStatus: () => undefined,
+  isLoadingHistoricalExchangeRate: false,
+  getHistoricalExchangeRate: () => true,
+
+  // get list currency
+  getListCurrency: () => undefined,
+  isLoadingListCurrency: false,
+  listCurrency: [],
 };
 
-export const WalletContext = React.createContext<WalletContextData>(walletDefaultValue);
+export const WalletContext =
+  React.createContext<WalletContextData>(walletDefaultValue);
 
 export function useWalletContextValue(): WalletContextData {
   const [_wallets, setWallets] = useState<Wallet[]>([]);
@@ -124,24 +149,37 @@ export function useWalletContextValue(): WalletContextData {
   const [_unlinkError, setUnlinkError] = useState<Error | undefined>();
   const [_isUnlinking, setIsUnlinking] = useState(false);
   const [_isUpdatingPrimary, setIsUpdatingPrimary] = useState(false);
-  const [_updatePrimaryError, setUpdatePrimaryError] = useState<Error | undefined>();
+  const [_updatePrimaryError, setUpdatePrimaryError] = useState<
+    Error | undefined
+  >();
   const [_isLinkingWallet, setIsLinkingWallet] = useState(false);
   const [_linkWalletError, setLinkWalletError] = useState<Error | undefined>();
   const [_isRefreshingWallet, setIsRefreshingWallet] = useState(false);
   const [_isSharingInformation, setIsSharingInformation] = useState(false);
-  const [_errorShareInformation, setErrorShareInformation] = useState<Error | undefined>();
+  const [_errorShareInformation, setErrorShareInformation] = useState<
+    Error | undefined
+  >();
   const [_isShareSuccessfully, setShareSucessfully] = useState(false);
   const [_isLinkedSuccessfully, setLinkedSucessfully] = useState(false);
   const [_transactions, setTransactions] = useState<WalletTransaction[]>([]);
-  const [_transactionError, setTransactionError] = useState<Error | undefined>(undefined);
+  const [_transactionError, setTransactionError] = useState<Error | undefined>(
+    undefined
+  );
   const [_isLoadingTransaction, setLoadingTransaction] = useState(false);
   const [_isRefreshingTransaction, setRefreshingTransaction] = useState(false);
 
   const [_isLoadingCryptoTC, setIsLoadingCryptoTC] = useState(true);
-  const [_cryptoTC, setCryptoTC] = useState<CryptoTCData| undefined>();
+  const [_cryptoTC, setCryptoTC] = useState<CryptoTCData | undefined>();
 
   const [_isLoadingCryptoExchange, setIsLoadingCryptoExchange] = useState(true);
-  const [_cryptoExchangeData, setCryptoExchangeData] = useState<CurrencyExchangeRateData[] | undefined>();
+  const [_cryptoExchangeData, setCryptoExchangeData] = useState<
+    CurrencyExchangeRateData[] | undefined
+  >();
+  const [_isLoadingHistoricalExchangeRate, setIsLoadingHistoricalExchangeRate] =
+    useState<boolean>(false);
+
+  const [_isLoadingListCurrency, setIsLoadingListCurrency] = useState(true);
+  const [_listCurrency, setListCurrency] = useState<Currency[] | undefined>();
 
   const getWallets = useCallback(async () => {
     try {
@@ -175,23 +213,35 @@ export function useWalletContextValue(): WalletContextData {
     }
   };
 
+  const getCryptoTcData = useCallback(
+    async (
+      templateName: string,
+      appId: string,
+      entityId: string,
+      format: string
+    ) => {
+      try {
+        setIsLoadingCryptoTC(true);
+        //await _fetchWallets();
+        // templateName:string,appId:string,entityId:string,format:string
+        const resp = await walletService.getCryptoTC(
+          templateName,
+          appId,
+          entityId,
+          format
+        );
+        setIsLoadingCryptoTC(false);
+        setCryptoTC(resp.data);
+        // clearWalletErrors();
+      } catch (err) {
+        console.log('err ', err);
 
-  const getCryptoTcData = useCallback(async (templateName:string,appId:string,entityId:string,format:string) => {
-    try {
-      setIsLoadingCryptoTC(true);
-      //await _fetchWallets();
-      // templateName:string,appId:string,entityId:string,format:string
-      const resp = await walletService.getCryptoTC(templateName,appId,entityId,format);
-      setIsLoadingCryptoTC(false);
-      setCryptoTC(resp.data)
-      // clearWalletErrors();
-    } catch (err) {
-      console.log('err ',err);
-
-      setIsLoadingCryptoTC(false);
-      setLoadError(err as Error);
-    }
-  }, []);
+        setIsLoadingCryptoTC(false);
+        setLoadError(err as Error);
+      }
+    },
+    []
+  );
 
   const sleep = (ms: number) => {
     return new Promise((resolve) => setTimeout(() => resolve(true), ms));
@@ -400,11 +450,17 @@ export function useWalletContextValue(): WalletContextData {
       }
       try {
         setLoadingTransaction(true);
-        const { data, paging, summary } = await walletService.getTransactions(walletId, pageNumber);
+        const { data, paging, summary } = await walletService.getTransactions(
+          walletId,
+          pageNumber
+        );
         const index = _transactions.findIndex((ts) => ts.walletId === walletId);
         if (index === -1) {
           // is transactions not existed, add new
-          setTransactions([..._transactions, { walletId, data, paging, summary }]);
+          setTransactions([
+            ..._transactions,
+            { walletId, data, paging, summary },
+          ]);
         } else {
           // update transactions
           setTransactions(
@@ -438,11 +494,17 @@ export function useWalletContextValue(): WalletContextData {
       }
       try {
         setRefreshingTransaction(true);
-        const { data, paging, summary } = await walletService.getTransactions(walletId, 1);
+        const { data, paging, summary } = await walletService.getTransactions(
+          walletId,
+          1
+        );
         const index = _transactions.findIndex((ts) => ts.walletId === walletId);
         if (index === -1) {
           // is transactions not existed, add new
-          setTransactions([..._transactions, { walletId, data, paging, summary }]);
+          setTransactions([
+            ..._transactions,
+            { walletId, data, paging, summary },
+          ]);
         } else {
           // update transactions
           setTransactions(
@@ -474,7 +536,9 @@ export function useWalletContextValue(): WalletContextData {
       if (!walletId) {
         return undefined;
       }
-      const transaction = _transactions.find((item) => item.walletId === walletId);
+      const transaction = _transactions.find(
+        (item) => item.walletId === walletId
+      );
       return transaction?.paging;
     },
     [_transactions]
@@ -492,7 +556,9 @@ export function useWalletContextValue(): WalletContextData {
       if (!walletId) {
         return [];
       }
-      const walletTransaction = _transactions.find((item) => item.walletId === walletId);
+      const walletTransaction = _transactions.find(
+        (item) => item.walletId === walletId
+      );
       const data = walletTransaction?.data;
       if (!data) {
         return [];
@@ -502,8 +568,10 @@ export function useWalletContextValue(): WalletContextData {
         [(txn: any) => new Date(txn.txnDateTime)],
         ['desc']
       );
-      const group = groupBy<Transaction>(sortedByDate, (transaction: Transaction) =>
-        moment(transaction.txnDateTime).format('DD MMM YYYY')
+      const group = groupBy<Transaction>(
+        sortedByDate,
+        (transaction: Transaction) =>
+          moment(transaction.txnDateTime).format('DD MMM YYYY')
       );
       return Object.keys(group).map((key) => ({
         section: moment(key, 'DD MMM YYYY').toISOString(),
@@ -518,7 +586,9 @@ export function useWalletContextValue(): WalletContextData {
       if (!walletId) {
         return undefined;
       }
-      const walletTransaction = _transactions.find((item) => item.walletId === walletId);
+      const walletTransaction = _transactions.find(
+        (item) => item.walletId === walletId
+      );
       const summary = walletTransaction?.summary;
 
       if (!summary) {
@@ -533,16 +603,43 @@ export function useWalletContextValue(): WalletContextData {
     setTransactions([]);
   }, []);
 
-
   const getAccountStatus = useCallback(() => {
     walletService.getAccountStatus();
   }, []);
 
   const getCryptoExchangeData = useCallback(async (limit?: number) => {
     setIsLoadingCryptoExchange(true);
-    const result = await walletService.getCurrenciesExchangeRate(1, limit ?? 100, 'PHP');
+    const result = await walletService.getCurrenciesExchangeRate(
+      1,
+      limit ?? 100,
+      'PHP'
+    );
     setCryptoExchangeData(result.data);
     setIsLoadingCryptoExchange(false);
+  }, []);
+
+  const getHistoricalExchangeRate = async (
+    updateAtFrom: string,
+    type: string
+  ) => {
+    setIsLoadingHistoricalExchangeRate(true);
+    console.log('getHistoricalExchangeRate -> from', updateAtFrom);
+    const result = await walletService.getCurrenciesHistoricalExchangeRate(
+      updateAtFrom,
+      type,
+      'PHP',
+      100,
+      1
+    );
+    setIsLoadingHistoricalExchangeRate(false);
+    return result;
+  };
+
+  const getListCurrency = useCallback(async () => {
+    setIsLoadingListCurrency(true);
+    const result = await walletService.getListCurrency();
+    setIsLoadingListCurrency(false);
+    setListCurrency(result.data);
   }, []);
 
   return useMemo(
@@ -591,7 +688,12 @@ export function useWalletContextValue(): WalletContextData {
       getCryptoExchangeData,
       isLoadingCryptoExchange: _isLoadingCryptoExchange,
       cryptoExchangeData: _cryptoExchangeData,
-      getAccountStatus: getAccountStatus
+      getAccountStatus: getAccountStatus,
+      getHistoricalExchangeRate,
+      isLoadingHistoricalExchangeRate: _isLoadingHistoricalExchangeRate,
+      getListCurrency,
+      isLoadingListCurrency: _isLoadingListCurrency,
+      listCurrency: _listCurrency,
     }),
     [
       _isLinkedSuccessfully,
@@ -617,7 +719,10 @@ export function useWalletContextValue(): WalletContextData {
       _isLoadingCryptoTC,
       _cryptoTC,
       _isLoadingCryptoExchange,
-      _cryptoExchangeData
+      _cryptoExchangeData,
+      _isLoadingHistoricalExchangeRate,
+      _isLoadingListCurrency,
+      _listCurrency,
     ]
   );
 }

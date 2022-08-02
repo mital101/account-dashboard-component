@@ -1,3 +1,4 @@
+import { Currency } from '../../../src/model';
 import {
   ImageSourcePropType,
   ImageStyle,
@@ -14,7 +15,7 @@ export type MarketPriceComponentProps = {
       onSearchingCrypto?: () => void;
       searchInputProps?: SearchInputProps;
       onViewAllCrypto?: () => void;
-      onSelectItemCurrency?: (idCurrency: string) => void;
+      onSelectItemCurrency?: (currency: Currency) => void;
     };
   };
 };

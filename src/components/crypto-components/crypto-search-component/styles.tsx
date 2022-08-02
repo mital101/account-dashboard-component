@@ -13,7 +13,7 @@ const useMergeStyles = (
     container: {
       paddingHorizontal: 25,
       backgroundColor: '#F1F6FC',
-      paddingTop: 24,
+      paddingTop: 15,
     },
     pageTitle: {
       fontSize: 24,
@@ -28,7 +28,7 @@ const useMergeStyles = (
     itemContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 15,
+      marginBottom: 22,
     },
     list: { paddingBottom: 280, paddingTop: 20 },
     row: {

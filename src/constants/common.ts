@@ -9,6 +9,8 @@ import {
   TransactionStatus,
   TransactionTypes,
 } from '../components/crypto-components/crypto-transactions-histoy-component/types';
+import { FilterExchangeRateOption } from '../components/crypto-components/crypto-trade-item-component';
+import moment from 'moment';
 
 export const contactInfos: ContactInfoItem[] = [
   {
@@ -49,4 +51,13 @@ export const statusOfTransaction: TransactionStatus[] = [
   { id: '1', title: 'All' },
   { id: '2', title: 'Complete' },
   { id: '3', title: 'Failed' },
+];
+
+export const filterExchangeRateOptions: FilterExchangeRateOption[] = [
+  { id: '1', label: '24H', date: moment().subtract(1, 'd').format() },
+  { id: '1', label: '1W', date: moment().subtract(1, 'w').format() },
+  { id: '1', label: '1M', date: moment().subtract(1, 'M').format() },
+  { id: '1', label: '3M', date: moment().subtract(3, 'M').format() },
+  { id: '1', label: '6M', date: moment().subtract(6, 'M').format() },
+  { id: '1', label: '1Y', date: moment().subtract(1, 'y').format() },
 ];

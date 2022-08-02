@@ -1,5 +1,5 @@
 import { CryptoListCurrencyComponentProps } from './types';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import useMergeStyles from './styles';
 import {
@@ -17,19 +17,26 @@ const CryptoListCurrencyComponent = ({
   style,
 }: CryptoListCurrencyComponentProps) => {
   const styles = useMergeStyles(style);
-  const { getCryptoExchangeData, isLoadingCryptoExchange, cryptoExchangeData } =
+  const { getListCurrency, isLoadingListCurrency, listCurrency } =
     useContext<WalletContextData>(WalletContext);
   const { onCryptoSelect } = props || {};
+
+  useEffect(() => {
+    getListCurrency();
+  }, []);
 
   const renderListCryptoData = () => {
     return (
       <FlatList
-        data={cryptoExchangeData}
-        refreshing={isLoadingCryptoExchange}
-        onRefresh={getCryptoExchangeData}
+        data={listCurrency}
+        ListHeaderComponent={
+          <Text style={styles.pageTitle}>{'All Crypto'}</Text>
+        }
+        refreshing={isLoadingListCurrency}
+        onRefresh={getListCurrency}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 180 }}
-        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingBottom: 120 }}
+        keyExtractor={(item) => item.code}
         renderItem={({ item }) => (
           <RowCurrency onSelect={onCryptoSelect} currency={item} />
         )}
@@ -39,7 +46,6 @@ const CryptoListCurrencyComponent = ({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.pageTitle}>{'All Crypto'}</Text>
       <View style={styles.content}>{renderListCryptoData()}</View>
     </View>
   );

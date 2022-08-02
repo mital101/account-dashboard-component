@@ -9,7 +9,7 @@ import RowCurrency from '../../components/row-currency';
 
 const MarketPricesComponent = forwardRef(
   ({ Root }: MarketPriceComponentProps, ref) => {
-    const { getCryptoExchangeData, cryptoExchangeData } =
+    const { getListCurrency, listCurrency } =
       useContext<WalletContextData>(WalletContext);
     const { style, props } = Root || {};
     const {
@@ -23,17 +23,17 @@ const MarketPricesComponent = forwardRef(
 
     useEffect(() => {
       //TODO: implement load list crypto
-      getCryptoExchangeData();
+      getListCurrency();
     }, []);
 
     const renderListCryptoData = () =>
-      cryptoExchangeData
-        ?.slice(0, 5)
+      listCurrency
+        ?.slice(0, 4)
         .map((item) => (
           <RowCurrency
             currency={item}
             onSelect={onSelectItemCurrency}
-            key={item.id}
+            key={item.code}
           />
         ));
 
