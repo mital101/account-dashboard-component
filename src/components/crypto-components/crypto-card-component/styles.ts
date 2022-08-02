@@ -17,8 +17,8 @@ const useMergeStyles = (
       height: "100%"
     },
     containerWrapper: {
-      flex: 1,
-      maxHeight: Dimensions.get("window").height - 180
+      flex: 1
+      // maxHeight: Dimensions.get("window").height - 180
       // paddingHorizontal: 15,
     },
     loadingContainerStyle: {

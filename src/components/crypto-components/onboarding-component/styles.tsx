@@ -18,7 +18,7 @@ const useMergeStyles = (
       backgroundColor: colors.primaryColor,
       flex: 1,
       justifyContent: "space-between",
-      paddingBottom: 20,
+      paddingBottom: 70,
       paddingHorizontal: 20,
       paddingTop: 30
     },
