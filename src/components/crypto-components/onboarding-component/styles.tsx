@@ -19,7 +19,7 @@ const useMergeStyles = (
       flex: 1,
       justifyContent: "space-between",
       paddingBottom: 20,
-      paddingHorizontal: 70,
+      paddingHorizontal: 20,
       paddingTop: 30
     },
     sliderWrapper: { width: itemWidth, alignItems: "center", marginTop: 50 },
