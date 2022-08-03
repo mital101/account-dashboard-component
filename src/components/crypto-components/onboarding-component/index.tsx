@@ -1,9 +1,18 @@
 import React, { forwardRef, useContext, useRef, useState } from 'react';
 import { Image, Text, View } from 'react-native';
-import { ThemeContext, Carousel, Button, CarouselRef } from 'react-native-theme-component';
+import {
+  ThemeContext,
+  Carousel,
+  Button,
+  CarouselRef,
+} from 'react-native-theme-component';
 import { OnboardingComponentProps, OnboardingItem } from './types';
 import useMergeStyles from './styles';
-import { CryptoLinkIcon,CryptoLinkIcon2,CryptoLinkIcon3 } from "../../../assets/images";
+import {
+  CryptoLinkIcon,
+  CryptoLinkIcon2,
+  CryptoLinkIcon3,
+} from '../../../assets/images';
 
 const defaultOnboardingData: OnboardingItem[] = [
   {
@@ -30,9 +39,9 @@ const defaultOnboardingData: OnboardingItem[] = [
 ];
 
 const OnboardingComponent = (props: OnboardingComponentProps) => {
-// const OnboardingComponent = forwardRef(({ Root }: OnboardingComponentProps) => {
+  // const OnboardingComponent = forwardRef(({ Root }: OnboardingComponentProps) => {
   // const { style, data = defaultOnboardingData, props } = Root || {};
-  const { onFinished,style, data = defaultOnboardingData } = props;
+  const { onFinished, style, data = defaultOnboardingData } = props;
   //
   const styles = useMergeStyles(style);
   const { colors } = useContext(ThemeContext);
@@ -42,20 +51,19 @@ const OnboardingComponent = (props: OnboardingComponentProps) => {
   //
   const isLastSlide = currentSlideIndex === data.length - 1;
   //
-  const renderOnboardingItem = (item: OnboardingItem,index:number) => {
-
-    return(
+  const renderOnboardingItem = (item: OnboardingItem, index: number) => {
+    return (
       <View style={styles.sliderWrapper}>
         <Text style={styles.title}>{item.title}</Text>
 
-        <View style={styles.imageWrapper}>
-          {item.imageComponent}
-        </View>
+        <View style={styles.imageWrapper}>{item.imageComponent}</View>
         {item.subtitle && <Text style={styles.subTitle}>{item.subtitle}</Text>}
-        {item.description && <Text style={styles.description}>{item.description}</Text>}
+        {item.description && (
+          <Text style={styles.description}>{item.description}</Text>
+        )}
       </View>
     );
-  }
+  };
   //
   const onNext = () => {
     if (!isLastSlide) {
@@ -67,7 +75,7 @@ const OnboardingComponent = (props: OnboardingComponentProps) => {
 
   return (
     <>
-    <View style={styles.container}>
+      <View style={styles.container}>
         <Carousel
           ref={carouselRef}
           onChangeIndex={setCurrentSlideIndex}
@@ -89,7 +97,7 @@ const OnboardingComponent = (props: OnboardingComponentProps) => {
         </View>
       </View>
     </>
-  )
+  );
 };
 
 // export default OnboardingComponent;

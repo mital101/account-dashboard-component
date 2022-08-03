@@ -225,7 +225,19 @@ export interface CryptoTCData {
   title: string;
 }
 
-export interface CryptoCurrency {
+export interface Currency {
+  code: string;
+  decimals: string;
+  isoCode: string;
+  name: string;
+  symbol: string;
+  isTop: boolean;
+  currencyType: string;
+  description: string;
+  logo: string;
+}
+
+export interface ExchangRateCurrency {
   code: string;
   id: string;
   name: string;
@@ -236,8 +248,8 @@ export interface CryptoCurrency {
 export interface CurrencyExchangeRateData {
   id: string;
   exchangeRate: string;
-  fromCurrency: CryptoCurrency;
-  toCurrency: CryptoCurrency;
+  fromCurrency: ExchangRateCurrency;
+  toCurrency: ExchangRateCurrency;
   rateType: string;
   ratio: number;
   updatedAt: string;

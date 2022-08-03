@@ -1,14 +1,12 @@
-import { AuthServices } from "react-native-auth-component";
+import { AuthServices } from 'react-native-auth-component';
 
 type WalletClient = {
   walletClient: any;
   financialClient: any;
   contentTemplateClient: any;
   exchangeRateClient: any;
+  countryInformationClient: any;
 };
-
-
-
 
 export class WalletService {
   private static _instance: WalletService = new WalletService();
@@ -17,6 +15,7 @@ export class WalletService {
   private _financialClient?: any;
   private _contentTemplateClient?: any;
   private _exchangeRateClient?: any;
+  private _countryInformationClient?: any;
   private authService = AuthServices.instance();
 
   constructor() {
@@ -37,6 +36,7 @@ export class WalletService {
     this._financialClient = clients.financialClient;
     this._contentTemplateClient = clients.contentTemplateClient;
     this._exchangeRateClient = clients.exchangeRateClient;
+    this._countryInformationClient = clients.countryInformationClient;
   };
 
   getWallets = async () => {
@@ -62,14 +62,21 @@ export class WalletService {
     }
   };
 
-  linkBankAccount = async (bankId: string, consentId: string, accountIds?: string[]) => {
+  linkBankAccount = async (
+    bankId: string,
+    consentId: string,
+    accountIds?: string[]
+  ) => {
     if (this._walletClient) {
-      const response = await this._walletClient.post('wallets/link-bank-accounts', {
-        bankId,
-        consentId,
-        accountIds,
-        async: true,
-      });
+      const response = await this._walletClient.post(
+        'wallets/link-bank-accounts',
+        {
+          bankId,
+          consentId,
+          accountIds,
+          async: true,
+        }
+      );
       return response.data;
     } else {
       throw new Error('Wallet Client is not registered');
@@ -139,14 +146,19 @@ export class WalletService {
     }
   };
 
-  getCryptoTC = async (templateName:string,appId:string,entityId:string,format:string) => {
+  getCryptoTC = async (
+    templateName: string,
+    appId: string,
+    entityId: string,
+    format: string
+  ) => {
     if (this._contentTemplateClient) {
-      const response = await this._contentTemplateClient.post('contents',{
-      	appId: appId,
-      	documentFormat: format,
-      	entityId: entityId,
-      	templateName: templateName,
-        data: {}
+      const response = await this._contentTemplateClient.post('contents', {
+        appId: appId,
+        documentFormat: format,
+        entityId: entityId,
+        templateName: templateName,
+        data: {},
       });
       return response.data;
     } else {
@@ -154,26 +166,74 @@ export class WalletService {
     }
   };
 
-  getCurrenciesExchangeRate = async (pageNum?: number, pageSize?: number, toCurrency?: string) => {
+  getCurrenciesExchangeRate = async (
+    pageNum?: number,
+    pageSize?: number,
+    toCurrency?: string
+  ) => {
     console.log('getCurrenciesExchangeRate', this._exchangeRateClient);
     if (this._exchangeRateClient) {
-      const response = await this._exchangeRateClient.get('currencies/exchange-rates', {
-        params: {
-          pageNum: pageNum,
-          pageSize: pageSize,
-          toCurrency: toCurrency
+      const response = await this._exchangeRateClient.get(
+        'currencies/exchange-rates',
+        {
+          params: {
+            pageNum: pageNum,
+            pageSize: pageSize,
+            toCurrency: toCurrency,
+          },
         }
-      });
-      console.log('response', response)
+      );
+      console.log('response', response);
       return response.data;
     } else {
       throw new Error('Exchange rate client service is not registered');
     }
   };
 
+  getCurrenciesHistoricalExchangeRate = async (
+    updateAtFrom?: string,
+    fromCurrency?: string,
+    toCurrency?: string,
+    pageNum?: number,
+    pageSize?: number
+  ) => {
+    console.log('getCurrenciesExchangeRate', this._exchangeRateClient);
+    if (this._exchangeRateClient) {
+      const response = await this._exchangeRateClient.get(
+        'currencies/historical-exchange-rates',
+        {
+          params: {
+            pageNum,
+            pageSize,
+            fromCurrency,
+            toCurrency,
+            updateAtFrom: updateAtFrom,
+          },
+        }
+      );
+      console.log('response', response.data);
+      return response.data;
+    } else {
+      throw new Error(
+        'Historical exchange rate client service is not registered'
+      );
+    }
+  };
+
   getAccountStatus = async () => {
-    console.log('getAccountStatus -> init');
     const token = await this.authService.fetchAppAccessToken();
-    console.log('getAccountStatus -> app token', token);
-  }
+  };
+
+  getListCurrency = async () => {
+    if (this._countryInformationClient) {
+      const response = await this._countryInformationClient.get(
+        'currencies?currencyType=CRYPTO'
+      );
+      return response.data;
+    } else {
+      throw new Error(
+        'Historical exchange rate client service is not registered'
+      );
+    }
+  };
 }

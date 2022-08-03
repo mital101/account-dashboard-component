@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleProp,
   Text,
@@ -8,11 +8,15 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Dimensions,
 } from 'react-native';
 import useMergeStyles from './styles';
 import { Button } from 'react-native-theme-component';
 import { LineChart } from 'react-native-gifted-charts';
-import { CurrencyExchangeRateData } from '../../../model';
+import { Currency, CurrencyExchangeRateData } from '../../../model';
+import { WalletService } from '../../../services/wallet-service';
+import { filterExchangeRateOptions } from '../../../constants/common';
+import moment from 'moment';
 
 export type CryptoTradeComponentThemeProps = {
   style?: CryptoTradeComponentThemeStyles;
@@ -31,7 +35,7 @@ export type CryptoTradeComponentThemeStyles = {
 };
 
 export type CryptoTradeComponentProps = {
-  itemData: CurrencyExchangeRateData;
+  currency: Currency;
   buttonLabel?: string;
   onLinkAccountPressed?: () => void;
   style?: CryptoTradeComponentThemeStyles;
@@ -40,90 +44,91 @@ export type CryptoTradeComponentProps = {
   isList?: boolean;
 };
 
+export type FilterExchangeRateOption = {
+  id: string;
+  label: string;
+  date: string;
+};
+
+export type ChartDataItem = {
+  value: number;
+  date: string;
+  label: string;
+};
+
+const walletService = WalletService.instance();
+const screenWidth = Dimensions.get('screen').width;
+
 const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
-  const { style, itemData, onClick } = props;
+  const { style, currency, onClick } = props;
   const styles = useMergeStyles(style);
+  const [selectedFilterOptionsIndex, setSelectedFilterOptionsIndex] =
+    useState<number>(0);
+  const [chartData, setChartData] = useState<ChartDataItem[]>([]);
+  const [maxExchangeRate, setMaxExchangeRate] = useState<number>();
+  const [selectedExchangeValue, setSelectedExchangeValue] =
+    useState<ChartDataItem>();
+  const firstExchangeRate =
+    chartData && chartData.length > 0 ? chartData[0].value : 0;
+  const lastExchangeRate =
+    chartData && chartData.length > 0
+      ? chartData[chartData.length - 1].value
+      : 0;
+  const lastExchangeDate =
+    chartData && chartData.length > 0
+      ? moment(chartData[chartData.length - 1].date).format(
+          'ddd DD, YYYY HH:ssA'
+        )
+      : '';
 
-  const [isActive, setIsActive] = useState<number>(0);
+  let diffRateLabel: string = '';
 
-  const ptData = [
-    {
-      value: 160,
-      date: '1 Apr 2022',
-      labelTextStyle: { color: 'gray', width: 60 },
-      label: '1 Apr',
-    },
-    { value: 180, date: '2 Apr 2022' },
-    {
-      value: 190,
-      date: '3 Apr 2022',
-      labelTextStyle: { color: 'gray', width: 60 },
-      label: '3 Apr',
-    },
-    { value: 280, date: '4 Apr 2022' },
-    {
-      value: 440,
-      date: '5 Apr 2022',
-      labelTextStyle: { color: 'gray', width: 60 },
-      label: '5 Apr',
-    },
-    { value: 545, date: '6 Apr 2022' },
-    {
-      value: 460,
-      date: '7 Apr 2022',
-      labelTextStyle: { color: 'gray', width: 60 },
-      label: '7 Apr',
-    },
-    { value: 500, date: '8 Apr 2022' },
-    {
-      value: 200,
-      date: '9 Apr 2022',
-      labelTextStyle: { color: 'gray', width: 60 },
-      label: '9 Apr',
-    },
-    { value: 440, date: '10 Apr 2022' },
-  ];
+  const isValueReducing = firstExchangeRate > lastExchangeRate;
 
-  const ptData2 = [
-    {
-      value: 110,
-      date: '1 Apr 2022',
-      labelTextStyle: { color: 'gray', width: 60 },
-      label: '1 Apr',
-    },
-    { value: 380, date: '2 Apr 2022' },
-    {
-      value: 490,
-      date: '3 Apr 2022',
-      labelTextStyle: { color: 'gray', width: 60 },
-      label: '3 Apr',
-    },
-    { value: 280, date: '4 Apr 2022' },
-    {
-      value: 440,
-      date: '5 Apr 2022',
-      labelTextStyle: { color: 'gray', width: 60 },
-      label: '5 Apr',
-    },
-    { value: 545, date: '6 Apr 2022' },
-    {
-      value: 160,
-      date: '7 Apr 2022',
-      labelTextStyle: { color: 'gray', width: 60 },
-      label: '7 Apr',
-    },
-    { value: 200, date: '8 Apr 2022' },
-    {
-      value: 300,
-      date: '9 Apr 2022',
-      labelTextStyle: { color: 'gray', width: 60 },
-      label: '9 Apr',
-    },
-    { value: 140, date: '10 Apr 2022' },
-  ];
+  if (isValueReducing) {
+    diffRateLabel = `-${
+      (firstExchangeRate - lastExchangeRate) / firstExchangeRate
+    }%`;
+  } else {
+    diffRateLabel = `+${
+      (lastExchangeRate - firstExchangeRate) / lastExchangeRate
+    }%`;
+  }
 
-  const randomCryptoImgUrl =
-    'https://cdn.pixabay.com/photo/2017/03/12/02/57/bitcoin-2136339_960_720.png';
+  const reducingColor = '#EB001B';
+  const rasingColor = '#6CBE58';
+
+  const getCurrencyExchangeData = async () => {
+    const responeData = await walletService.getCurrenciesHistoricalExchangeRate(
+      filterExchangeRateOptions[selectedFilterOptionsIndex].date,
+      currency.code,
+      'PHP',
+      1,
+      100
+    );
+    if (responeData.data.length > 0) {
+      let maxExchangeRate = responeData.data[0].exchangeRate;
+      const chartData: ChartDataItem[] = responeData.data.map(
+        (e: CurrencyExchangeRateData) => {
+          if (e.exchangeRate > maxExchangeRate) {
+            maxExchangeRate = e.exchangeRate;
+          }
+          return {
+            value: e.exchangeRate,
+            date: e.updatedAt,
+            labelTextStyle: { color: '#7F7B82', fontSize: 10, marginLeft: 10 },
+            label: moment(e.updatedAt).format('DD/MM'),
+          };
+        }
+      );
+      setMaxExchangeRate(maxExchangeRate);
+      setChartData(chartData);
+    }
+  };
+
+  useEffect(() => {
+    getCurrencyExchangeData();
+  }, [selectedFilterOptionsIndex]);
 
   return (
     <View style={styles.containerStyle}>
@@ -133,210 +138,115 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
       >
         <View style={styles.rowSpaceBetween}>
           <View style={styles.rowCurrency}>
-            <Text style={styles.title}>{`${'USD Coin'} (USDC)`}</Text>
+            <Text
+              style={styles.title}
+            >{`${currency.name} (${currency.code})`}</Text>
           </View>
-          <Image source={{ uri: randomCryptoImgUrl }} style={styles.image} />
+          <Image source={{ uri: currency.logo }} style={styles.image} />
         </View>
 
         <View style={styles.rowCurrency}>
-          <Text style={styles.subTitle}>{`As of Dec 03, 2021 2:12PM`}</Text>
+          <Text style={styles.subTitle}>{`As of ${lastExchangeDate}`}</Text>
         </View>
         <View style={styles.headerWrapper}>
           <Text
             style={styles.exchangePrecentage}
-          >{`1 BTC ≈ ₱ 2,444,810.00`}</Text>
+          >{`1 ${currency.code} ≈ ₱ ${lastExchangeRate}`}</Text>
           <Text
-            style={true ? styles.nagativeExchangeRate : styles.exchangeRate}
-          >{`+6.33% from yesterday`}</Text>
+            style={
+              isValueReducing
+                ? styles.nagativeExchangeRate
+                : styles.exchangeRate
+            }
+          >
+            {diffRateLabel}
+          </Text>
         </View>
         <View style={styles.rowWrapper}>
-          <TouchableOpacity
-            onPress={() => {
-              setIsActive(0);
-            }}
-            style={
-              isActive === 0
-                ? styles.chartActiveButton
-                : styles.chartInaActiveButton
-            }
-          >
-            <Text style={styles.chartButtonText}>{`24H`}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setIsActive(1);
-            }}
-            style={
-              isActive === 1
-                ? styles.chartActiveButton
-                : styles.chartInaActiveButton
-            }
-          >
-            <Text style={styles.chartButtonText}>{`1W`}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setIsActive(2);
-            }}
-            style={
-              isActive === 2
-                ? styles.chartActiveButton
-                : styles.chartInaActiveButton
-            }
-          >
-            <Text style={styles.chartButtonText}>{`1M`}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setIsActive(3);
-            }}
-            style={
-              isActive === 3
-                ? styles.chartActiveButton
-                : styles.chartInaActiveButton
-            }
-          >
-            <Text style={styles.chartButtonText}>{`3M`}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setIsActive(4);
-            }}
-            style={
-              isActive === 4
-                ? styles.chartActiveButton
-                : styles.chartInaActiveButton
-            }
-          >
-            <Text style={styles.chartButtonText}>{`6M`}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setIsActive(5);
-            }}
-            style={
-              isActive === 5
-                ? styles.chartActiveButton
-                : styles.chartInaActiveButton
-            }
-          >
-            <Text style={styles.chartButtonText}>{`1Y`}</Text>
-          </TouchableOpacity>
+          {filterExchangeRateOptions.map((opt, index) => (
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedFilterOptionsIndex(index);
+              }}
+              style={
+                selectedFilterOptionsIndex === index
+                  ? styles.chartActiveButton
+                  : styles.chartInaActiveButton
+              }
+            >
+              <Text style={styles.chartButtonText}>{opt.label}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
+
         <View style={styles.headerWrapper}>
-          <Text style={styles.exchangePrecentage}>{`₱ 2,444,792.00`}</Text>
-          <Text style={styles.subTitle}>{`As of Dec 03, 2021 2:12PM`}</Text>
+          {selectedExchangeValue && (
+            <Text
+              style={styles.exchangePrecentage}
+            >{`₱ ${selectedExchangeValue.value}`}</Text>
+          )}
+          {selectedExchangeValue && (
+            <Text style={styles.subTitle}>{`As of ${moment(
+              selectedExchangeValue.date
+            ).format('ddd DD, YYYY HH:ssA')}`}</Text>
+          )}
         </View>
 
-        <>
-          <LineChart
-            areaChart
-            data={true ? ptData2 : ptData}
-            width={310}
-            hideDataPoints
-            spacing={50}
-            color={true ? '#D32F2F' : '#2E7D32'}
-            thickness={2}
-            startFillColor={
-              true ? 'rgba(211, 47, 47,0.01)' : 'rgba(140,183,142,0.3)'
-            }
-            endFillColor={
-              true ? 'rgba(211, 47, 47,0.01)' : 'rgba(140,183,142,0.01)'
-            }
-            startOpacity={0.9}
-            endOpacity={0.1}
-            initialSpacing={0}
-            noOfSections={5}
-            maxValue={600}
-            yAxisColor="lightgray"
-            yAxisThickness={1}
-            rulesType="solid"
-            // verticalLinesSpacing={100}
-            // noOfVerticalLines={}
-            // rotateLabel
-            // xAxisColor="#0BA5A4"
-            // rulesColor="gray"
-            yAxisTextStyle={{ color: 'gray' }}
-            yAxisSide="right"
-            // hideOrigin={true}
-            hideYAxisText={true}
-            showVerticalLines
-            xAxisColor="lightgray"
-            pointerConfig={{
-              pointerStripHeight: 160,
-              // pointerStripColor: 'lightgray',
-              pointerStripWidth: 2,
-              pointerColor: 'white',
-              radius: 6,
-              pointerLabelWidth: 100,
-              pointerLabelHeight: 90,
-              activatePointersOnLongPress: true,
-              autoAdjustPointerLabelPosition: false,
-              pointerLabelComponent: (items) => {
-                return (
-                  <View
-                    style={{
-                      height: 90,
-                      width: 100,
-                      justifyContent: 'center',
-                      marginTop: -30,
-                      marginLeft: -40,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: 'white',
-                        fontSize: 14,
-                        marginBottom: 6,
-                        textAlign: 'center',
-                      }}
-                    >
-                      {items[0].date}
-                    </Text>
-                    <View
-                      style={{
-                        paddingHorizontal: 14,
-                        paddingVertical: 6,
-                        borderRadius: 16,
-                        backgroundColor: 'white',
-                      }}
-                    >
-                      <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
-                        {'$' + items[0].value + '.0'}
-                      </Text>
-                    </View>
-                  </View>
-                );
-              },
-            }}
-          />
-        </>
-
+        <LineChart
+          areaChart
+          data={chartData}
+          width={screenWidth - 60}
+          adjustToWidth
+          hideDataPoints
+          color={isValueReducing ? reducingColor : rasingColor}
+          thickness={2}
+          startFillColor={isValueReducing ? reducingColor : rasingColor}
+          endFillColor={isValueReducing ? reducingColor : rasingColor}
+          startOpacity={0.9}
+          endOpacity={0.1}
+          initialSpacing={20}
+          noOfSections={5}
+          maxValue={maxExchangeRate}
+          yAxisColor="#DDD9E4"
+          yAxisThickness={1}
+          rulesType="solid"
+          yAxisSide="right"
+          hideYAxisText={true}
+          showVerticalLines
+          xAxisColor="#DDD9E4"
+          showStripOnPress={true}
+          pointerConfig={{
+            pointerStripColor: '#000000',
+            pointerStripWidth: 2,
+            pointerStripUptoDataPoint: true,
+            pointerComponent: () => <View style={styles.pointer} />,
+            pointerLabelComponent: (items: [ChartDataItem]) => {
+              console.log('pointerLabelComponent -> items', items);
+              setSelectedExchangeValue(items[0]);
+              return <View />;
+            },
+          }}
+        />
+        {/* 
         <View style={styles.rowCurrency}>
           <Text style={styles.title2}>{`My Assets`}</Text>
         </View>
         <View style={styles.headerWrapper}>
           <Text style={styles.message}>{`1 BTC ≈ ₱ 2,444,810.00`}</Text>
           <Text style={styles.message}>{`+6.33% from yesterday`}</Text>
-        </View>
+        </View> */}
         <View style={styles.rowCurrency}>
-          <Text style={styles.title2}>{`About Bitcoin`}</Text>
+          <Text style={styles.title2}>{`About ${currency.name}`}</Text>
         </View>
         <View style={styles.headerWrapper}>
-          <Text style={styles.message2}>
-            Bitcoin is one of the most popular cryptocurrencies in the market.
-            First introduced in 2009 by Satoshi Nakamoto, Bitcoin has held the
-            crypto market’s number one spot according to market capitalization.
-            Bitcoin paved the way for many existing altcoins in the market and
-            marked a pivotal moment for digital payment solutions.
-          </Text>
+          <Text style={styles.message2}>{currency.description}</Text>
         </View>
       </ScrollView>
       <View style={styles.footerContainerStyle}>
         <View style={styles.footerButtonWrapper}>
           <Button
             onPress={() => {
-              onClick({ type: 'Buy', item: itemData });
+              onClick({ type: 'Buy', item: chartData });
             }}
             // label={
             //   i18n?.t("customer_invoke_component.lbl_continue") ??
@@ -348,7 +258,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
         <View style={styles.footerButtonWrapper}>
           <Button
             onPress={() => {
-              onClick({ type: 'Sell', item: itemData });
+              onClick({ type: 'Sell', item: chartData });
             }}
             label={'Sell'}
           />

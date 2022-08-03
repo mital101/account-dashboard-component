@@ -1,5 +1,5 @@
 import { CryptoSearchComponentProps } from './types';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, Text, View, Image, TouchableOpacity } from 'react-native';
 import useMergeStyles from './styles';
 import {
@@ -8,7 +8,7 @@ import {
 } from '../../../context/wallet-context';
 import { SearchInput } from 'react-native-theme-component';
 import { ArrowRightIcon } from '../../../assets/arrow-right.icon';
-import { CurrencyExchangeRateData } from '../../../model';
+import { Currency } from '../../../model';
 
 const CryptoSearchComponent = ({
   props,
@@ -16,40 +16,50 @@ const CryptoSearchComponent = ({
 }: CryptoSearchComponentProps) => {
   const styles = useMergeStyles(style);
   const { onCryptoSelect } = props || {};
-  const { getCryptoExchangeData, isLoadingCryptoExchange, cryptoExchangeData } =
+  const { getListCurrency, isLoadingListCurrency, listCurrency } =
     useContext<WalletContextData>(WalletContext);
-  const [showData, setShowData] = useState<CurrencyExchangeRateData[]>(
-    cryptoExchangeData || []
-  );
+  const [showData, setShowData] = useState<Currency[]>(listCurrency || []);
 
-  const onSelect = (id: string) => {
-    onCryptoSelect && onCryptoSelect(id);
+  console.log('render -> listCurrency', showData);
+
+  useEffect(() => {
+    getListCurrency();
+  }, []);
+
+  useEffect(() => {
+    if (listCurrency && listCurrency.length > 0) {
+      setShowData(listCurrency);
+    }
+  }, [listCurrency]);
+
+  const onSelect = (data: Currency) => {
+    onCryptoSelect && onCryptoSelect(data);
   };
 
   const renderListCryptoData = () => {
     return (
       <FlatList
         data={showData}
-        refreshing={isLoadingCryptoExchange}
-        onRefresh={getCryptoExchangeData}
+        refreshing={isLoadingListCurrency}
+        onRefresh={getListCurrency}
         showsVerticalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.code}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.itemContainer}
-            onPress={() => onSelect(item.id)}
+            onPress={() => onSelect(item)}
           >
             <View style={styles.row}>
               <Image
                 source={{
-                  uri: item.fromCurrency.symbolGraphic.replace('sgv', 'png'),
+                  uri: item.logo,
                 }}
                 style={styles.itemImage}
               />
               <View style={styles.column}>
-                <Text>{item.fromCurrency.code}</Text>
-                <Text>{item.fromCurrency.name}</Text>
+                <Text>{item.code}</Text>
+                <Text>{item.name}</Text>
               </View>
             </View>
             <ArrowRightIcon width={20} height={20} color={'#F8981D'} />
@@ -62,19 +72,19 @@ const CryptoSearchComponent = ({
   const onSearch = (text: string) => {
     console.log('onSearch crypto: ', text);
     const searchText = text.trim().toLocaleLowerCase();
-    if (cryptoExchangeData) {
+    if (listCurrency) {
       setShowData(
-        cryptoExchangeData.filter(
+        listCurrency.filter(
           (c) =>
-            c.fromCurrency.code.toLocaleLowerCase().includes(searchText) ||
-            c.fromCurrency.name.toLocaleLowerCase().includes(searchText)
+            c.code.toLocaleLowerCase().includes(searchText) ||
+            c.name.toLocaleLowerCase().includes(searchText)
         )
       );
     }
   };
 
   const onClearText = () => {
-    setShowData(cryptoExchangeData || []);
+    setShowData(listCurrency || []);
   };
 
   return (

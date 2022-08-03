@@ -13,7 +13,6 @@ const useMergeStyles = (
     container: {
       paddingHorizontal: 25,
       backgroundColor: '#F1F6FC',
-      paddingTop: 24,
     },
     pageTitle: {
       fontSize: 24,
@@ -21,7 +20,7 @@ const useMergeStyles = (
       color: '#3E2D68',
     },
     content: {
-      marginTop: 20,
+      marginTop: 5,
       borderRadius: 8,
     },
   });

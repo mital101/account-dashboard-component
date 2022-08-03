@@ -1,9 +1,10 @@
+import { Currency } from '../../../model';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 export type CryptoListCurrencyComponentProps = {
   style?: CryptoListCurrencyComponentStyles;
   props?: {
-    onCryptoSelect?: (id: string) => void;
+    onCryptoSelect?: (currency: Currency) => void;
   };
 };
 

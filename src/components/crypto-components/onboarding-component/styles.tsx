@@ -1,10 +1,10 @@
-import { defaultsDeep } from "lodash";
-import { Dimensions, StyleSheet } from "react-native";
-import { OnboardingComponentStyles } from "./types";
-import { ThemeContext } from "react-native-theme-component";
-import { useContext } from "react";
+import { defaultsDeep } from 'lodash';
+import { Dimensions, StyleSheet } from 'react-native';
+import { OnboardingComponentStyles } from './types';
+import { ThemeContext } from 'react-native-theme-component';
+import { useContext } from 'react';
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
 const horizontalPaddingTotal = 40;
 const itemWidth = width - horizontalPaddingTotal;
 
@@ -17,42 +17,42 @@ const useMergeStyles = (
     container: {
       backgroundColor: colors.primaryColor,
       flex: 1,
-      justifyContent: "space-between",
+      justifyContent: 'space-between',
       paddingBottom: 20,
       paddingHorizontal: 20,
-      paddingTop: 30
+      paddingTop: 30,
     },
-    sliderWrapper: { width: itemWidth, alignItems: "center", marginTop: 50 },
+    sliderWrapper: { width: itemWidth, alignItems: 'center', marginTop: 50 },
     imageWrapper: {
       width: 150,
       height: 150,
       marginTop: 100,
-      alignItems: "center"
+      alignItems: 'center',
     },
-    image: { width: "100%", height: "100%" },
+    image: { width: '100%', height: '100%' },
     title: {
       color: colors.backgroundTextColor,
       fontSize: 24,
       lineHeight: 36,
-      textAlign: "center",
-      fontFamily: fonts.semiBold
+      textAlign: 'center',
+      fontFamily: fonts.semiBold,
     },
     subTitle: {
       marginTop: 23,
       color: colors.backgroundTextColor,
       fontSize: 18,
       lineHeight: 24,
-      textAlign: "center",
-      fontFamily: fonts.medium
+      textAlign: 'center',
+      fontFamily: fonts.medium,
     },
     description: {
       marginTop: 10,
       color: colors.backgroundTextColor,
       fontSize: 14,
       lineHeight: 24,
-      textAlign: "center",
-      fontFamily: fonts.regular
-    }
+      textAlign: 'center',
+      fontFamily: fonts.regular,
+    },
   });
   return defaultsDeep(style, defaultStyles);
 };

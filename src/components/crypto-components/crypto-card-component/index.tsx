@@ -26,10 +26,10 @@ import EmptyWalletComponent from '../no-crypto-wallet-component';
 import CryptoItemComponent from '../crypto-item-component/index';
 import AccountInfoCard from '../../crypto-components/crypto-account-info-card';
 import MarketPricesComponent from '../../market-price-component';
-import { Wallet, Transaction } from '../../../model';
+import { Wallet, Currency } from '../../../model';
 import { WalletItemComponentStyle } from '../../wallet-card-component/wallet-item-component';
 import { TransactionCardComponentStyles } from '../../wallet-card-component/transaction-card-component';
-import { WalletContext } from '@banking-component/wallet-component/src/context/wallet-context';
+import { WalletContext } from '../../../context/wallet-context';
 
 export type CryptoCardComponentProps = {
   style?: CryptoCardComponentStyles;
@@ -48,7 +48,7 @@ export type CryptoCardComponentProps = {
   onTransferIn: () => void;
   onTransferOut: () => void;
   onSearchingCrypto: () => void;
-  onSelectItemCurrency: (idCurrency: string) => void;
+  onSelectItemCurrency: (currency: Currency) => void;
   children?: ReactNode;
   isActive?: boolean;
 };
