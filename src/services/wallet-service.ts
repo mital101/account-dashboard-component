@@ -4,6 +4,7 @@ type WalletClient = {
   contentTemplateClient: any;
   exchangeRateClient: any;
   countryInformationClient: any;
+  paymentClient: any;
 };
 
 export class WalletService {
@@ -14,6 +15,7 @@ export class WalletService {
   private _contentTemplateClient?: any;
   private _exchangeRateClient?: any;
   private _countryInformationClient?: any;
+  private _paymentClient?: any;
 
   constructor() {
     if (WalletService._instance) {
@@ -34,6 +36,7 @@ export class WalletService {
     this._contentTemplateClient = clients.contentTemplateClient;
     this._exchangeRateClient = clients.exchangeRateClient;
     this._countryInformationClient = clients.countryInformationClient;
+    this._paymentClient = clients.paymentClient;
   };
 
   getWallets = async () => {
@@ -227,6 +230,156 @@ export class WalletService {
       throw new Error(
         'Historical exchange rate client service is not registered'
       );
+    }
+  };
+
+  moneyInValidation = async (
+    amount: number,
+    senderAccountNumber: string,
+    receiverAccountNumber: string
+  ) => {
+    console.log(
+      'moneyInValidation',
+      amount,
+      senderAccountNumber,
+      receiverAccountNumber
+    );
+    if (this._paymentClient) {
+      try {
+        const response = await this._paymentClient.post(
+          'inward-payments/validations',
+          {
+            Data: {
+              Initiation: {
+                LocalInstrument: 'PDAX',
+                InstructedAmount: {
+                  Amount: amount,
+                  Currency: 'PHP',
+                },
+                DebtorAccount: {
+                  Identification: senderAccountNumber,
+                  SchemeName: 'PH.BRSTN.AccountNumber',
+                },
+                DebtorAccountExt: {
+                  BankCode: 'UnionDigital',
+                },
+                CreditorAccount: {
+                  Identification: receiverAccountNumber,
+                  SchemeName: 'PH.BRSTN.AccountNumber',
+                },
+                CreditorAccountExt: {
+                  BankCode: 'PDAX',
+                },
+                RemittanceInformation: {
+                  Unstructured: 'notes',
+                },
+                SupplementaryData: {
+                  PaymentType: 'MoneyIn',
+                },
+              },
+            },
+            Risk: {
+              PaymentContextCode: 'PartyToParty',
+            },
+          }
+        );
+        console.log('response', response);
+        return response.data;
+      } catch (error) {
+        return 'error: ' + error;
+      }
+    } else {
+      throw new Error('Payment client service is not registered');
+    }
+  };
+
+  moneyInInitital = async (
+    amount: number,
+    senderAccountNumber: string,
+    receiverAccountNumber: string
+  ) => {
+    console.log(
+      'moneyInValidation',
+      amount,
+      senderAccountNumber,
+      receiverAccountNumber
+    );
+    if (this._paymentClient) {
+      try {
+        const response = await this._paymentClient.post('inward-payments', {
+          Data: {
+            Initiation: {
+              LocalInstrument: 'PDAX',
+              InstructedAmount: {
+                Amount: amount,
+                Currency: 'PHP',
+              },
+              DebtorAccount: {
+                Identification: senderAccountNumber,
+                SchemeName: 'PH.BRSTN.AccountNumber',
+              },
+              CreditorAccount: {
+                Identification: receiverAccountNumber,
+                SchemeName: 'PH.BRSTN.AccountNumber',
+              },
+              RemittanceInformation: {
+                Unstructured:
+                  'Topup money from Pitaka account to Crypto Wallet',
+              },
+              SupplementaryData: {
+                PaymentType: 'MoneyIn',
+              },
+              CreditorAccountExt: {
+                BankCode: 'PDAX',
+              },
+              DebtorAccountExt: {
+                BankCode: 'UnionDigital',
+              },
+            },
+          },
+          Risk: {
+            PaymentContextCode: 'PartyToParty',
+          },
+        });
+        console.log('response', response);
+        return response.data;
+      } catch (error) {
+        return 'error: ' + error;
+      }
+    } else {
+      throw new Error('Payment client service is not registered');
+    }
+  };
+
+  moneyInConfirmation = async (id: string, otp: string) => {
+    console.log('moneyInConfirmation', id, otp);
+    if (this._paymentClient) {
+      try {
+        const response = await this._paymentClient.patch(
+          'inward-payments/' + id,
+          {
+            Data: {
+              Initiation: {
+                LocalInstrument: 'PDAX',
+                SupplementaryData: {
+                  PaymentType: 'MoneyIn',
+                  CustomFields: [
+                    {
+                      Key: 'OTP',
+                      Value: `${otp}`,
+                    },
+                  ],
+                },
+              },
+            },
+          }
+        );
+        return response.data;
+      } catch (error) {
+        return error;
+      }
+    } else {
+      throw new Error('Payment client service is not registered');
     }
   };
 }

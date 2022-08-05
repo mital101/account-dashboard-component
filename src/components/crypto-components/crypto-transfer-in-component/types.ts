@@ -6,7 +6,6 @@ export type CryptoTransferInComponentProps = {
     onSelectCrypto?: () => void;
     onTransferPHP?: () => void;
     goToAccountLimit?: () => void;
-    isError?: boolean;
   };
 };
 

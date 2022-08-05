@@ -1,5 +1,5 @@
 import { CryptoReviewSummaryComponentProps } from './types';
-import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useContext, useEffect, useImperativeHandle, useState } from 'react';
 import {
   Text,
   View,
@@ -8,9 +8,10 @@ import {
   BackHandler,
 } from 'react-native';
 import useMergeStyles from './styles';
-import { Button } from 'react-native-theme-component';
+import { Button, ThemeContext, useCurrencyFormat } from 'react-native-theme-component';
 import AlertModal from '../../alert-model';
 import RowInfo from '../../row-info';
+import { WalletContext } from '../../../context/wallet-context';
 
 export type CryptoReviewSummaryRef = {
   onCancel: () => void;
@@ -21,7 +22,11 @@ const CryptoReviewSummaryComponent = forwardRef(
     const { onGoBack, onSuccess } = props || {};
     const [isShowCancelAlert, setIsShowCancelAlert] = useState<boolean>();
     const [isShowErrorAlert, setIsShowErrorAlert] = useState<boolean>();
+    const { fonts } = useContext(ThemeContext);
+    const { initMoneyin, amount = 0, isLoadingInitMoneyIn, unionWallet, cryptoWallet } = useContext(WalletContext);
     const styles = useMergeStyles(style);
+    const formatedAmount = useCurrencyFormat(amount, 'PHP');
+    const formatedAmountDeposite = useCurrencyFormat(amount, 'PHP');
 
     useImperativeHandle(
       ref,
@@ -43,20 +48,22 @@ const CryptoReviewSummaryComponent = forwardRef(
     };
 
     const onConfirmAlertCancel = () => {
-      onGoBack && onGoBack();
       setIsShowCancelAlert(false);
+      onGoBack && onGoBack();
     }
 
     const onConfirmAlertAccept = () => {
       setIsShowCancelAlert(false);
     }
 
-    const onConfirm = () => {
-      console.log('confirm');
+    const onConfirm = async () => {
+      await initMoneyin();
       onSuccess && onSuccess();
     }
 
-    const onReload = () => {
+    const onReload = async () => {
+      await initMoneyin();
+      onSuccess && onSuccess();
     }
     
     return (
@@ -73,25 +80,25 @@ const CryptoReviewSummaryComponent = forwardRef(
                 <RowInfo
                   props={{
                     title: 'Amount in PHP',
-                    value: '₱ 1,000.00',
+                    value: `${formatedAmount}`,
                   }}
                 />
                 <RowInfo
                   props={{
                     title: 'Send Money From',
-                    value: `My Pitaka\nBen Santos\n1234567890`,
+                    value: `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}`,
                   }}
                 />
                 <RowInfo
                   props={{
                     title: 'Send Money To',
-                    value: 'My Crypto Pitaka\nBen Santos',
+                    value: `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}`,
                   }}
                 />
                 <RowInfo
                   props={{
                     title: 'When',
-                    value: 'Send instantly',
+                    value: `Send instantly`,
                   }}
                 />
                 <RowInfo
@@ -103,14 +110,20 @@ const CryptoReviewSummaryComponent = forwardRef(
                 <RowInfo
                   props={{
                     title: 'Total amount to be deposited into Crypto Account',
-                    value: '₱ 1,000.00',
+                    value: `${formatedAmountDeposite}`,
+                  }}
+                  style={{
+                    value: {
+                      color: '#3E2D68',
+                      fontFamily: fonts.semiBold
+                    }
                   }}
                 />
               </View>
             </View>
         </ScrollView>
         <View style={styles.actionWrapper}>
-          <Button label="Confirm" onPress={onConfirm} />
+          <Button label="Confirm" onPress={onConfirm} isLoading={isLoadingInitMoneyIn} />
         </View>
         <AlertModal 
           isVisible={isShowCancelAlert} 

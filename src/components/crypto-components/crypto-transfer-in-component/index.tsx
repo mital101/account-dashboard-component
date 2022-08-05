@@ -1,5 +1,5 @@
 import { CryptoTransferInComponentProps } from './types';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Text,
   View,
@@ -21,6 +21,8 @@ import {
 } from 'react-native-theme-component';
 import { InformationIcon } from '../../../assets/images';
 import { ArrowRightIcon } from '../../../assets/images';
+import { WalletService } from '../../../services/wallet-service';
+import { WalletContext } from '../../../context/wallet-context';
 
 const randomCryptoImgUrl =
   'https://cdn.pixabay.com/photo/2017/03/12/02/57/bitcoin-2136339_960_720.png';
@@ -92,25 +94,35 @@ const cryptoDummyData: CryptoItem[] = [
   },
 ];
 
+const walletService = WalletService.instance();
+
 const CryptoTransferInComponent = ({
   props,
   style,
 }: CryptoTransferInComponentProps) => {
   const {
     onSelectCrypto,
-    isError = true,
     onTransferPHP,
     goToAccountLimit,
   } = props || {};
-  const styles = useMergeStyles(style);
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [transferValue, setTransferValue] = useState<number>(0);
   const [selectedCrypto, setSelectedCrypto] = React.useState<string>();
-  const isValidToSubmit =
-    selectedTabIndex === 0 ? transferValue > 0 : !!selectedCrypto;
-
+  const [isLoadingValidation, setIsLoadingValidation] = useState<boolean>(false);
+  const { setAmountCryptoIn, unionWallet, cryptoWallet } = useContext(WalletContext);
+  const unionWalletCurrentBalance = useCurrencyFormat(unionWallet?.availableBalance || 0, 'PHP');
   const transferValueFormated =
     transferValue > 0 ? useCurrencyFormat(transferValue, '', '') : '';
+  
+  const styles = useMergeStyles(style);
+
+  const minimumError = transferValueFormated.length > 0 && transferValue < 200;
+  const higherCurrentBalanceErorr = transferValue > (unionWallet?.currentBalance || 0);
+  const isInputValid = !minimumError && !higherCurrentBalanceErorr;
+
+  const isValidToSubmit =
+    selectedTabIndex === 0 ? (transferValue > 0 && isInputValid) : !!selectedCrypto;
+
 
   const renderTabbar = (title: string, indexTabbar: number) => (
     <TouchableOpacity
@@ -128,11 +140,6 @@ const CryptoTransferInComponent = ({
     e: NativeSyntheticEvent<TextInputKeyPressEventData>
   ) => {
     if (e.nativeEvent.key !== 'Backspace') {
-      console.log(
-        transferValue,
-        e.nativeEvent.key,
-        parseInt(`${transferValue}${e.nativeEvent.key}`)
-      );
       setTransferValue(parseInt(`${transferValue || ''}${e.nativeEvent.key}`));
     } else {
       setTransferValue(parseInt(`${transferValue || ''}`.slice(0, -1)));
@@ -147,7 +154,7 @@ const CryptoTransferInComponent = ({
           <View
             style={[
               styles.inputBalanceWrapper,
-              !isError && styles.paddingBottomView,
+              isInputValid && styles.paddingBottomView,
             ]}
           >
             <View style={styles.rowInput}>
@@ -160,10 +167,11 @@ const CryptoTransferInComponent = ({
                 keyboardType="numeric"
               />
             </View>
-            {isError && (
+            {!isInputValid && (
               <View style={styles.errorRow}>
                 <Text style={styles.errorText}>
-                  The minimum amount that you’re allowed to transfer-in is ₱1.00
+                  {minimumError ? `The minimum amount that you’re allowed to transfer-in is ₱200.0` : 
+                    higherCurrentBalanceErorr ? 'You have insufficient balance in your Pitaka.' : 'Invalid amount' }
                 </Text>
               </View>
             )}
@@ -171,7 +179,7 @@ const CryptoTransferInComponent = ({
           <View style={styles.currentBalanceWrapper}>
             <View style={styles.rowInput}>
               <Text style={styles.balanceTitle}>My Pitaka Balance: </Text>
-              <Text style={styles.smallBalanceLabel}>₱ 36,000.75</Text>
+              <Text style={styles.smallBalanceLabel}>{unionWalletCurrentBalance}</Text>
             </View>
           </View>
         </View>
@@ -222,6 +230,26 @@ const CryptoTransferInComponent = ({
     />
   );
 
+  const handleOnTransferPHP = async () => {
+    setIsLoadingValidation(true);
+    if(unionWallet && cryptoWallet) {
+      const result = await walletService.moneyInValidation(
+        transferValue, 
+        unionWallet?.bankAccount.accountNumber, 
+        cryptoWallet?.bankAccount.accountNumber
+        );
+
+      if(result.Data) {
+        setAmountCryptoIn(transferValue);
+        onTransferPHP && onTransferPHP();
+        // onTransferPHP && onTransferPHP(
+        //   unionWallet, cryptoWallet, transferValue, 'Send instantly', 0, transferValue);
+      }
+    }
+
+    setIsLoadingValidation(false); 
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -240,8 +268,9 @@ const CryptoTransferInComponent = ({
       </ScrollView>
       <View style={styles.actionWrapper}>
         <Button
+          isLoading={isLoadingValidation}
           label={selectedTabIndex === 0 ? 'Transfer-in PHP' : 'Select'}
-          onPress={selectedTabIndex === 0 ? onTransferPHP : onSelectCrypto}
+          onPress={selectedTabIndex === 0 ? handleOnTransferPHP : onSelectCrypto}
           disabled={!isValidToSubmit}
           disableColor={'#EAEAEB'}
         />

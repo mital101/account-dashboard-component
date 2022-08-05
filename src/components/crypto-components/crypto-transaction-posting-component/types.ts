@@ -1,4 +1,4 @@
-import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 export type CryptoTransactionPostingComponentProps = {
   style?: CryptoTransactionPostingComponentStyles;
@@ -6,6 +6,11 @@ export type CryptoTransactionPostingComponentProps = {
     onBackToDashboard?: () => void;
     onBackToTransferIn?: () => void;
     onGoToHelpCenter?: () => void;
+    amount: number;
+    type: string;
+    status: string;
+    date: string;
+    refNumber: string;
   };
 };
 

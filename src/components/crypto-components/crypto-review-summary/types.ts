@@ -1,8 +1,9 @@
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { Wallet } from '../../../model';
 
 export type CryptoReviewSummaryComponentProps = {
   style?: CryptoReviewSummaryComponentStyles;
-  props?: { 
+  props: { 
     onGoBack?: () => void;
     onSuccess?: () => void;
   };

@@ -3,26 +3,44 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import useMergeStyles from './styles';
 import RowInfo from '../../row-info';
-import { Button } from 'react-native-theme-component';
+import { Button, useCurrencyFormat } from 'react-native-theme-component';
 import { InfoIcon, UnionDigitalBankIcon } from '../../../assets/images';
 import LoadingSpinner from '../../loading-spinner';
+import moment from 'moment';
 
 const CryptoTransactionPostingComponent = ({
   props,
   style,
 }: CryptoTransactionPostingComponentProps) => {
   const styles = useMergeStyles(style);
-  const { onBackToDashboard, onBackToTransferIn, onGoToHelpCenter } =
+  const { onBackToDashboard, onBackToTransferIn, onGoToHelpCenter, amount, type,
+    status,
+    date,
+    refNumber 
+  } =
     props || {};
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+    
+  const isSuccess = status === 'Initialized' ||
+  'AcceptedCreditSettlementCompleted' ||
+  'AcceptedSettlementCompleted' ||
+  'AcceptedSettlementInProcess' ||
+  'AcceptedWithoutPosting' ||
+  'Pending' || 
+  'Complete';
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSuccess(true);
-    }, 2000);
-  }, []);
+  const formatedAmount = useCurrencyFormat(amount || 0, 'PHP');
+  const formatedDate = moment(date).format(
+    'ddd DD, YYYY HH:ss A'
+  );
+  
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setIsLoading(false);
+  //     setIsSuccess(true);
+  //   }, 2000);
+  // }, []);
 
   if (isLoading) {
     return (
@@ -66,7 +84,7 @@ const CryptoTransactionPostingComponent = ({
                   Reference No.
                 </Text>
                 <Text style={[styles.infoSubTitle, styles.errorInfoTitleColor]}>
-                  ABCDE12345676789
+                  {refNumber}
                 </Text>
               </View>
             </View>
@@ -105,19 +123,19 @@ const CryptoTransactionPostingComponent = ({
           <RowInfo
             props={{
               title: 'Transaction Type',
-              value: 'PHP transfer-in',
+              value: `${type}`,
             }}
           />
           <RowInfo
             props={{
               title: 'Amount to Send',
-              value: '₱ 1,000.00',
+              value: `${formatedAmount}`,
             }}
           />
           <RowInfo
             props={{
               title: 'Transaction Status ',
-              value: 'Completed',
+              value: `${status}`,
             }}
             style={{
               value: styles.completedTextColor,
@@ -139,11 +157,11 @@ const CryptoTransactionPostingComponent = ({
         <View>
           <View style={styles.rowBetween}>
             <Text style={styles.infoTitle}>Transaction Date / Time</Text>
-            <Text style={styles.infoSubTitle}>Nov 2, 2021 / 07:10 AM</Text>
+            <Text style={styles.infoSubTitle}>{formatedDate}</Text>
           </View>
           <View style={styles.rowBetween}>
             <Text style={styles.infoTitle}>Reference No.</Text>
-            <Text style={styles.infoSubTitle}>ABCDE12345676789</Text>
+            <Text style={styles.infoSubTitle}>{refNumber}</Text>
           </View>
         </View>
 

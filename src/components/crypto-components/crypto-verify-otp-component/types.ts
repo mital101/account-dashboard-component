@@ -2,8 +2,8 @@ import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 export type CryptoVerifyOTPComponentProps = {
   style?: CryptoVerifyOTPComponentStyles;
-  props?: {
-    onConfirmed: () => void;
+  props: {
+    onConfirmed: (amount: number, type: string, status: string, date: string, refNumber: string) => void;
   };
 };
 
@@ -25,4 +25,6 @@ export type CryptoVerifyOTPComponentStyles = {
   durationLabel?: StyleProp<TextStyle>;
   notReceivedCodeLabel?: StyleProp<TextStyle>;
   countdownWrapper?: StyleProp<ViewStyle>;
+  errorText?: StyleProp<TextStyle>;
+  errorWrapper?: StyleProp<ViewStyle>;
 };

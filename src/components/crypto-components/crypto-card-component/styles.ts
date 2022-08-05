@@ -9,8 +9,6 @@ const useMergeStyles = (
 ): CryptoCardComponentStyles => {
   const { fonts, colors } = useContext(ThemeContext);
 
-  console.log('colors ', colors);
-
   const defaultStyles: CryptoCardComponentStyles = StyleSheet.create({
     containerStyle: {
       flex: 1,
