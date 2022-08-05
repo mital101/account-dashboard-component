@@ -22,6 +22,7 @@ import {
 } from '@banking-component/wallet-component/src/components/crypto-components';
 
 // import { AccountOriginationContext } from 'account-origination-component';
+
 import { CustomerInvokeContext } from 'customer-invoke-component';
 
 export type CryptoLinkAccountComponentProps = {
@@ -43,6 +44,7 @@ const CryptoLinkAccountComponent = ({ style, onNext,onPressBack }: CryptoLinkAcc
   const { i18n,colors } = useContext(ThemeContext);
 
   const { profile } = useContext(AuthContext);
+
   const {
     createCryptoApplication,
     cryptoApplicationDetails,
@@ -52,7 +54,7 @@ const CryptoLinkAccountComponent = ({ style, onNext,onPressBack }: CryptoLinkAcc
     clearErrors
   } = useContext(CustomerInvokeContext);
 
-  const { getCryptoTcData, cryptoTC, isLoadingCryptoTC } = useContext(WalletContext);
+  const { getCryptoTcData, cryptoTC, isLoadingCryptoTC,getWalletsById } = useContext(WalletContext);
 
   // const [isMount, setIsMount] = useState<boolean>(false);
   const [isSelected1, setSelected1] = useState(false);
@@ -60,6 +62,7 @@ const CryptoLinkAccountComponent = ({ style, onNext,onPressBack }: CryptoLinkAcc
   const [isSelected3, setSelected3] = useState(false);
   const [isAppCreated, setIsAppCreated] = useState(false);
   const [isShowTc, setShowTc] = useState(false);
+
 
   useEffect(() => {
     getCryptoTcData("pdax-terms-conditions","UnionDigital","UD","HTML");
@@ -69,6 +72,7 @@ const CryptoLinkAccountComponent = ({ style, onNext,onPressBack }: CryptoLinkAcc
 
   useEffect(() => {
     if (isCryptoCreatedApplication) {
+      getWalletsById('PDAX')
       setIsAppCreated(isCryptoCreatedApplication)
     }
   }, [isCryptoCreatedApplication]);
@@ -208,6 +212,7 @@ const CryptoLinkAccountComponent = ({ style, onNext,onPressBack }: CryptoLinkAcc
               label={'Proceed to activate crypto account'}
               isLoading={isCryptoCreatingApplication}
               onPress={() => {
+
                 if (cryptoTC) {
                   createCryptoApplication(cryptoTC?.templateId)
                 }
