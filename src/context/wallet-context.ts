@@ -88,6 +88,10 @@ export interface WalletContextData {
   getListCurrency: () => void;
   isLoadingListCurrency: boolean;
   listCurrency?: Currency[];
+
+  walletsById: Wallet[];
+  getWalletsById: () => void;
+  refreshWalletsById: (delayTime?: number) => void;
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -136,6 +140,10 @@ export const walletDefaultValue: WalletContextData = {
   getListCurrency: () => undefined,
   isLoadingListCurrency: false,
   listCurrency: [],
+
+  walletsById: [],
+  getWalletsById: () => null,
+  refreshWalletsById: () => null,
 };
 
 export const WalletContext =
@@ -181,6 +189,8 @@ export function useWalletContextValue(): WalletContextData {
   const [_isLoadingListCurrency, setIsLoadingListCurrency] = useState(true);
   const [_listCurrency, setListCurrency] = useState<Currency[] | undefined>();
 
+  const [_walletsById, setWalletsById] = useState<Wallet[]>([]);
+
   const getWallets = useCallback(async () => {
     try {
       setIsLoadingWallets(true);
@@ -210,6 +220,28 @@ export function useWalletContextValue(): WalletContextData {
       }
       setWallets(orderBy<Wallet>(_walletsData, ['isDefaultWallet'], ['desc']));
       setSummary(resp.summary);
+    }
+  };
+
+  const getWalletsById = useCallback(async (bankId:string) => {
+    try {
+      setIsLoadingWallets(true);
+      await _fetchWalletsById(bankId);
+      setIsLoadingWallets(false);
+      clearWalletErrors();
+    } catch (err) {
+      setIsLoadingWallets(false);
+      setLoadError(err as Error);
+    }
+  }, []);
+
+  const _fetchWalletsById = async (bankId:string) => {
+    const resp = await walletService.getWalletsByBankId(bankId);
+    let _walletsData: Wallet[] = resp.data;
+    if (isEmpty(_walletsData)) {
+      setWalletsById([]);
+    } else {
+      setWalletsById(_walletsData);
     }
   };
 
@@ -263,6 +295,24 @@ export function useWalletContextValue(): WalletContextData {
       }
     },
     [_wallets]
+  );
+
+  const refreshWalletsById = useCallback(
+    async (delayTime?: number) => {
+      try {
+        setIsRefreshingWallet(true);
+        if (delayTime) {
+          await sleep(delayTime);
+        }
+        await _fetchWalletsById();
+        setIsRefreshingWallet(false);
+        clearWalletErrors();
+      } catch (err) {
+        setIsRefreshingWallet(false);
+        setLoadError(err as Error);
+      }
+    },
+    [_walletsById]
   );
 
   const setPrimaryWallet = useCallback(async (walletId: string) => {
@@ -441,6 +491,7 @@ export function useWalletContextValue(): WalletContextData {
 
   const clearWallets = useCallback(() => {
     setWallets([]);
+    setWalletsById([])
   }, []);
 
   const fetchTransactions = useCallback(
@@ -694,6 +745,9 @@ export function useWalletContextValue(): WalletContextData {
       getListCurrency,
       isLoadingListCurrency: _isLoadingListCurrency,
       listCurrency: _listCurrency,
+      walletsById: _walletsById,
+      refreshWalletsById,
+      getWalletsById,
     }),
     [
       _isLinkedSuccessfully,
@@ -723,6 +777,7 @@ export function useWalletContextValue(): WalletContextData {
       _isLoadingHistoricalExchangeRate,
       _isLoadingListCurrency,
       _listCurrency,
+      _walletsById
     ]
   );
 }

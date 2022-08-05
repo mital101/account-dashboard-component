@@ -81,6 +81,70 @@ const useMergeStyles = (style?: CryptoItemComponentStyle) => {
     bottomContainerStyle: {
       flexDirection: 'row',
     },
+
+
+    walletContainerStyle: {
+      backgroundColor: '#ffffff',
+      borderRadius: 5,
+      justifyContent: 'center',
+      height: 173,
+      elevation: 2,
+      shadowColor: 'grey',
+      shadowOffset: {
+        width: 1,
+        height: 1,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 1,
+      margin: 1,
+    },
+    walletContentContainerStyle: {
+      flex: 1,
+      paddingHorizontal: 20,
+      paddingTop: 18,
+      paddingBottom: 20,
+      justifyContent: 'space-between',
+    },
+    walletHeaderContainerStyle: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    walletNameStyle: {
+      fontFamily: fonts.bold,
+      fontSize: 12,
+      color: '#FFF',
+      flex: 1,
+    },
+    accountNumberStyle: {
+      fontFamily: fonts.bold,
+      fontSize: 14,
+      color: '#FF9800',
+      marginRight: 3,
+      textDecorationLine: 'underline',
+    },
+    amountTextStyle: {
+      fontFamily: fonts.bold,
+      fontSize: 24,
+      lineHeight: 36,
+      color: '#FFF',
+    },
+    subRowCurrency: {
+      flexDirection: 'row',
+      // alignItems: 'center',
+      // marginVertical: 1,
+    },
+    currencyLink:{
+      fontWeight: '500',
+      fontSize: 10,
+      color: '#2E7D32',
+    },
+    currencySubLink:{
+      fontWeight: '500',
+      fontSize: 10,
+      color: '#7F7B82',
+    },
+
+
   });
 
   return defaultsDeep(style, defaultStyles);

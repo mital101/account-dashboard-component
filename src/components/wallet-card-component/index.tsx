@@ -47,7 +47,8 @@ export type WalletCardComponentProps = {
   onSendMoney: (wallet: Wallet) => void;
   onViewAllTransactions: (wallet: Wallet) => void;
   onTransactionDetails: (transaction: Transaction) => void;
-  onLinkAccount: () => void;
+  onLinkAccount?: () => void;
+  onViewAccount?: () => void;
   children?: ReactNode;
   walletList?:WalletTypeList[]
 };
@@ -68,6 +69,7 @@ const WalletCardComponent = ({
   onAddMoney,
   onSendMoney,
   onLinkAccount,
+  onViewAccount,
   phoneNumber,
   onViewAllTransactions,
   dateFormat,
@@ -208,10 +210,12 @@ const WalletCardComponent = ({
   if (isSliderShow) {
     return (
       < View style={{flex:1,marginTop:-250,minHeight:Dimensions.get('window').height}}>
-        <OnboardingComponent  onFinished={()=>{
-          onLinkAccount()
-          setSliderShow(false)
-        }}  />
+        <OnboardingComponent
+          onFinished={()=>{
+            onLinkAccount()
+            setSliderShow(false)
+          }}
+        />
       </View>
     )
   }else{
@@ -231,15 +235,17 @@ const WalletCardComponent = ({
                       keyExtractor={(item: Wallet) => item.walletId}
                       extraData={wallets}
                       renderItem={({ item }: any) => {
-                        return (
-                          <WalletItemComponent
-                            wallet={item}
-                            onAddMoney={() => onAddMoney(item)}
-                            onSendMoney={() => onSendMoney(item)}
-                            phoneNumber={phoneNumber}
-                            style={styles.walletItemComponentStyle}
-                          />
-                        );
+                        if (item.bankAccount.bankCode !== 'PDAX') {
+                          return (
+                            <WalletItemComponent
+                              wallet={item}
+                              onAddMoney={() => onAddMoney(item)}
+                              onSendMoney={() => onSendMoney(item)}
+                              phoneNumber={phoneNumber}
+                              style={styles.walletItemComponentStyle}
+                            />
+                          );
+                        }
                       }}
                       sliderWidth={_carouselWidth}
                       itemWidth={_carouselItemWidth}
@@ -272,14 +278,19 @@ const WalletCardComponent = ({
               return(
                 <View  key={key} style={styles.emptyCarouselContainerStyle}>
                   <CryptoItemComponent
-                    wallet={[]}
+                    wallet={wallets?wallets:[]}
                     style={styles.walletItemComponentStyle}
                     title={"Buy and sell crypto now!"}
                     message={"Buy for as low as ₱50."}
                     buttonText={"Activate my crypto account"}
                     leftIcon={<CryptoLinkIcon width={100} height={82} />}
-                    onLinkAccount={()=>{
-                      setSliderShow(true)
+                    onLinkAccount={(isActivated)=>{
+                      if (isActivated) {
+                        onViewAccount()
+                      }else{
+                        setSliderShow(true)
+                      }
+
                     }}
                   />
                 </View>

@@ -13,6 +13,9 @@ import {
 } from '../../../assets/images';
 import useMergeStyles from './styles';
 import Tooltip, { TooltipChildrenContext } from 'react-native-walkthrough-tooltip';
+import {
+  useCurrencyFormat,
+} from "react-native-theme-component";
 
 export type AccountInfoCardThemeProps = {
   style?: AccountInfoCardThemeStyles;
@@ -42,10 +45,21 @@ export type AccountInfoCardProps = {
   onClickTrade?:()=>void;
   onTransferIn?: () => void;
   onTransferOut?: () => void;
+  walletData?:any;
 };
 
 const AccountInfoCard = (props: AccountInfoCardProps) => {
-  const { style,isShowTips,onTipsCompleted,onTipsTerminated,onViewAccount,onClickTrade, onTransferIn, onTransferOut  } = props;
+  const {
+    style,
+    isShowTips,
+    onTipsCompleted,
+    onTipsTerminated,
+    onViewAccount,
+    onClickTrade,
+    onTransferIn,
+    onTransferOut,
+    walletData
+  } = props;
   const styles = useMergeStyles(style);
 
   const [showTip1, setTip1] = useState<boolean>(false);
@@ -72,8 +86,9 @@ const AccountInfoCard = (props: AccountInfoCardProps) => {
       </View>
       <View style={styles.rowSpaceBetween}>
         <View style={styles.rowCurrency}>
-          <PytakaCurrencyIcon width={16} height={18} />
-          <Text style={styles.currency}>12,598.72</Text>
+          {walletData && <Text style={styles.currency}>
+            {useCurrencyFormat(walletData.currentBalance, walletData.currencyCode)}
+          </Text>}
         </View>
         <EyesIcon width={18} height={18} />
       </View>
