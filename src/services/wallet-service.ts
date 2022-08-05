@@ -382,4 +382,17 @@ export class WalletService {
       throw new Error('Payment client service is not registered');
     }
   };
+
+  getWalletsByBankId = async (bankId: string) => {
+    if (this._walletClient) {
+      const response = await this._walletClient.get('wallets', {
+        params: {
+          bankId: bankId,
+        },
+      });
+      return response.data;
+    } else {
+      throw new Error('Wallet Client is not registered');
+    }
+  };
 }
