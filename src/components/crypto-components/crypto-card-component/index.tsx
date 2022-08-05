@@ -1,4 +1,10 @@
-import React, { ReactNode, useContext, useState, useEffect } from 'react';
+import React, {
+  ReactNode,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
 import {
   TouchableOpacity,
   Dimensions,
@@ -140,9 +146,12 @@ const CryptoCardComponent = ({
     }
   }, [walletsById]);
 
-  useEffect(() => {
-    getWalletsById('PDAX');
-  }, []);
+  useFocusEffect(() => {
+    useCallback(() => {
+      console.log('refresh');
+      getWalletsById('PDAX');
+    }, []);
+  });
 
   useEffect(() => {
     if (isWithToolTip) {
