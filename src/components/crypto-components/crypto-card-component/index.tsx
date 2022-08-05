@@ -32,7 +32,7 @@ import { TransactionCardComponentStyles } from '../../wallet-card-component/tran
 
 import { AccountOriginationContext } from 'account-origination-component';
 import { CustomerInvokeContext } from 'customer-invoke-component';
-import { WalletContext } from "../../../context/wallet-context";
+import { WalletContext } from '../../../context/wallet-context';
 
 export type CryptoCardComponentProps = {
   style?: CryptoCardComponentStyles;
@@ -98,7 +98,6 @@ const CryptoCardComponent = ({
   onViewAllCrypto,
   onSearchingCrypto,
   onSelectItemCurrency,
-  onTransferOut
 }: CryptoCardComponentProps) => {
   const { colors, i18n } = useContext(ThemeContext);
 
@@ -108,13 +107,15 @@ const CryptoCardComponent = ({
   const [showHelpTips, setHelpTips] = useState<boolean>(false);
   const [showSliderTips, setSliderTips] = useState<boolean>(false);
 
-  const [cryptoWallet,getCryptoWallet] = useState<any>([]);
+  const [cryptoWallet, getCryptoWallet] = useState<any>([]);
   const [ref, setRef] = useState(null);
   const { profile } = useContext(AuthContext);
 
-  const { getApplicationStatus, applicationStatus } = useContext(AccountOriginationContext);
-  const {cryptoApplicationDetails } = useContext(CustomerInvokeContext);
-  const { walletsById,getWalletsById } = useContext(WalletContext);
+  const { getApplicationStatus, applicationStatus } = useContext(
+    AccountOriginationContext
+  );
+  const { cryptoApplicationDetails } = useContext(CustomerInvokeContext);
+  const { walletsById, getWalletsById } = useContext(WalletContext);
 
   //cryptoApplicationDetails
 
@@ -134,13 +135,13 @@ const CryptoCardComponent = ({
 
   useEffect(() => {
     if (walletsById) {
-      let filteredArray = walletsById.find(item => item.status === 'ACTIVE');
-      getCryptoWallet(filteredArray)
+      let filteredArray = walletsById.find((item) => item.status === 'ACTIVE');
+      getCryptoWallet(filteredArray);
     }
   }, [walletsById]);
 
   useEffect(() => {
-     getWalletsById('PDAX')
+    getWalletsById('PDAX');
   }, []);
 
   useEffect(() => {
@@ -238,8 +239,12 @@ const CryptoCardComponent = ({
                     onTipsTerminated={() => {
                       setTransferTips(false);
                     }}
-                    onClickTrade={()=>{onTrade()}}
-                    onViewAccount={()=>{onViewAccount()}}
+                    onClickTrade={() => {
+                      onTrade();
+                    }}
+                    onViewAccount={() => {
+                      onViewAccount();
+                    }}
                     isShowTips={showTransferTips}
                     onTransferIn={onTransferIn}
                     onTransferOut={onTransferOut}
