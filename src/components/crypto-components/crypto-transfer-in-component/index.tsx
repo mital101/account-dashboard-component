@@ -192,7 +192,7 @@ const CryptoTransferInComponent = ({
             </Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.dailyLimit}>
+        {/* <View style={styles.dailyLimit}>
           <View style={styles.rowBetween}>
             <Text style={styles.dailyLimitLabel}>
               Daily Limit (₱ 100,000.00)
@@ -206,7 +206,7 @@ const CryptoTransferInComponent = ({
           <View style={styles.remainingWrapper}>
             <Text style={styles.remainLabel}>₱ 100,000.00 remaining</Text>
           </View>
-        </View>
+        </View> */}
       </View>
     );
   };

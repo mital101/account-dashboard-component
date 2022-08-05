@@ -87,7 +87,7 @@ export interface WalletContextData {
   isLoadingListCurrency: boolean;
   listCurrency?: Currency[];
   walletsById: Wallet[];
-  getWalletsById: () => void;
+  getWalletsById: (id: string) => void;
   refreshWalletsById: (delayTime?: number) => void;
   isLoadingInitMoneyIn: boolean;
   paymentId?: string;

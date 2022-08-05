@@ -32,7 +32,7 @@ const CryptoListCurrencyComponent = ({
         ListHeaderComponent={
           <Text style={styles.pageTitle}>{'All Crypto'}</Text>
         }
-        refreshing={isLoadingListCurrency}
+        refreshing={false}
         onRefresh={getListCurrency}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
