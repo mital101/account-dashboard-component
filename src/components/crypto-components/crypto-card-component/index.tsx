@@ -44,11 +44,14 @@ export type CryptoCardComponentProps = {
   onAddMoney: (wallet: Wallet) => void;
   onSendMoney: (wallet: Wallet) => void;
   onViewAllTransactions: (wallet: Wallet) => void;
+  onViewAllCrypto: () => void;
   onTrade: () => void;
   onLinkAccount: () => void;
   onViewAccount: () => void;
   onTransferIn: () => void;
   onTransferOut: () => void;
+  onSearchingCrypto: () => void;
+  onSelectItemCurrency: (currency: Currency) => void;
   children?: ReactNode;
   isActive?: boolean;
   isWithToolTip?: boolean;
@@ -91,6 +94,10 @@ const CryptoCardComponent = ({
   isActive,
   isWithToolTip,
   onTransferIn,
+  onTransferOut,
+  onViewAllCrypto,
+  onSearchingCrypto,
+  onSelectItemCurrency,
   onTransferOut
 }: CryptoCardComponentProps) => {
   const { colors, i18n } = useContext(ThemeContext);
@@ -244,7 +251,15 @@ const CryptoCardComponent = ({
           )}
           <View style={styles.emptyCarouselContainerStyle}>
             <View style={{ marginHorizontal: 15 }}>
-              <MarketPricesComponent />
+              <MarketPricesComponent
+                Root={{
+                  props: {
+                    onViewAllCrypto,
+                    onSearchingCrypto,
+                    onSelectItemCurrency,
+                  },
+                }}
+              />
             </View>
             <Tooltip
               isVisible={showHelpTips}
