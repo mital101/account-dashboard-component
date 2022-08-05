@@ -100,29 +100,32 @@ const CryptoTransferInComponent = ({
   props,
   style,
 }: CryptoTransferInComponentProps) => {
-  const {
-    onSelectCrypto,
-    onTransferPHP,
-    goToAccountLimit,
-  } = props || {};
+  const { onSelectCrypto, onTransferPHP, goToAccountLimit } = props || {};
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [transferValue, setTransferValue] = useState<number>(0);
   const [selectedCrypto, setSelectedCrypto] = React.useState<string>();
-  const [isLoadingValidation, setIsLoadingValidation] = useState<boolean>(false);
-  const { setAmountCryptoIn, unionWallet, cryptoWallet } = useContext(WalletContext);
-  const unionWalletCurrentBalance = useCurrencyFormat(unionWallet?.availableBalance || 0, 'PHP');
+  const [isLoadingValidation, setIsLoadingValidation] =
+    useState<boolean>(false);
+  const { setAmountCryptoIn, unionWallet, cryptoWallet } =
+    useContext(WalletContext);
+  const unionWalletCurrentBalance = useCurrencyFormat(
+    unionWallet?.availableBalance || 0,
+    'PHP'
+  );
   const transferValueFormated =
     transferValue > 0 ? useCurrencyFormat(transferValue, '', '') : '';
-  
+
   const styles = useMergeStyles(style);
 
   const minimumError = transferValueFormated.length > 0 && transferValue < 200;
-  const higherCurrentBalanceErorr = transferValue > (unionWallet?.currentBalance || 0);
+  const higherCurrentBalanceErorr =
+    transferValue > (unionWallet?.currentBalance || 0);
   const isInputValid = !minimumError && !higherCurrentBalanceErorr;
 
   const isValidToSubmit =
-    selectedTabIndex === 0 ? (transferValue > 0 && isInputValid) : !!selectedCrypto;
-
+    selectedTabIndex === 0
+      ? transferValue > 0 && isInputValid
+      : !!selectedCrypto;
 
   const renderTabbar = (title: string, indexTabbar: number) => (
     <TouchableOpacity
@@ -170,8 +173,11 @@ const CryptoTransferInComponent = ({
             {!isInputValid && (
               <View style={styles.errorRow}>
                 <Text style={styles.errorText}>
-                  {minimumError ? `The minimum amount that you’re allowed to transfer-in is ₱200.0` : 
-                    higherCurrentBalanceErorr ? 'You have insufficient balance in your Pitaka.' : 'Invalid amount' }
+                  {minimumError
+                    ? `The minimum amount that you’re allowed to transfer-in is ₱200.0`
+                    : higherCurrentBalanceErorr
+                    ? 'You have insufficient balance in your Pitaka.'
+                    : 'Invalid amount'}
                 </Text>
               </View>
             )}
@@ -179,7 +185,9 @@ const CryptoTransferInComponent = ({
           <View style={styles.currentBalanceWrapper}>
             <View style={styles.rowInput}>
               <Text style={styles.balanceTitle}>My Pitaka Balance: </Text>
-              <Text style={styles.smallBalanceLabel}>{unionWalletCurrentBalance}</Text>
+              <Text style={styles.smallBalanceLabel}>
+                {unionWalletCurrentBalance}
+              </Text>
             </View>
           </View>
         </View>
@@ -232,23 +240,24 @@ const CryptoTransferInComponent = ({
 
   const handleOnTransferPHP = async () => {
     setIsLoadingValidation(true);
-    if(unionWallet && cryptoWallet) {
+    if (unionWallet && cryptoWallet) {
       const result = await walletService.moneyInValidation(
-        transferValue, 
-        unionWallet?.bankAccount.accountNumber, 
+        transferValue,
+        unionWallet?.bankAccount.accountNumber,
         cryptoWallet?.bankAccount.accountNumber
-        );
+      );
 
-      if(result.Data) {
+      if (result.Data) {
         setAmountCryptoIn(transferValue);
+        setTransferValue(0);
         onTransferPHP && onTransferPHP();
         // onTransferPHP && onTransferPHP(
         //   unionWallet, cryptoWallet, transferValue, 'Send instantly', 0, transferValue);
       }
     }
 
-    setIsLoadingValidation(false); 
-  }
+    setIsLoadingValidation(false);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -270,7 +279,9 @@ const CryptoTransferInComponent = ({
         <Button
           isLoading={isLoadingValidation}
           label={selectedTabIndex === 0 ? 'Transfer-in PHP' : 'Select'}
-          onPress={selectedTabIndex === 0 ? handleOnTransferPHP : onSelectCrypto}
+          onPress={
+            selectedTabIndex === 0 ? handleOnTransferPHP : onSelectCrypto
+          }
           disabled={!isValidToSubmit}
           disableColor={'#EAEAEB'}
         />

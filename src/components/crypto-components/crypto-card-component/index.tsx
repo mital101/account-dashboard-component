@@ -1,4 +1,10 @@
-import React, { ReactNode, useContext, useState, useEffect, useCallback } from 'react';
+import React, {
+  ReactNode,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
 import {
   TouchableOpacity,
   Dimensions,
@@ -12,7 +18,7 @@ import {
 import useMergeStyles from './styles';
 import { ThemeContext } from 'react-native-theme-component';
 import { AuthContext } from 'react-native-auth-component';
-
+import { useFocusEffect } from '@react-navigation/native';
 import {
   CryptoHelpLinkIcon,
   InfoIcon,
