@@ -19,7 +19,7 @@ import useMergeStyles from "./styles";
 // import { Wallet } from "../../../model";
 import CryptoDetailsModal from "./components/crypto-details-modal";
 import LinearGradient from 'react-native-linear-gradient';
-
+import {WalletContext} from '@banking-component/wallet-component';
 export type CryptoItemComponentProps = {
   wallet?: any;
   onLinkAccount: (isActivated) => void;
@@ -60,12 +60,14 @@ const CryptoItemComponent = (props: CryptoItemComponentProps) => {
   const [isActivated, setIsActivated] = useState<any>();
 
   const styles: CryptoItemComponentStyle = useMergeStyles(style);
+  const { getWalletsById } = useContext(WalletContext);
 
   useEffect(() => {
     if (wallet.length > 0) {
       let filteredArray = wallet.find(item => item.bankAccount.bankCode === 'PDAX');
 
       if (filteredArray) {
+        getWalletsById('PDAX')
         setIsActivated(filteredArray)
       }
       // setInitialWallet(wallets[0]);
