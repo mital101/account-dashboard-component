@@ -255,7 +255,6 @@ const CryptoTransferInComponent = ({
         //   unionWallet, cryptoWallet, transferValue, 'Send instantly', 0, transferValue);
       }
     }
-
     setIsLoadingValidation(false);
   };
 

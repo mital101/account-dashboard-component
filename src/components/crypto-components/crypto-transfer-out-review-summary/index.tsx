@@ -1,5 +1,5 @@
 import { CryptoTransferOutReviewSummaryComponentProps } from './types';
-import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useContext, useEffect, useImperativeHandle, useState } from 'react';
 import {
   Text,
   View,
@@ -8,9 +8,10 @@ import {
   BackHandler,
 } from 'react-native';
 import useMergeStyles from './styles';
-import { Button } from 'react-native-theme-component';
+import { Button, ThemeContext, useCurrencyFormat } from 'react-native-theme-component';
 import AlertModal from '../../alert-model';
 import RowInfo from '../../row-info';
+import { WalletContext } from '../../../context/wallet-context';
 
 export type CryptoTransferOutReviewSummaryRef = {
   onCancel: () => void;
@@ -22,10 +23,14 @@ const CryptoTransferOutReviewSummaryComponent = forwardRef(
     const [isShowCancelAlert, setIsShowCancelAlert] = useState<boolean>();
     const [isShowErrorAlert, setIsShowErrorAlert] = useState<boolean>();
     const styles = useMergeStyles(style);
+    const { fonts } = useContext(ThemeContext);
+    const { initMoneyOut, amount = 0, isLoadingInitMoneyOut, unionWallet, cryptoWallet } = useContext(WalletContext);
+    const formatedAmount = useCurrencyFormat(amount, 'PHP');
+    const formatedAmountDeposite = useCurrencyFormat(amount, 'PHP');
 
     useImperativeHandle(
       ref,
-      (): CryptoReviewSummaryRef => ({
+      (): CryptoTransferOutReviewSummaryRef => ({
         onCancel: async () => {
           setIsShowCancelAlert(true);
         },
@@ -51,12 +56,14 @@ const CryptoTransferOutReviewSummaryComponent = forwardRef(
       setIsShowCancelAlert(false);
     }
 
-    const onConfirm = () => {
-      console.log('confirm');
+    const onConfirm = async () => {
+      await initMoneyOut();
       onSuccess && onSuccess();
     }
 
-    const onReload = () => {
+    const onReload = async () => {
+      await initMoneyOut();
+      onSuccess && onSuccess();
     }
 
     return (
@@ -72,45 +79,51 @@ const CryptoTransferOutReviewSummaryComponent = forwardRef(
               <View style={styles.infoView}>
                 <RowInfo
                   props={{
-                    title: 'Amount in Crypto',
-                    value: '0.00038167 BTC',
+                    title: 'Amount in PHP',
+                    value: `${formatedAmount}`,
                   }}
                 />
                 <RowInfo
                   props={{
                     title: 'Send Crypto From',
-                    value: `My Crypto Pitaka\nBen Santos`,
+                    value: `My Crypto Pitaka\n${cryptoWallet?.bankAccount.accountHolderName}`,
                   }}
                 />
                 <RowInfo
                   props={{
                     title: 'Send Crypto To',
-                    value: '15Jk6oy1yg5mvSFrKgEjgJ3ms7NkY28c9S',
+                    value: `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}`,
                   }}
                 />
                 <RowInfo
                   props={{
-                    title: 'Network',
-                    value: 'Bitcoin',
+                    title: 'When',
+                    value: `Send instantly`,
                   }}
                 />
                 <RowInfo
                   props={{
                     title: 'Transaction Fee',
-                    value: '0.00 BTC',
+                    value: 'FREE',
                   }}
                 />
                 <RowInfo
                   props={{
                     title: 'Total amount to be deposited into address',
-                    value: '0.00038167 BTC',
+                    value: `${formatedAmountDeposite}`,
+                  }}
+                  style={{
+                    value: {
+                      color: '#3E2D68',
+                      fontFamily: fonts.semiBold
+                    }
                   }}
                 />
               </View>
             </View>
         </ScrollView>
         <View style={styles.actionWrapper}>
-          <Button label="Confirm" onPress={onConfirm} />
+          <Button label="Confirm" onPress={onConfirm} isLoading={isLoadingInitMoneyOut} />
         </View>
         <AlertModal
           isVisible={isShowCancelAlert}

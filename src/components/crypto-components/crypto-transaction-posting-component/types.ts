@@ -6,6 +6,7 @@ export type CryptoTransactionPostingComponentProps = {
     onBackToDashboard?: () => void;
     onBackToTransferIn?: () => void;
     onGoToHelpCenter?: () => void;
+    onBackToTransferOut?: () => void;
     amount: number;
     type: string;
     status: string;

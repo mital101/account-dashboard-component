@@ -341,7 +341,7 @@ export class WalletService {
             PaymentContextCode: 'PartyToParty',
           },
         });
-        console.log('response', response);
+        console.log('response', response.data);
         return response.data;
       } catch (error) {
         return 'error: ' + error;
@@ -374,6 +374,236 @@ export class WalletService {
             },
           }
         );
+        return response.data;
+      } catch (error) {
+        return error;
+      }
+    } else {
+      throw new Error('Payment client service is not registered');
+    }
+  };
+
+  //Money Out
+
+  moneyOutValidation = async (
+    amount: number,
+    senderAccountNumber: string,
+    receiverAccountNumber: string
+  ) => {
+    console.log('moneyOutValidation -> request','outward-payments/validations',
+    {
+      Data: {
+        Initiation: {
+          LocalInstrument: 'PDAX',
+          InstructedAmount: {
+            Amount: amount,
+            Currency: 'PHP',
+          },
+          DebtorAccount: {
+            Identification: senderAccountNumber,
+            SchemeName: 'PH.BRSTN.AccountNumber',
+          },
+          DebtorAccountExt: {
+            BankCode: 'PDAX',
+          },
+          CreditorAccount: {
+            Identification: receiverAccountNumber,
+            SchemeName: 'PH.BRSTN.AccountNumber',
+          },
+          CreditorAccountExt: {
+            BankCode: 'UnionDigital',
+          },
+          RemittanceInformation: {
+            Unstructured: 'notes',
+          },
+          SupplementaryData: {
+            PaymentType: 'MoneyOut',
+          },
+        },
+      },
+      Risk: {
+        PaymentContextCode: 'PartyToParty',
+      },
+    })
+    if (this._paymentClient) {
+      try {
+        const response = await this._paymentClient.post(
+          'outward-payments/validations',
+          {
+            Data: {
+              Initiation: {
+                LocalInstrument: 'PDAX',
+                InstructedAmount: {
+                  Amount: amount,
+                  Currency: 'PHP',
+                },
+                DebtorAccount: {
+                  Identification: senderAccountNumber,
+                  SchemeName: 'PH.BRSTN.AccountNumber',
+                },
+                DebtorAccountExt: {
+                  BankCode: 'PDAX',
+                },
+                CreditorAccount: {
+                  Identification: receiverAccountNumber,
+                  SchemeName: 'PH.BRSTN.AccountNumber',
+                },
+                CreditorAccountExt: {
+                  BankCode: 'UnionDigital',
+                },
+                RemittanceInformation: {
+                  Unstructured: 'notes',
+                },
+                SupplementaryData: {
+                  PaymentType: 'MoneyOut',
+                },
+              },
+            },
+            Risk: {
+              PaymentContextCode: 'PartyToParty',
+            },
+          }
+        );
+        console.log('moneyOutValidation -> response', response.data);
+        return response.data;
+      } catch (error) {
+        return 'error: ' + error;
+      }
+    } else {
+      throw new Error('Payment client service is not registered');
+    }
+  };
+
+  moneyOutInitital = async (
+    amount: number,
+    senderAccountNumber: string,
+    receiverAccountNumber: string
+  ) => {
+    console.log(
+      'moneyOutInitital -> request', 'outward-payments', {
+        Data: {
+          Initiation: {
+            LocalInstrument: 'PDAX',
+            InstructedAmount: {
+              Amount: amount,
+              Currency: 'PHP',
+            },
+            DebtorAccount: {
+              Identification: senderAccountNumber,
+              SchemeName: 'PH.BRSTN.AccountNumber',
+            },
+            CreditorAccount: {
+              Identification: receiverAccountNumber,
+              SchemeName: 'PH.BRSTN.AccountNumber',
+            },
+            RemittanceInformation: {
+              Unstructured:
+                'Topup money from Pitaka account to Crypto Wallet',
+            },
+            SupplementaryData: {
+              PaymentType: 'MoneyOut',
+            },
+            CreditorAccountExt: {
+              BankCode: 'UnionDigital',
+            },
+            DebtorAccountExt: {
+              BankCode: 'PDAX',
+            },
+          },
+        },
+        Risk: {
+          PaymentContextCode: 'PartyToParty',
+        },
+      }
+    );
+    if (this._paymentClient) {
+      try {
+        const response = await this._paymentClient.post('outward-payments', {
+          Data: {
+            Initiation: {
+              LocalInstrument: 'PDAX',
+              InstructedAmount: {
+                Amount: amount,
+                Currency: 'PHP',
+              },
+              DebtorAccount: {
+                Identification: senderAccountNumber,
+                SchemeName: 'PH.BRSTN.AccountNumber',
+              },
+              CreditorAccount: {
+                Identification: receiverAccountNumber,
+                SchemeName: 'PH.BRSTN.AccountNumber',
+              },
+              RemittanceInformation: {
+                Unstructured:
+                  'Topup money from Pitaka account to Crypto Wallet',
+              },
+              SupplementaryData: {
+                PaymentType: 'MoneyOut',
+              },
+              CreditorAccountExt: {
+                BankCode: 'UnionDigital',
+              },
+              DebtorAccountExt: {
+                BankCode: 'PDAX',
+              },
+            },
+          },
+          Risk: {
+            PaymentContextCode: 'PartyToParty',
+          },
+        });
+        console.log('moneyOutInitital -> response', response.data);
+        return response.data;
+      } catch (error) {
+        return 'error: ' + error;
+      }
+    } else {
+      throw new Error('Payment client service is not registered');
+    }
+  };
+
+  moneyOutConfirmation = async (id: string, otp: string) => {
+    console.log('moneyOutConfirmation -> request', 'outward-payments/' + id,
+    {
+      Data: {
+        Initiation: {
+          LocalInstrument: 'PDAX',
+          SupplementaryData: {
+            PaymentType: 'MoneyOut',
+            CustomFields: [
+              {
+                Key: 'OTP',
+                Value: `${otp}`,
+              },
+            ],
+          },
+        },
+      },
+    });
+
+    if (this._paymentClient) {
+      try {
+        const response = await this._paymentClient.patch(
+          'outward-payments/' + id,
+          {
+            Data: {
+              Initiation: {
+                LocalInstrument: 'PDAX',
+                SupplementaryData: {
+                  PaymentType: 'MoneyOut',
+                  CustomFields: [
+                    {
+                      Key: 'OTP',
+                      Value: `${otp}`,
+                    },
+                  ],
+                },
+              },
+            },
+          }
+        );
+        console.log('moneyOutConfirmation -> respone', response.data);
         return response.data;
       } catch (error) {
         return error;

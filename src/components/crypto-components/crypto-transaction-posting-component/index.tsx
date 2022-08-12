@@ -1,5 +1,5 @@
 import { CryptoTransactionPostingComponentProps } from './types';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import useMergeStyles from './styles';
 import RowInfo from '../../row-info';
@@ -7,19 +7,22 @@ import { Button, useCurrencyFormat } from 'react-native-theme-component';
 import { InfoIcon, UnionDigitalBankIcon } from '../../../assets/images';
 import LoadingSpinner from '../../loading-spinner';
 import moment from 'moment';
+import { WalletContext } from '../../../context/wallet-context';
 
 const CryptoTransactionPostingComponent = ({
   props,
   style,
 }: CryptoTransactionPostingComponentProps) => {
   const styles = useMergeStyles(style);
-  const { onBackToDashboard, onBackToTransferIn, onGoToHelpCenter, amount, type,
+  const { onBackToDashboard, onBackToTransferIn, onBackToTransferOut, onGoToHelpCenter, amount, type,
     status,
     date,
     refNumber 
   } =
     props || {};
-    
+
+  const {isRefreshingWallets, currentTransfer, unionWallet, cryptoWallet} = useContext(WalletContext);
+  const isMoneyInTransaction = currentTransfer === 'moneyin';
   const isSuccess = status === 'Initialized' ||
   'AcceptedCreditSettlementCompleted' ||
   'AcceptedSettlementCompleted' ||
@@ -33,16 +36,7 @@ const CryptoTransactionPostingComponent = ({
     'ddd DD, YYYY HH:ss A'
   );
   
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setIsLoading(false);
-  //     setIsSuccess(true);
-  //   }, 2000);
-  // }, []);
-
-  if (isLoading) {
+  if (isRefreshingWallets) {
     return (
       <View style={styles.containerCenter}>
         <View style={styles.content}>
@@ -115,8 +109,7 @@ const CryptoTransactionPostingComponent = ({
         <Text style={styles.titleSuccess}>Transaction Successful!</Text>
         <View style={styles.subTitleSuccessWrapper}>
           <Text style={styles.subTitleSuccess}>
-            #UDidIt! You have successfully transferred money from your Pitaka to
-            your Crypto Pitaka. See transaction details below:
+            {`#UDidIt! You have successfully transferred money from your ${isMoneyInTransaction ? 'Pitaka' : 'Crypto Pitaka'} to your ${!isMoneyInTransaction ? 'Pitaka' : 'Crypto Pitaka'}. See transaction details below:`}
           </Text>
         </View>
         <View style={styles.contentSuccess}>
@@ -135,7 +128,7 @@ const CryptoTransactionPostingComponent = ({
           <RowInfo
             props={{
               title: 'Transaction Status ',
-              value: `${status}`,
+              value: `Completed`,
             }}
             style={{
               value: styles.completedTextColor,
@@ -144,13 +137,13 @@ const CryptoTransactionPostingComponent = ({
           <RowInfo
             props={{
               title: 'Send Money From',
-              value: 'My Pitaka\nBen Santos\n1234567890',
+              value: isMoneyInTransaction ? `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}` : `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}`,
             }}
           />
           <RowInfo
             props={{
               title: 'Send Money To',
-              value: 'My Crypto Pitaka\nBen Santos',
+              value: !isMoneyInTransaction ? `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}` : `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}`,
             }}
           />
         </View>
@@ -171,7 +164,7 @@ const CryptoTransactionPostingComponent = ({
         <View style={styles.btnActionsWrapper}>
           <Button
             label={'Make Another Transaction'}
-            onPress={onBackToTransferIn}
+            onPress={isMoneyInTransaction ? onBackToTransferIn : onBackToTransferOut}
           />
           <Button
             label={'Back to Crypto Dashboard'}

@@ -3,7 +3,7 @@ import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 export type CryptoTransferOutVerifyOTPComponentProps = {
   style?: CryptoTransferOutVerifyOTPComponentStyles;
   props?: {
-    onConfirmed: () => void;
+    onConfirmed: (amount: number, type: string, status: string, date: string, refNumber: string) => void;
   };
 };
 
@@ -25,4 +25,6 @@ export type CryptoTransferOutVerifyOTPComponentStyles = {
   durationLabel?: StyleProp<TextStyle>;
   notReceivedCodeLabel?: StyleProp<TextStyle>;
   countdownWrapper?: StyleProp<ViewStyle>;
+  errorWrapper?: StyleProp<ViewStyle>;
+  errorText?: StyleProp<TextStyle>;
 };

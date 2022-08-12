@@ -1,14 +1,14 @@
 import { CryptoTransferOutComponentProps } from "./types";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Text,
   View,
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  TextInput,
   NativeSyntheticEvent,
-  TextInputKeyPressEventData
+  TextInputKeyPressEventData,
+  TextInput
 } from "react-native";
 import { CryptoItem } from "./types";
 import useMergeStyles from "./styles";
@@ -22,9 +22,12 @@ import {
 
 import {
   ArrowBack,
+  ArrowDownIcon,
   ArrowRightIcon,
   InformationIcon
 } from "../../../assets/images";
+import { WalletContext } from "../../../context/wallet-context";
+import { WalletService } from "../../../services/wallet-service";
 
 const randomCryptoImgUrl =
   "https://cdn.pixabay.com/photo/2017/03/12/02/57/bitcoin-2136339_960_720.png";
@@ -72,6 +75,8 @@ const cryptoDummyData: CryptoItem[] = [
   }
 ];
 
+const walletService = WalletService.instance();
+
 const CryptoTransferOutComponent = ({
   style,
   onSelectCrypto,
@@ -85,13 +90,37 @@ const CryptoTransferOutComponent = ({
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [transferValue, setTransferValue] = useState<number>(0);
   const [selectedCrypto, setSelectedCrypto] = React.useState<string>();
-  const isValidToSubmit =
-    selectedTabIndex === 0 ? transferValue > 0 : !!selectedCrypto;
+  const [isLoadingValidation, setIsLoadingValidation] =
+    useState<boolean>(false);
+  const { setAmountCryptoIn, unionWallet, cryptoWallet } =
+    useContext(WalletContext);
+  const [isShowDropDown, setIsShowDropDown] = useState<boolean>(false);
+  const [yDDPosition, setYDDPosition] = useState<number>();
+  const [isSelectPortfolio, setIsSelectPortfolio] = useState<boolean>(false);
+  const selectedItemDDBGColor = 'rgba(73, 69, 79, 0.08)';
+  const currentCashBalance = useCurrencyFormat(unionWallet?.currentBalance || 0, 'PHP');
+  const myPortfolioBalance = useCurrencyFormat(
+    (unionWallet?.currentBalance || 0) + (cryptoWallet?.currentBalance || 0),
+    'PHP'
+  );
 
-  // console.log('props ',props);
+  const unionWalletCurrentBalance = useCurrencyFormat(
+    cryptoWallet?.availableBalance || 0,
+    'PHP'
+  );
 
   const transferValueFormated =
     transferValue > 0 ? useCurrencyFormat(transferValue, "", "") : "";
+
+  const minimumError = transferValueFormated.length > 0 && transferValue < 200;
+  const higherCurrentBalanceErorr =
+    transferValue > (cryptoWallet?.currentBalance || 0);
+  const isInputValid = !minimumError && !higherCurrentBalanceErorr;
+
+  const isValidToSubmit =
+    selectedTabIndex === 0
+      ? transferValue > 0 && isInputValid
+      : !!selectedCrypto;
 
   const renderTabbar = (title: string, indexTabbar: number) => (
     <TouchableOpacity
@@ -109,11 +138,6 @@ const CryptoTransferOutComponent = ({
     e: NativeSyntheticEvent<TextInputKeyPressEventData>
   ) => {
     if (e.nativeEvent.key !== "Backspace") {
-      console.log(
-        transferValue,
-        e.nativeEvent.key,
-        parseInt(`${transferValue}${e.nativeEvent.key}`)
-      );
       setTransferValue(parseInt(`${transferValue || ""}${e.nativeEvent.key}`));
     } else {
       setTransferValue(parseInt(`${transferValue || ""}`.slice(0, -1)));
@@ -128,7 +152,7 @@ const CryptoTransferOutComponent = ({
           <View
             style={[
               styles.inputBalanceWrapper,
-              !isError && styles.paddingBottomView
+              isInputValid && styles.paddingBottomView
             ]}
           >
             <View style={styles.rowInput}>
@@ -141,11 +165,14 @@ const CryptoTransferOutComponent = ({
                 keyboardType="numeric"
               />
             </View>
-            {isError && (
+            {!isInputValid && (
               <View style={styles.errorRow}>
                 <Text style={styles.errorText}>
-                  The minimum amount that you’re allowed to transfer-out is
-                  ₱1.00
+                {minimumError
+                    ? `The minimum amount that you’re allowed to transfer-in is ₱200.0`
+                    : higherCurrentBalanceErorr
+                    ? 'You have insufficient balance in your Account.'
+                    : 'Invalid amount'}
                 </Text>
               </View>
             )}
@@ -153,7 +180,7 @@ const CryptoTransferOutComponent = ({
           <View style={styles.currentBalanceWrapper}>
             <View style={styles.rowInput}>
               <Text style={styles.balanceTitle}>Available balance: </Text>
-              <Text style={styles.smallBalanceLabel}>₱ 3,500.00</Text>
+              <Text style={styles.smallBalanceLabel}>{unionWalletCurrentBalance}</Text>
             </View>
           </View>
         </View>
@@ -166,7 +193,7 @@ const CryptoTransferOutComponent = ({
             </Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.dailyLimit}>
+        {/* <View style={styles.dailyLimit}>
           <View style={styles.rowBetween}>
             <Text style={styles.dailyLimitLabel}>
               Daily Limit (₱ 100,000.00)
@@ -180,7 +207,7 @@ const CryptoTransferOutComponent = ({
           <View style={styles.remainingWrapper}>
             <Text style={styles.remainLabel}>₱ 100,000.00 remaining</Text>
           </View>
-        </View>
+        </View> */}
       </View>
     );
   };
@@ -204,9 +231,31 @@ const CryptoTransferOutComponent = ({
     />
   );
 
+  const handleOnTransferPHP = async () => {
+    setIsLoadingValidation(true);
+    if (unionWallet && cryptoWallet) {
+      const result = await walletService.moneyOutValidation(
+        transferValue,
+        cryptoWallet?.bankAccount.accountNumber,
+        unionWallet?.bankAccount.accountNumber,
+      );
+
+      if (result.Data) {
+        setAmountCryptoIn(transferValue);
+        setTransferValue(0);
+        onTransferOutPHP && onTransferOutPHP();
+      }
+    }
+    setIsLoadingValidation(false);
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.header}>
+      <View style={styles.header}
+      onLayout={(event) => {
+        const { y, height } = event.nativeEvent.layout;
+        setYDDPosition(y + height + 5);
+      }}>
         <TouchableOpacity
           onPress={() => {
             onGoBack();
@@ -214,10 +263,15 @@ const CryptoTransferOutComponent = ({
         >
           <ArrowBack />
         </TouchableOpacity>
-        <View>
-          <Text style={styles.pageHeaderName}>{"My PItaka Balance"}</Text>
-          <Text style={styles.pageHeaderBalance}>{"₱ 36,000.75"}</Text>
-        </View>
+        <TouchableOpacity style={styles.row} onPress={() => setIsShowDropDown(!isShowDropDown)}>
+            <View style={styles.column}>
+              <Text>{!isSelectPortfolio ? 'Current Cash Balance' : 'My Portfolio Balance'}</Text>
+              <Text>{`${!isSelectPortfolio ? currentCashBalance : myPortfolioBalance}`}</Text>
+            </View>
+            <View style={[styles.iconWrapper, isShowDropDown && styles.rotate]}>
+              <ArrowDownIcon size={15} color={'#020000'} />
+            </View>
+          </TouchableOpacity>
       </View>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={styles.pageTitle}>{"Transfer-out"}</Text>
@@ -240,18 +294,51 @@ const CryptoTransferOutComponent = ({
       </ScrollView>
       <View style={styles.actionWrapper}>
         <Button
+          isLoading={isLoadingValidation}
           label={selectedTabIndex === 0 ? "Transfer-out PHP" : "Select"}
-          onPress={() => {
-            selectedTabIndex === 0
-              ? onTransferOutPHP()
-              : onSelectCrypto(cryptoDummyData[selectedCrypto - 1]);
-          }}
+          onPress={
+            selectedTabIndex === 0 ? handleOnTransferPHP : onSelectCrypto
+          }
           disabled={!isValidToSubmit}
           disableColor={"#EAEAEB"}
         />
       </View>
+      
+      {isShowDropDown && (
+          <View style={[styles.dropdown, { top: yDDPosition }]}>
+            <View style={styles.ddItemWrapper}>
+              <TouchableOpacity
+                style={[
+                  styles.ddBtn,
+                  !isSelectPortfolio && { backgroundColor: selectedItemDDBGColor },
+                ]}
+                onPress={() => {
+                  setIsSelectPortfolio(false);
+                  setIsShowDropDown(false);
+                }}
+              >
+                <Text style={styles.ddBtnText}>Current Cash Balance</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.ddItemWrapper}>
+              <TouchableOpacity
+                style={[
+                  styles.ddBtn,
+                  isSelectPortfolio && { backgroundColor: selectedItemDDBGColor },
+                ]}
+                onPress={() => {
+                  setIsSelectPortfolio(true);
+                  setIsShowDropDown(false);
+                }}
+              >
+                <Text style={styles.ddBtnText}>My Portfolio Balance</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
     </SafeAreaView>
   );
 };
+
 
 export default CryptoTransferOutComponent;

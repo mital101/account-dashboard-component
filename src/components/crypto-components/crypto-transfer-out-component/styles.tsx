@@ -247,7 +247,7 @@ const useMergeStyles = (
       marginRight: 5,
     },
     input: {
-      marginLeft: 5,
+      paddingLeft: 5,
       fontSize: 16,
       fontFamily: fonts.medium,
       color: '#1D1C1D',
@@ -272,6 +272,30 @@ const useMergeStyles = (
       alignItems: 'center',
       marginTop: 8,
       paddingBottom: 12,
+    },
+    dropdown: {
+      position: 'absolute',
+      right: 20,
+      backgroundColor: '#FFFFFF',
+      width: 200,
+    },
+    ddItemWrapper: {
+      paddingVertical: 7,
+      borderBottomWidth: 1,
+      borderBottomColor: '#E7E0EC',
+    },
+    ddBtn: { flex: 1, paddingVertical: 10 },
+    ddBtnText: { textAlign: 'right', marginRight: 10 },
+    downloadLabel: { color: '#F8981D', textDecorationLine: 'underline' },
+    column: {
+      alignItems: 'flex-end',
+      marginRight: 12,
+    },
+    iconWrapper: {
+      alignItems: 'center',
+    },
+    rotate: {
+      transform: [{ rotate: '180deg' }],
     },
   });
   return defaultsDeep(style, defaultStyles);

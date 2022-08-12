@@ -20,7 +20,7 @@ const CryptoVerifyOTPComponent = ({
   const otpRef = useRef<OTPFieldRef>();
   const countdownRef = useRef<CountDownTimerRef>();
   const { onConfirmed } = props || {};
-  const { paymentId, initMoneyin } = useContext(WalletContext);
+  const { paymentId, initMoneyin, refreshWallets } = useContext(WalletContext);
   const [isLoadingOtpVerification, setIsLoadingOtpVerification] =
     useState<boolean>(false);
   const [value, setValue] = useState<string>('');
@@ -47,12 +47,13 @@ const CryptoVerifyOTPComponent = ({
       onConfirmed &&
         onConfirmed(
           result.Data.Initiation.InstructedAmount.Amount,
-          `${result.Data.Initiation.InstructedAmount.Amount} transfer-in`,
+          `${result.Data.Initiation.InstructedAmount.Currency} transfer-in`,
           result.Data.Status,
           result.Data.StatusUpdateDateTime,
           result.Data.Initiation.SupplementaryData.PaymentServiceProviderExt
             .PspReference
         );
+      refreshWallets(2000);
     } else if (result.response?.data?.errors) {
       setError(
         `${result.response?.data?.errors[0].message}. Please try again.`

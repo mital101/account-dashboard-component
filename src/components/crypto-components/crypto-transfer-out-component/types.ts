@@ -60,6 +60,8 @@ export type CryptoTransferOutComponentStyles = {
   errorText?: StyleProp<TextStyle>;
   paddingBottomView?: StyleProp<ViewStyle>;
   errorRow?: StyleProp<ViewStyle>;
+  pageHeaderMessage?: StyleProp<TextStyle>;
+  header?: StyleProp<ViewStyle>;
 };
 
 export type CryptoItem = {

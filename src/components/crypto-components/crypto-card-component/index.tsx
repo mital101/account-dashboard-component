@@ -14,6 +14,7 @@ import {
   ScrollView,
   Text,
   TextStyle,
+  RefreshControl,
 } from 'react-native';
 import useMergeStyles from './styles';
 import { ThemeContext } from 'react-native-theme-component';
@@ -112,43 +113,13 @@ const CryptoCardComponent = ({
   const [showTransferTips, setTransferTips] = useState<boolean>(false);
   const [showHelpTips, setHelpTips] = useState<boolean>(false);
   const [showSliderTips, setSliderTips] = useState<boolean>(false);
-
-  const [cryptoWallet, getCryptoWallet] = useState<any>([]);
   const [ref, setRef] = useState(null);
   const { profile } = useContext(AuthContext);
-
-  const { getApplicationStatus, applicationStatus } = useContext(
-    AccountOriginationContext
-  );
-  const { cryptoApplicationDetails } = useContext(CustomerInvokeContext);
-  const { walletsById, getWalletsById } = useContext(WalletContext);
-
-  //cryptoApplicationDetails
-
-  // walletsById: [],
-  // getWalletsById: () => null,
-
-  // useEffect(() => {
-  //   if (ref) {
-  //     ref.scrollTo({
-  //       x: 0,
-  //       y: 400,
-  //       animated: true,
-  //     });
-  //   }
-  //
-  // },[ref]);
-
-  useEffect(() => {
-    if (walletsById) {
-      let filteredArray = walletsById.find((item) => item.status === 'ACTIVE');
-      getCryptoWallet(filteredArray);
-    }
-  }, [walletsById]);
+  const { refreshWallets, cryptoWallet, setCurrentTransfer } = useContext(WalletContext);
 
   useFocusEffect(
     React.useCallback(() => {
-      getWalletsById('PDAX');
+      refreshWallets();
     }, [])
   );
 
@@ -158,7 +129,16 @@ const CryptoCardComponent = ({
     }
   }, [isWithToolTip]);
 
-  // console.log('walletsById ',cryptoWallet);
+  const handleTransferIn = () => {
+    setCurrentTransfer('moneyin');
+    onTransferIn && onTransferIn();
+  }
+
+  const handleTransferOut = () => {
+    setCurrentTransfer('moneyout');
+    onTransferOut && onTransferOut();
+  }
+
 
   const firstName = `${profile?.firstName}`.trim();
   return (
@@ -170,6 +150,12 @@ const CryptoCardComponent = ({
           ref={(ref) => {
             setRef(ref);
           }}
+          refreshControl={
+            <RefreshControl 
+              refreshing={false}
+              onRefresh={refreshWallets}
+            />
+          }
         >
           <Text style={styles.userName}>{`${firstName}’s Crypto`}</Text>
           {!isActive && (
@@ -254,8 +240,8 @@ const CryptoCardComponent = ({
                       onViewAccount();
                     }}
                     isShowTips={showTransferTips}
-                    onTransferIn={onTransferIn}
-                    onTransferOut={onTransferOut}
+                    onTransferIn={handleTransferIn}
+                    onTransferOut={handleTransferOut}
                     walletData={cryptoWallet}
                   />
                 )}

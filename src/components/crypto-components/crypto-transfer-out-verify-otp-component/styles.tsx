@@ -98,6 +98,13 @@ const useMergeStyles = (
       lineHeight: 24,
       color: '#BAB7BB',
     },
+    errorWrapper: {
+      alignItems: 'center',
+      marginTop: 15
+    },
+    errorText: {
+      color: '#D32F2F'
+    }
   });
   return defaultsDeep(style, defaultStyles);
 };

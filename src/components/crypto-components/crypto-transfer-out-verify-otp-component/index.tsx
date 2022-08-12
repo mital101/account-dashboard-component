@@ -1,5 +1,5 @@
 import { CryptoTransferOutVerifyOTPComponentProps } from './types';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Text, View, SafeAreaView, ScrollView } from 'react-native';
 import useMergeStyles from './styles';
 import { Button, OTPField } from 'react-native-theme-component';
@@ -7,6 +7,10 @@ import { OTPFieldRef } from 'react-native-theme-component/src/otp-field';
 import CountdownTimer, {
   CountDownTimerRef,
 } from 'react-native-theme-component/src/countdown-timer';
+import { WalletContext } from '../../../context/wallet-context';
+import { WalletService } from '@banking-component/wallet-component/src/services/wallet-service';
+
+const walletService = WalletService.instance();
 
 const CryptoTransferOutVerifyOTPComponent = ({
   props,
@@ -16,7 +20,11 @@ const CryptoTransferOutVerifyOTPComponent = ({
   const otpRef = useRef<OTPFieldRef>();
   const countdownRef = useRef<CountDownTimerRef>();
   const { onConfirmed } = props || {};
+  const { paymentId, initMoneyin, refreshWallets } = useContext(WalletContext);
+  const [isLoadingOtpVerification, setIsLoadingOtpVerification] =
+    useState<boolean>(false);
   const [value, setValue] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     if (value && value.length === 6) {
@@ -25,16 +33,42 @@ const CryptoTransferOutVerifyOTPComponent = ({
   }, [value]);
 
   const handleCompleteInputOTP = () => {
-    console.log('on complete input otp');
+    onConfirm();
   };
 
-  const onConfirm = () => {
-    console.log('on confirm verify otp');
-    onConfirmed && onConfirmed();
+  const onConfirm = async () => {
+    setIsLoadingOtpVerification(true);
+    const result = await walletService.moneyOutConfirmation(
+      paymentId || '',
+      value
+    );
+    setIsLoadingOtpVerification(false);
+    if (result.Data) {
+      onConfirmed &&
+        onConfirmed(
+          result.Data.Initiation.InstructedAmount.Amount,
+          `${result.Data.Initiation.InstructedAmount.Currency} transfer-out`,
+          result.Data.Status,
+          result.Data.StatusUpdateDateTime,
+          result.Data.Initiation.SupplementaryData.PaymentServiceProviderExt
+            .PspReference
+        );
+      refreshWallets(2000);
+    } else if (result.response?.data?.errors) {
+      setError(
+        `${result.response?.data?.errors[0].message}. Please try again.`
+      );
+      otpRef.current?.clearInput();
+      otpRef.current?.focus();
+    }
   };
 
   const onResendOTP = () => {
-    console.log('onResendOTP');
+    countdownRef.current?.restart();
+    initMoneyin();
+    otpRef.current?.clearInput();
+    otpRef.current?.focus();
+    setError('');
   };
 
   return (
@@ -57,6 +91,11 @@ const CryptoTransferOutVerifyOTPComponent = ({
               focusCellContainerStyle: { borderBottomColor: '#1EBCE8' },
             }}
           />
+          {error.length > 0 && (
+            <View style={styles.errorWrapper}>
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          )}
           <View style={styles.countdownWrapper}>
             <Text style={styles.notReceivedCodeLabel}>
               {"Didn't receive a code? "}
@@ -76,7 +115,11 @@ const CryptoTransferOutVerifyOTPComponent = ({
         </View>
       </ScrollView>
       <View style={styles.actionWrapper}>
-        <Button label="Continue" onPress={onConfirm} />
+        <Button
+          label="Continue"
+          onPress={onConfirm}
+          isLoading={isLoadingOtpVerification}
+        />
       </View>
     </SafeAreaView>
   );
