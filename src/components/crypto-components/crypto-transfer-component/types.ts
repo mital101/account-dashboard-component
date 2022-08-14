@@ -13,6 +13,8 @@ export type CryptoTransferInComponentStyles = {
   safeArea?: StyleProp<ViewStyle>;
   container?: StyleProp<ViewStyle>;
   pageTitle?: StyleProp<TextStyle>;
+  pageSubTitleSection?: StyleProp<ViewStyle>;
+  pageSubTitle?: StyleProp<TextStyle>;
   title?: StyleProp<TextStyle>;
   subTitle?: StyleProp<TextStyle>;
   contactContainer?: StyleProp<ViewStyle>;

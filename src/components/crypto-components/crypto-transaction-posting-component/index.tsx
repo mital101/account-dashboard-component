@@ -14,7 +14,7 @@ const CryptoTransactionPostingComponent = ({
   style,
 }: CryptoTransactionPostingComponentProps) => {
   const styles = useMergeStyles(style);
-  const { onBackToDashboard, onBackToTransferIn, onBackToTransferOut, onGoToHelpCenter, amount, type,
+  const { onBackToDashboard, onBackToTransfer, onGoToHelpCenter, amount, type,
     status,
     date,
     refNumber 
@@ -22,7 +22,7 @@ const CryptoTransactionPostingComponent = ({
     props || {};
 
   const {isRefreshingWallets, currentTransfer, unionWallet, cryptoWallet} = useContext(WalletContext);
-  const isMoneyInTransaction = currentTransfer === 'moneyin';
+  const isTransferIn = currentTransfer === 'moneyin';
   const isSuccess = status === 'Initialized' ||
   'AcceptedCreditSettlementCompleted' ||
   'AcceptedSettlementCompleted' ||
@@ -109,7 +109,7 @@ const CryptoTransactionPostingComponent = ({
         <Text style={styles.titleSuccess}>Transaction Successful!</Text>
         <View style={styles.subTitleSuccessWrapper}>
           <Text style={styles.subTitleSuccess}>
-            {`#UDidIt! You have successfully transferred money from your ${isMoneyInTransaction ? 'Pitaka' : 'Crypto Pitaka'} to your ${!isMoneyInTransaction ? 'Pitaka' : 'Crypto Pitaka'}. See transaction details below:`}
+            {`#UDidIt! You have successfully transferred money from your ${isTransferIn ? 'Pitaka' : 'Crypto Pitaka'} to your ${!isTransferIn ? 'Pitaka' : 'Crypto Pitaka'}. See transaction details below:`}
           </Text>
         </View>
         <View style={styles.contentSuccess}>
@@ -137,13 +137,13 @@ const CryptoTransactionPostingComponent = ({
           <RowInfo
             props={{
               title: 'Send Money From',
-              value: isMoneyInTransaction ? `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}` : `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}`,
+              value: isTransferIn ? `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}` : `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}`,
             }}
           />
           <RowInfo
             props={{
               title: 'Send Money To',
-              value: !isMoneyInTransaction ? `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}` : `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}`,
+              value: !isTransferIn ? `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}` : `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}`,
             }}
           />
         </View>
@@ -164,7 +164,7 @@ const CryptoTransactionPostingComponent = ({
         <View style={styles.btnActionsWrapper}>
           <Button
             label={'Make Another Transaction'}
-            onPress={isMoneyInTransaction ? onBackToTransferIn : onBackToTransferOut}
+            onPress={onBackToTransfer}
           />
           <Button
             label={'Back to Crypto Dashboard'}

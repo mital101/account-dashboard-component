@@ -4,9 +4,8 @@ export type CryptoTransactionPostingComponentProps = {
   style?: CryptoTransactionPostingComponentStyles;
   props?: {
     onBackToDashboard?: () => void;
-    onBackToTransferIn?: () => void;
+    onBackToTransfer?: () => void;
     onGoToHelpCenter?: () => void;
-    onBackToTransferOut?: () => void;
     amount: number;
     type: string;
     status: string;

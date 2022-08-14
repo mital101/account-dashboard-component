@@ -12,6 +12,8 @@ export type WalletListComponentRefs = {
   hideActionSheet: () => void;
 };
 
+export type TransferType = 'moneyin' | 'moneyout';
+
 export type WalletListComponentProps = {
   Root: {
     style?: WalletListComponentStyle;

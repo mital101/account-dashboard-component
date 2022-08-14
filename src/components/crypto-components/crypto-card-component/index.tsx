@@ -55,8 +55,7 @@ export type CryptoCardComponentProps = {
   onTrade: () => void;
   onLinkAccount: () => void;
   onViewAccount: () => void;
-  onTransferIn: () => void;
-  onTransferOut: () => void;
+  onTransfer: () => void;
   onSearchingCrypto: () => void;
   onSelectItemCurrency: (currency: Currency) => void;
   children?: ReactNode;
@@ -100,8 +99,7 @@ const CryptoCardComponent = ({
   children,
   isActive,
   isWithToolTip,
-  onTransferIn,
-  onTransferOut,
+  onTransfer,
   onViewAllCrypto,
   onSearchingCrypto,
   onSelectItemCurrency,
@@ -131,12 +129,12 @@ const CryptoCardComponent = ({
 
   const handleTransferIn = () => {
     setCurrentTransfer('moneyin');
-    onTransferIn && onTransferIn();
+    onTransfer && onTransfer();
   }
 
   const handleTransferOut = () => {
     setCurrentTransfer('moneyout');
-    onTransferOut && onTransferOut();
+    onTransfer && onTransfer();
   }
 
 

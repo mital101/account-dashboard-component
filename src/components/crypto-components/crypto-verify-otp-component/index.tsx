@@ -20,12 +20,13 @@ const CryptoVerifyOTPComponent = ({
   const otpRef = useRef<OTPFieldRef>();
   const countdownRef = useRef<CountDownTimerRef>();
   const { onConfirmed } = props || {};
-  const { paymentId, initMoneyin, refreshWallets } = useContext(WalletContext);
+  const { paymentId, initMoneyin, initMoneyOut, refreshWallets, currentTransfer } = useContext(WalletContext);
   const [isLoadingOtpVerification, setIsLoadingOtpVerification] =
     useState<boolean>(false);
   const [value, setValue] = useState<string>('');
   const [error, setError] = useState<string>();
-
+  const isTransferIn = currentTransfer === 'moneyin';
+   
   useEffect(() => {
     if (value && value.length === 6) {
       handleCompleteInputOTP();
@@ -38,16 +39,20 @@ const CryptoVerifyOTPComponent = ({
 
   const onConfirm = async () => {
     setIsLoadingOtpVerification(true);
-    const result = await walletService.moneyInConfirmation(
+    const result = isTransferIn ?  await walletService.moneyInConfirmation(
+      paymentId || '',
+      value
+    ) : await walletService.moneyOutConfirmation(
       paymentId || '',
       value
     );
+
     setIsLoadingOtpVerification(false);
     if (result.Data) {
       onConfirmed &&
         onConfirmed(
           result.Data.Initiation.InstructedAmount.Amount,
-          `${result.Data.Initiation.InstructedAmount.Currency} transfer-in`,
+          `${result.Data.Initiation.InstructedAmount.Currency} ${isTransferIn ? 'transfer-in' : 'transfer-out'}`,
           result.Data.Status,
           result.Data.StatusUpdateDateTime,
           result.Data.Initiation.SupplementaryData.PaymentServiceProviderExt
@@ -65,7 +70,7 @@ const CryptoVerifyOTPComponent = ({
 
   const onResendOTP = () => {
     countdownRef.current?.restart();
-    initMoneyin();
+    isTransferIn ? initMoneyin() : initMoneyOut();
     otpRef.current?.clearInput();
     otpRef.current?.focus();
   };

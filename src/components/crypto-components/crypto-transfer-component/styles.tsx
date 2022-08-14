@@ -246,6 +246,14 @@ const useMergeStyles = (
       marginTop: 8,
       paddingBottom: 12,
     },
+    pageSubTitle: {
+      fontFamily: fonts.regular,
+      fontSize: 12,
+      color: '#4E4B50'
+    },
+    pageSubTitleSection: {
+      marginVertical: 15
+    }
   });
   return defaultsDeep(style, defaultStyles);
 };

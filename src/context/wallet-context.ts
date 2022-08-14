@@ -16,6 +16,7 @@ import {
   Currency,
 } from '../model';
 import _, { chain, groupBy, isEmpty, orderBy } from 'lodash';
+import { TransferType } from '../types';
 
 const walletService = WalletService.instance();
 
@@ -100,7 +101,7 @@ export interface WalletContextData {
   initMoneyOut: () => Promise<void>,
   isLoadingInitMoneyOut: boolean;
   currentTransfer?: string;
-  setCurrentTransfer: (type: string) => void;
+  setCurrentTransfer: (type: TransferType) => void;
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -212,7 +213,7 @@ export function useWalletContextValue(): WalletContextData {
   const [_isLoadingInitMoneyIn, setIsLoadingInitMoneyIn] = useState<boolean>(false);
   const [_paymentId, setPaymentId] = useState<string>();
   const [_amount, setAmount] = useState<number>();
-  const [_currentTransfer, setCurrentTransfer] = useState<string>();
+  const [_currentTransfer, setCurrentTransfer] = useState<TransferType>();
   
   const [_walletsById, setWalletsById] = useState<Wallet[]>([]);
 

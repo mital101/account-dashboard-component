@@ -20,7 +20,6 @@ import {
   useCurrencyFormat,
 } from 'react-native-theme-component';
 import { InformationIcon } from '../../../assets/images';
-import { ArrowRightIcon } from '../../../assets/images';
 import { WalletService } from '../../../services/wallet-service';
 import { WalletContext } from '../../../context/wallet-context';
 
@@ -106,10 +105,11 @@ const CryptoTransferInComponent = ({
   const [selectedCrypto, setSelectedCrypto] = React.useState<string>();
   const [isLoadingValidation, setIsLoadingValidation] =
     useState<boolean>(false);
-  const { setAmountCryptoIn, unionWallet, cryptoWallet } =
+  const { setAmountCryptoIn, unionWallet, cryptoWallet, currentTransfer } =
     useContext(WalletContext);
-  const unionWalletCurrentBalance = useCurrencyFormat(
-    unionWallet?.availableBalance || 0,
+  const isTransferIn = currentTransfer === 'moneyin'; 
+  const currentAvailableBalance = useCurrencyFormat(
+    (isTransferIn ? unionWallet?.availableBalance : cryptoWallet?.availableBalance) || 0,
     'PHP'
   );
   const transferValueFormated =
@@ -119,7 +119,7 @@ const CryptoTransferInComponent = ({
 
   const minimumError = transferValueFormated.length > 0 && transferValue < 200;
   const higherCurrentBalanceErorr =
-    transferValue > (unionWallet?.currentBalance || 0);
+    transferValue > ((isTransferIn ? unionWallet?.currentBalance : cryptoWallet?.currentBalance) || 0);
   const isInputValid = !minimumError && !higherCurrentBalanceErorr;
 
   const isValidToSubmit =
@@ -184,9 +184,9 @@ const CryptoTransferInComponent = ({
           </View>
           <View style={styles.currentBalanceWrapper}>
             <View style={styles.rowInput}>
-              <Text style={styles.balanceTitle}>My Pitaka Balance: </Text>
+              <Text style={styles.balanceTitle}>{isTransferIn ? 'My Pitaka Balance: ' : 'Available balance: '}</Text>
               <Text style={styles.smallBalanceLabel}>
-                {unionWalletCurrentBalance}
+                {currentAvailableBalance}
               </Text>
             </View>
           </View>
@@ -241,18 +241,20 @@ const CryptoTransferInComponent = ({
   const handleOnTransferPHP = async () => {
     setIsLoadingValidation(true);
     if (unionWallet && cryptoWallet) {
-      const result = await walletService.moneyInValidation(
+      const result = isTransferIn ? await walletService.moneyInValidation(
         transferValue,
         unionWallet?.bankAccount.accountNumber,
         cryptoWallet?.bankAccount.accountNumber
+      ) : await walletService.moneyOutValidation(
+        transferValue,
+        cryptoWallet?.bankAccount.accountNumber,
+        unionWallet?.bankAccount.accountNumber,
       );
 
       if (result.Data) {
         setAmountCryptoIn(transferValue);
         setTransferValue(0);
         onTransferPHP && onTransferPHP();
-        // onTransferPHP && onTransferPHP(
-        //   unionWallet, cryptoWallet, transferValue, 'Send instantly', 0, transferValue);
       }
     }
     setIsLoadingValidation(false);
@@ -261,7 +263,10 @@ const CryptoTransferInComponent = ({
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <Text style={styles.pageTitle}>{'Transfer-in'}</Text>
+        <Text style={styles.pageTitle}>{isTransferIn ? 'Transfer-in' : 'Transfer-out'}</Text>
+        <View style={styles.pageSubTitleSection}>
+          <Text style={styles.pageSubTitle}>{isTransferIn ? 'Add PHP or deposit crypto in your crypto pitaka' : 'Securely withdraw PHP from your crypto pitaka or transfer crypto to other wallets.'}</Text>
+        </View>
         <View style={styles.tabbar}>
           <View style={styles.headerWrapper}>
             {renderTabbar('PHP', 0)}

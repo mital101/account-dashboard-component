@@ -23,7 +23,8 @@ const CryptoReviewSummaryComponent = forwardRef(
     const [isShowCancelAlert, setIsShowCancelAlert] = useState<boolean>();
     const [isShowErrorAlert, setIsShowErrorAlert] = useState<boolean>();
     const { fonts } = useContext(ThemeContext);
-    const { initMoneyin, amount = 0, isLoadingInitMoneyIn, unionWallet, cryptoWallet } = useContext(WalletContext);
+    const { initMoneyin, initMoneyOut, isLoadingInitMoneyOut,  amount = 0, isLoadingInitMoneyIn, unionWallet, cryptoWallet, currentTransfer } = useContext(WalletContext);
+    const isTransferIn = currentTransfer === 'moneyin';
     const styles = useMergeStyles(style);
     const formatedAmount = useCurrencyFormat(amount, 'PHP');
     const formatedAmountDeposite = useCurrencyFormat(amount, 'PHP');
@@ -57,12 +58,12 @@ const CryptoReviewSummaryComponent = forwardRef(
     }
 
     const onConfirm = async () => {
-      await initMoneyin();
+      isTransferIn ? await initMoneyin() : await initMoneyOut();
       onSuccess && onSuccess();
     }
 
     const onReload = async () => {
-      await initMoneyin();
+      isTransferIn ? await initMoneyin() : await initMoneyOut();
       onSuccess && onSuccess();
     }
     
@@ -86,13 +87,13 @@ const CryptoReviewSummaryComponent = forwardRef(
                 <RowInfo
                   props={{
                     title: 'Send Money From',
-                    value: `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}`,
+                    value: isTransferIn ? `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}` : `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}`,
                   }}
                 />
                 <RowInfo
                   props={{
                     title: 'Send Money To',
-                    value: `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}`,
+                    value: isTransferIn ? `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}` : `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}`,
                   }}
                 />
                 <RowInfo
@@ -123,7 +124,7 @@ const CryptoReviewSummaryComponent = forwardRef(
             </View>
         </ScrollView>
         <View style={styles.actionWrapper}>
-          <Button label="Confirm" onPress={onConfirm} isLoading={isLoadingInitMoneyIn} />
+          <Button label="Confirm" onPress={onConfirm} isLoading={isTransferIn ? isLoadingInitMoneyIn : isLoadingInitMoneyOut} />
         </View>
         <AlertModal 
           isVisible={isShowCancelAlert} 
