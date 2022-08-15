@@ -222,7 +222,6 @@ const useMergeStyles = (
     input: {
       marginLeft: 5,
       fontSize: 16,
-      fontFamily: fonts.medium,
       color: '#1D1C1D',
     },
     remainingWrapper: {
@@ -239,7 +238,7 @@ const useMergeStyles = (
       color: '#D32F2F',
       fontFamily: fonts.regular,
       maxWidth: '80%',
-      textAlign: 'center'
+      textAlign: 'center',
     },
     errorRow: {
       alignItems: 'center',
@@ -249,11 +248,11 @@ const useMergeStyles = (
     pageSubTitle: {
       fontFamily: fonts.regular,
       fontSize: 12,
-      color: '#4E4B50'
+      color: '#4E4B50',
     },
     pageSubTitleSection: {
-      marginVertical: 15
-    }
+      marginVertical: 15,
+    },
   });
   return defaultsDeep(style, defaultStyles);
 };
