@@ -56,8 +56,8 @@ const AccountSummaryCard = (props: AccountSummaryCardProps) => {
   useEffect(() => {
     if (financialProfile) {
       let filteredPesoBalance = financialProfile.walletSummaries.find((item) => item.currency === 'PHP');
-      setPesoBalance(filteredPesoBalance.currentBalanceInBaseCurrency)
-      setCryptoBalance(financialProfile.totalCurrentBalance-filteredPesoBalance.currentBalanceInBaseCurrency)
+      setPesoBalance(filteredPesoBalance?.currentBalanceInBaseCurrency)
+      setCryptoBalance(financialProfile?.totalCurrentBalance-filteredPesoBalance?.currentBalanceInBaseCurrency)
     }
   },[financialProfile]);
 

@@ -62,13 +62,16 @@ const CryptoItemComponent = (props: CryptoItemComponentProps) => {
   const styles: CryptoItemComponentStyle = useMergeStyles(style);
   const { getWalletsById } = useContext(WalletContext);
 
+
   useEffect(() => {
     if (wallet.length > 0) {
       let filteredArray = wallet.find(item => item.bankAccount.bankCode === 'PDAX');
-
+      
       if (filteredArray) {
         getWalletsById('PDAX')
         setIsActivated(filteredArray)
+      }else{
+        setIsActivated(undefined)
       }
       // setInitialWallet(wallets[0]);
       // changeToIndex(0);
