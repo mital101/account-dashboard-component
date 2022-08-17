@@ -395,4 +395,19 @@ export class WalletService {
       throw new Error('Wallet Client is not registered');
     }
   };
+
+  getFinancialProfile = async (userId:string,bankId: string) => {
+    if (this._financialClient) {
+      const response = await this._financialClient.get(
+        `users/${userId}/financial-profile`,{
+          params: {
+            bankId: bankId,
+          }
+        },
+      );
+      return response.data;
+    } else {
+      throw new Error('Financial Client is not registered');
+    }
+  };
 }

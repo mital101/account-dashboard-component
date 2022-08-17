@@ -14,7 +14,7 @@ import {
 } from '../../../assets/images';
 import useMergeStyles from './styles';
 import Tooltip, { TooltipChildrenContext } from 'react-native-walkthrough-tooltip';
-
+import { useCurrencyFormat } from "react-native-theme-component";
 export type AccountSummaryCardThemeProps = {
   style?: AccountSummaryCardThemeStyles;
   props: {
@@ -40,27 +40,41 @@ export type AccountSummaryCardProps = {
   isEmpty?:boolean;
   onClickHide?: () => void;
   onViewAccount?:()=>void;
+  walletData?:any;
+  financialProfile?:any;
 };
 
 const AccountSummaryCard = (props: AccountSummaryCardProps) => {
-  const { style,isProtected,isEmpty,onClickHide,onViewAccount } = props;
+  const { style,isProtected,isEmpty,onClickHide,onViewAccount,walletData,financialProfile } = props;
   const styles = useMergeStyles(style);
 
-  // const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [pesoBalance, setPesoBalance] = useState<number>(0);
+  const [cryptoBalance, setCryptoBalance] = useState<number>(0);
 
-  // useEffect(() => {
-  //   if (isShowTips) {
-  //     setTip1(true)
-  //   }
-  // },[isShowTips]);
+
+
+  useEffect(() => {
+    if (financialProfile) {
+      let filteredPesoBalance = financialProfile.walletSummaries.find((item) => item.currency === 'PHP');
+      setPesoBalance(filteredPesoBalance.currentBalanceInBaseCurrency)
+      setCryptoBalance(financialProfile.totalCurrentBalance-filteredPesoBalance.currentBalanceInBaseCurrency)
+    }
+  },[financialProfile]);
 
   return (
     <View style={styles.containerStyle}>
       <View style={styles.containerWrapperStyle}>
         <View style={styles.rowSpaceBetween}>
           <View style={styles.rowCurrency}>
-            <PytakaCurrencyIcon width={16} height={18} color="#3E2D68"/>
-            <Text style={styles.currency}>{isProtected?'***':'12,598.72'}</Text>
+
+            {financialProfile && walletData && !isProtected ? <Text style={styles.currency}>
+                {useCurrencyFormat(financialProfile?.totalCurrentBalance, walletData.currencyCode)}
+              </Text>:
+              <>
+                <PytakaCurrencyIcon width={16} height={18} color="#3E2D68"/>
+                <Text style={styles.currency}>{isProtected?'***':'0.00'}</Text>
+              </>
+            }
           </View>
           <TouchableOpacity onPress={()=>{
             onClickHide(!isProtected)
@@ -80,7 +94,13 @@ const AccountSummaryCard = (props: AccountSummaryCardProps) => {
             <Text style={styles.currencyMessage}> Peso:</Text>
           </View>
           <View style={styles.rowCurrency}>
-            <Text style={styles.accountBalance}>{isProtected?'***':isEmpty?'₱ 0.00':'₱ 3,500.00' }</Text>
+
+            {walletData && !isProtected ? <Text style={styles.accountBalance}>
+                {useCurrencyFormat(pesoBalance, walletData.currencyCode)}
+              </Text>:
+              <Text style={styles.accountBalance}>{isProtected?'***':isEmpty?'₱ 0.00':'₱ 0.00' }</Text>
+
+            }
           </View>
         </View>
         <View style={styles.itemSpaceBetween}>
@@ -89,7 +109,12 @@ const AccountSummaryCard = (props: AccountSummaryCardProps) => {
             <Text style={styles.currencyMessage}> Crypto:</Text>
           </View>
           <View style={styles.rowCurrency}>
-            <Text style={styles.accountBalance}>{isProtected?'***': isEmpty?'₱ 0.00': '₱ 9,591.54' }</Text>
+
+            {walletData && !isProtected ? <Text style={styles.accountBalance}>
+                {useCurrencyFormat(cryptoBalance, walletData.currencyCode)}
+              </Text>:
+              <Text style={styles.accountBalance}>{isProtected?'***':isEmpty?'₱ 0.00':'₱ 0.00' }</Text>
+            }
           </View>
         </View>
       </View>

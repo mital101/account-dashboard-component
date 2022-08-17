@@ -96,6 +96,7 @@ export interface WalletContextData {
   setAmountCryptoIn: (amount: number) => void;
   cryptoWallet?: Wallet;
   unionWallet?: Wallet;
+  getFinancialProfile: (userId: string,bankId: string) => void;
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -151,7 +152,8 @@ export const walletDefaultValue: WalletContextData = {
   initMoneyin: async () => undefined,
   setAmountCryptoIn: () => undefined,
   cryptoWallet: undefined,
-  unionWallet: undefined
+  unionWallet: undefined,
+  getFinancialProfile: () => undefined,
 };
 
 export const WalletContext =
@@ -198,12 +200,16 @@ export function useWalletContextValue(): WalletContextData {
 
   const [_isLoadingListCurrency, setIsLoadingListCurrency] = useState(true);
   const [_listCurrency, setListCurrency] = useState<Currency[] | undefined>();
-  
+
   const [_isLoadingInitMoneyIn, setIsLoadingInitMoneyIn] = useState<boolean>(false);
   const [_paymentId, setPaymentId] = useState<string>();
   const [_amount, setAmount] = useState<number>();
 
   const [_walletsById, setWalletsById] = useState<Wallet[]>([]);
+
+  const [_isLoadingFinancialProfile, setIsLoadingFinancialProfile] = useState(true);
+  const [_FinancialProfile, setFinancialProfile] = useState<any[] | undefined>();
+
 
   const getWallets = useCallback(async () => {
     try {
@@ -483,7 +489,6 @@ export function useWalletContextValue(): WalletContextData {
     []
   );
 
-  
   const clearWalletErrors = useCallback(() => {
     if (_loadError) {
       setLoadError(undefined);
@@ -724,8 +729,8 @@ export function useWalletContextValue(): WalletContextData {
     const cryptoWallet: Wallet | undefined = _wallets.find((w) => w.bankAccount.bankCode === 'PDAX');
     if(unionWallet && cryptoWallet && _amount) {
       const result = await walletService.moneyInInitital(
-        _amount, 
-        unionWallet?.bankAccount.accountNumber, 
+        _amount,
+        unionWallet?.bankAccount.accountNumber,
         cryptoWallet?.bankAccount.accountNumber
         );
       setPaymentId(result.Data.DomesticPaymentId)
@@ -735,6 +740,13 @@ export function useWalletContextValue(): WalletContextData {
 
   const setAmountCryptoIn = useCallback((amount: number) => {
     setAmount(amount);
+  }, []);
+
+  const getFinancialProfile = useCallback(async (userId: string,bankId: string) => {
+    setIsLoadingFinancialProfile(true);
+    const result = await walletService.getFinancialProfile(userId,bankId);
+    setIsLoadingFinancialProfile(false);
+    setFinancialProfile(result.data);
   }, []);
 
   return useMemo(
@@ -798,7 +810,10 @@ export function useWalletContextValue(): WalletContextData {
       amount: _amount,
       setAmountCryptoIn,
       unionWallet: _unionWallets,
-      cryptoWallet: _cryptoWallets
+      cryptoWallet: _cryptoWallets,
+      getFinancialProfile,
+      isLoadingFinancialProfile: _isLoadingFinancialProfile,
+      financialProfile: _FinancialProfile,
     }),
     [
       _isLinkedSuccessfully,
@@ -833,7 +848,9 @@ export function useWalletContextValue(): WalletContextData {
       _paymentId,
       _isLoadingInitMoneyIn,
       _unionWallets,
-      _cryptoWallets
+      _cryptoWallets,
+      _isLoadingFinancialProfile,
+      _FinancialProfile
     ]
   );
 }
