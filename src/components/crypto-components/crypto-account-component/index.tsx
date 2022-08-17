@@ -33,6 +33,7 @@ import MarketPricesComponent from '../../market-price-component';
 import { Wallet, Transaction } from '../../../model';
 import { WalletItemComponentStyle } from '../../wallet-card-component/wallet-item-component';
 import { TransactionCardComponentStyles } from '../../wallet-card-component/transaction-card-component';
+import { WalletContext } from '../../../context/wallet-context';
 
 export type CryptoAccountComponentProps = {
   style?: CryptoAccountComponentStyles;
@@ -50,6 +51,7 @@ export type CryptoAccountComponentProps = {
   children?: ReactNode;
   isActive?: boolean;
   onClickMyCrypto: () => void;
+  userId: string;
 };
 
 export type CryptoAccountComponentStyles = {
@@ -87,7 +89,8 @@ const CryptoAccountComponent = ({
   onViewAccount,
   children,
   isActive,
-  onClickMyCrypto
+  onClickMyCrypto,
+  userId
 }: CryptoAccountComponentProps) => {
   const { colors, i18n } = useContext(ThemeContext);
 
@@ -103,23 +106,25 @@ const CryptoAccountComponent = ({
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isEmpty, setIsEmpty] = useState<boolean>(false);
 
+  const { walletsById,getFinancialProfile,financialProfile } = useContext(WalletContext);
+  const [cryptoWallet, getCryptoWallet] = useState<any>([]);
 
-  // useEffect(() => {
-  //   if (ref) {
-  //     ref.scrollTo({
-  //       x: 0,
-  //       y: 400,
-  //       animated: true,
-  //     });
-  //   }
-  //
-  // },[ref]);
+  useEffect(() => {
+    if (userId) {
+      console.log('userId ',userId);
 
-  // useEffect(() => {
-  //   if (isActive) {
-  //     setIsVisible(!isVisible);
-  //   }
-  // }, [isActive]);
+      getFinancialProfile(userId,'PDAX')
+    }
+
+  }, []);
+
+
+  useEffect(() => {
+    if (walletsById) {
+      let filteredArray = walletsById.find((item) => item.status === 'ACTIVE');
+      getCryptoWallet(filteredArray);
+    }
+  }, [walletsById]);
 
 
   return (
@@ -146,21 +151,27 @@ const CryptoAccountComponent = ({
           <AccountSummaryCard
             onClickHide={()=>{setIsVisible(!isVisible)}}
             isProtected={isVisible}
+            walletData={cryptoWallet}
+            financialProfile={financialProfile}
             isEmpty={isEmpty} />
 
           <BreakdownSummaryCard
             isProtected={isVisible}
+            walletData={cryptoWallet}
             isEmpty={isEmpty}
+            financialProfile={financialProfile}
           />
 
           <MyCryptoCard
             ViewAll={()=>{onClickMyCrypto()}}
             isProtected={isVisible}
+            walletData={cryptoWallet}
             isEmpty={isEmpty}
           />
 
           <CryptoTransactionsCard
             isProtected={isVisible}
+            walletData={cryptoWallet}
             isEmpty={isEmpty}
           />
 

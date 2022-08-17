@@ -36,12 +36,13 @@ export type BreakdownSummaryCardProps = {
   isProtected?:boolean;
   isEmpty?:boolean;
   onViewAccount?:()=>void;
+  financialProfile?:any;
 };
 
 const BreakdownSummaryCard = (props: BreakdownSummaryCardProps) => {
-  const { style,isProtected,isEmpty,onViewAccount } = props;
+  const { style,isProtected,isEmpty,onViewAccount,financialProfile } = props;
   const styles = useMergeStyles(style);
-
+  const [chartData, setChartData] = useState<any>([]);
   const data=[
     {value:15,color: '#3E2D68',name:'PHP'},
     {value:22,color: '#FF9800',name:'BTC'},
@@ -49,15 +50,61 @@ const BreakdownSummaryCard = (props: BreakdownSummaryCardProps) => {
     {value:21,color: '#50AF95',name:'USDT'},
     {value:21,color: '#FF93A1',name:'Others'},
   ]
-  // const [showTip1, setTip1] = useState<boolean>(false);
-  // const [showTip2, setTip2] = useState<boolean>(false);
-  // const [showTip3, setTip3] = useState<boolean>(false);
-  //
-  // useEffect(() => {
-  //   if (isShowTips) {
-  //     setTip1(true)
-  //   }
-  // },[isShowTips]);
+
+  const hashCode=(str)=> {
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+       hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash;
+  }
+
+  const intToRGB=(i)=> {
+    var c = (i & 0x00FFFFFF)
+        .toString(16)
+        .toUpperCase();
+
+    return "#"+"00000".substring(0, 6 - c.length) + c;
+  }
+
+  useEffect(() => {
+    if (financialProfile) {
+      let currencyList = []
+      let othersCurrencyList = 0
+      console.log('financialProfile.walletSummaries',financialProfile.walletSummaries);
+
+      financialProfile.walletSummaries.map((obj,key)=>{
+        if (key < 4) {
+          currencyList.push(
+          {
+            value:obj.currentBalanceInBaseCurrency > 0 ? ((obj.currentBalanceInBaseCurrency/financialProfile.totalCurrentBalance)*100) : 0.00,
+            color: intToRGB(hashCode(obj.walletId)),
+            name:obj.currency
+          });
+        }else{
+          othersCurrencyList += obj.currentBalanceInBaseCurrency
+        }
+
+
+
+      });
+      if (othersCurrencyList > 0) {
+        currencyList.push(
+        {
+          value:(othersCurrencyList/financialProfile.totalCurrentBalance)*100,
+          color: '#FF93A1',
+          name:'Others'
+        });
+      }
+
+      setChartData(currencyList)
+    }
+  },[financialProfile]);
+
+
+
+  // let filteredArray = walletsById.find((item) => item.status === 'ACTIVE');
+
 
   const renderLegend = (itemData)=>{
     return (
@@ -75,7 +122,7 @@ const BreakdownSummaryCard = (props: BreakdownSummaryCardProps) => {
           />
           <Text style={{color: '#1D1C1D', fontSize: 16}}>{itemData.name}</Text>
         </View>
-        <Text style={{color: '#1D1C1D', fontSize: 16}}>{isProtected?'***': `${itemData.value}%`}</Text>
+        <Text style={{color: '#1D1C1D', fontSize: 16}}>{isProtected?'***': `${itemData.value.toFixed(2)}%`}</Text>
       </View>
     )
   }
@@ -98,12 +145,12 @@ const BreakdownSummaryCard = (props: BreakdownSummaryCardProps) => {
                 isAnimated
                 strokeWidth={1}
                 strokeColor={'#fff'}
-                data={data}
+                data={chartData}
                 donut
                 radius={80}
                 innerRadius={50}/>
               <View style={styles.graphContainer}>
-                {data && data.map((obj,key)=>{
+                {chartData && chartData.map((obj,key)=>{
                   return(<View key={key}>{renderLegend(obj)}</View>)
                 })}
               </View>
