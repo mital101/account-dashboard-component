@@ -219,6 +219,7 @@ const CryptoAccountComponent = ({
               <CryptoTransactionsCardComponent
                 props={{
                   data: item,
+                  isVisible: !isVisible,
                   onSelect: onSelectCryptoTransaction,
                 }}
               />

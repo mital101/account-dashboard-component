@@ -18,6 +18,7 @@ export type CryptoTransactionsCardComponentProps = {
     data: Transaction;
     isLastItem?: boolean;
     isFirstItem?: boolean;
+    isVisible?: boolean;
     onSelect?: (transaction: Transaction) => void;
   };
 };
@@ -36,7 +37,7 @@ const CryptoTransactionsCardComponent = ({
   style,
   props,
 }: CryptoTransactionsCardComponentProps) => {
-  const { data, isLastItem, isFirstItem, onSelect } = props || {};
+  const { data, isVisible = true, isLastItem, isFirstItem, onSelect } = props || {};
   const styles = useMergeStyles(style);
 
   const isMoneyOut = data?.txnType === 'MoneyOut';
@@ -44,7 +45,7 @@ const CryptoTransactionsCardComponent = ({
   const formatedAmount = data?.amount.amount ? useCurrencyFormat(data?.amount.amount, 'PHP') : '';
   const displayAmount = `${isMoneyOut ? '-' : '+'} ${isAmountPytaka ? formatedAmount : data?.amount.amount + ' ' + data?.amount.currency}`;
   const displayTitle = `${isMoneyOut ? 'Transfer-out' : 'Transfer-in'} (${data?.amount.currency})`;
-  const formatedDateTime = data?.txnDateTime ? moment(`${data.txnDateTime}Z`).format('MMM DD, YYYY HH:ss A') : '';
+  const formatedDateTime = data?.txnDateTime ? moment(data.txnDateTime).format('MMM DD, YYYY HH:ss A') : '';
   const getStringStatus = (status: string) => {
     switch(status) {
       case 'SUCCESS': 
@@ -69,7 +70,7 @@ const CryptoTransactionsCardComponent = ({
     >
       <View style={styles.row}>
         <Text style={styles.title}>{displayTitle}</Text>
-        <Text style={styles.title}>{displayAmount}</Text>
+        <Text style={styles.title}>{isVisible ? displayAmount : '***'}</Text>
       </View>
       <View style={styles.verticalMargin} />
       <View style={styles.row}>

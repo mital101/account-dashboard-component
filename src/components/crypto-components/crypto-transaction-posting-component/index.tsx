@@ -39,7 +39,7 @@ const CryptoTransactionPostingComponent = ({
 
 
   const formatedAmount = useCurrencyFormat(amount || 0, 'PHP');
-  const formatedDate = moment(`${date}Z`).format(
+  const formatedDate = moment(date).format(
     'ddd DD, YYYY HH:ss A'
   );
 
