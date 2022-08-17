@@ -174,7 +174,6 @@ export class WalletService {
     pageSize?: number,
     toCurrency?: string
   ) => {
-    console.log('getCurrenciesExchangeRate', this._exchangeRateClient);
     if (this._exchangeRateClient) {
       const response = await this._exchangeRateClient.get(
         'currencies/exchange-rates',
@@ -186,7 +185,6 @@ export class WalletService {
           },
         }
       );
-      console.log('response', response);
       return response.data;
     } else {
       throw new Error('Exchange rate client service is not registered');
@@ -200,7 +198,6 @@ export class WalletService {
     pageNum?: number,
     pageSize?: number
   ) => {
-    console.log('getCurrenciesExchangeRate', this._exchangeRateClient);
     if (this._exchangeRateClient) {
       const response = await this._exchangeRateClient.get(
         'currencies/historical-exchange-rates',
@@ -214,7 +211,6 @@ export class WalletService {
           },
         }
       );
-      console.log('response', response.data);
       return response.data;
     } else {
       throw new Error(
@@ -241,12 +237,6 @@ export class WalletService {
     senderAccountNumber: string,
     receiverAccountNumber: string
   ) => {
-    console.log(
-      'moneyInValidation',
-      amount,
-      senderAccountNumber,
-      receiverAccountNumber
-    );
     if (this._paymentClient) {
       try {
         const response = await this._paymentClient.post(
@@ -286,7 +276,6 @@ export class WalletService {
             },
           }
         );
-        console.log('response', response);
         return response.data;
       } catch (error) {
         return 'error: ' + error;
@@ -301,12 +290,6 @@ export class WalletService {
     senderAccountNumber: string,
     receiverAccountNumber: string
   ) => {
-    console.log(
-      'moneyInValidation',
-      amount,
-      senderAccountNumber,
-      receiverAccountNumber
-    );
     if (this._paymentClient) {
       try {
         const response = await this._paymentClient.post('inward-payments', {
@@ -344,7 +327,6 @@ export class WalletService {
             PaymentContextCode: 'PartyToParty',
           },
         });
-        console.log('response', response.data);
         return response.data;
       } catch (error) {
         return 'error: ' + error;
@@ -355,7 +337,6 @@ export class WalletService {
   };
 
   moneyInConfirmation = async (id: string, otp: string) => {
-    console.log('moneyInConfirmation', id, otp);
     if (this._paymentClient) {
       try {
         const response = await this._paymentClient.patch(
@@ -393,44 +374,6 @@ export class WalletService {
     senderAccountNumber: string,
     receiverAccountNumber: string
   ) => {
-    console.log(
-      'moneyOutValidation -> request',
-      'outward-payments/validations',
-      {
-        Data: {
-          Initiation: {
-            LocalInstrument: 'PDAX',
-            InstructedAmount: {
-              Amount: amount,
-              Currency: 'PHP',
-            },
-            DebtorAccount: {
-              Identification: senderAccountNumber,
-              SchemeName: 'PH.BRSTN.AccountNumber',
-            },
-            DebtorAccountExt: {
-              BankCode: 'PDAX',
-            },
-            CreditorAccount: {
-              Identification: receiverAccountNumber,
-              SchemeName: 'PH.BRSTN.AccountNumber',
-            },
-            CreditorAccountExt: {
-              BankCode: 'UnionDigital',
-            },
-            RemittanceInformation: {
-              Unstructured: 'notes',
-            },
-            SupplementaryData: {
-              PaymentType: 'MoneyOut',
-            },
-          },
-        },
-        Risk: {
-          PaymentContextCode: 'PartyToParty',
-        },
-      }
-    );
     if (this._paymentClient) {
       try {
         const response = await this._paymentClient.post(
@@ -470,7 +413,6 @@ export class WalletService {
             },
           }
         );
-        console.log('moneyOutValidation -> response', response.data);
         return response.data;
       } catch (error) {
         return 'error: ' + error;
@@ -485,40 +427,6 @@ export class WalletService {
     senderAccountNumber: string,
     receiverAccountNumber: string
   ) => {
-    console.log('moneyOutInitital -> request', 'outward-payments', {
-      Data: {
-        Initiation: {
-          LocalInstrument: 'PDAX',
-          InstructedAmount: {
-            Amount: amount,
-            Currency: 'PHP',
-          },
-          DebtorAccount: {
-            Identification: senderAccountNumber,
-            SchemeName: 'PH.BRSTN.AccountNumber',
-          },
-          CreditorAccount: {
-            Identification: receiverAccountNumber,
-            SchemeName: 'PH.BRSTN.AccountNumber',
-          },
-          RemittanceInformation: {
-            Unstructured: 'Topup money from Pitaka account to Crypto Wallet',
-          },
-          SupplementaryData: {
-            PaymentType: 'MoneyOut',
-          },
-          CreditorAccountExt: {
-            BankCode: 'UnionDigital',
-          },
-          DebtorAccountExt: {
-            BankCode: 'PDAX',
-          },
-        },
-      },
-      Risk: {
-        PaymentContextCode: 'PartyToParty',
-      },
-    });
     if (this._paymentClient) {
       try {
         const response = await this._paymentClient.post('outward-payments', {
@@ -556,7 +464,6 @@ export class WalletService {
             PaymentContextCode: 'PartyToParty',
           },
         });
-        console.log('moneyOutInitital -> response', response.data);
         return response.data;
       } catch (error) {
         return 'error: ' + error;
@@ -567,23 +474,6 @@ export class WalletService {
   };
 
   moneyOutConfirmation = async (id: string, otp: string) => {
-    console.log('moneyOutConfirmation -> request', 'outward-payments/' + id, {
-      Data: {
-        Initiation: {
-          LocalInstrument: 'PDAX',
-          SupplementaryData: {
-            PaymentType: 'MoneyOut',
-            CustomFields: [
-              {
-                Key: 'OTP',
-                Value: `${otp}`,
-              },
-            ],
-          },
-        },
-      },
-    });
-
     if (this._paymentClient) {
       try {
         const response = await this._paymentClient.patch(
@@ -605,7 +495,6 @@ export class WalletService {
             },
           }
         );
-        console.log('moneyOutConfirmation -> respone', response.data);
         return response.data;
       } catch (error) {
         return error;
@@ -643,7 +532,6 @@ export class WalletService {
         toDateTime: filter?.to,
         txnTypes: filter?.types,
       };
-      console.log('getCryptoTransactions -> params', params);
 
       const response = await this._walletClient.get('transactions', {
         params: {
