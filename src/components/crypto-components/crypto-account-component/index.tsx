@@ -8,6 +8,7 @@ import {
   ScrollView,
   Text,
   TextStyle,
+  FlatList,
 } from 'react-native';
 import useMergeStyles from './styles';
 import { ThemeContext } from 'react-native-theme-component';
@@ -17,6 +18,7 @@ import {
   CryptoHelpLinkIcon,
   InfoIcon,
   PointerIcon,
+  SeperateLineIcon,
 } from '../../../assets/images';
 import Tooltip, {
   TooltipChildrenContext,
@@ -27,12 +29,13 @@ import CryptoItemComponent from '../crypto-item-component/index';
 import AccountSummaryCard from '../../crypto-components/crypto-account-summary-card';
 import BreakdownSummaryCard from '../../crypto-components/crypto-breakdown-card';
 import MyCryptoCard from '../../crypto-components/my-crypto-card';
-import CryptoTransactionsCard from '../../crypto-components/crypto-transactions-card';
 
 import MarketPricesComponent from '../../market-price-component';
 import { Wallet, Transaction } from '../../../model';
 import { WalletItemComponentStyle } from '../../wallet-card-component/wallet-item-component';
 import { TransactionCardComponentStyles } from '../../wallet-card-component/transaction-card-component';
+import CryptoTransactionsCardComponent from '../crypto-transaction-card';
+import { WalletContext } from '../../../context/wallet-context';
 
 export type CryptoAccountComponentProps = {
   style?: CryptoAccountComponentStyles;
@@ -43,13 +46,14 @@ export type CryptoAccountComponentProps = {
   loadingIndicator?: ReactNode;
   onAddMoney: (wallet: Wallet) => void;
   onSendMoney: (wallet: Wallet) => void;
-  onViewAllTransactions: (wallet: Wallet) => void;
+  onViewAllTransactions: () => void;
   onTransactionDetails: (transaction: Transaction) => void;
   onLinkAccount: () => void;
   onViewAccount: () => void;
   children?: ReactNode;
   isActive?: boolean;
   onClickMyCrypto: () => void;
+  onSelectCryptoTransaction: (transaction: Transaction) => void;
 };
 
 export type CryptoAccountComponentStyles = {
@@ -70,6 +74,13 @@ export type CryptoAccountComponentStyles = {
   viewTooltip?: StyleProp<ViewStyle>;
   viewTooltipHeader?: StyleProp<ViewStyle>;
   emptyCarouselContainerStyle?: StyleProp<ViewStyle>;
+  recentTransactionSection?: StyleProp<ViewStyle>;
+  recentTransactionWrapper?: StyleProp<ViewStyle>;
+  row?: StyleProp<ViewStyle>;
+  tilteSection?: StyleProp<TextStyle>;
+  emptyTransactionContainer?: StyleProp<ViewStyle>;
+  emptyTransactionTitle?: StyleProp<TextStyle>;
+  viewAll?: StyleProp<TextStyle>;
 };
 
 const CryptoAccountComponent = ({
@@ -87,7 +98,8 @@ const CryptoAccountComponent = ({
   onViewAccount,
   children,
   isActive,
-  onClickMyCrypto
+  onClickMyCrypto,
+  onSelectCryptoTransaction
 }: CryptoAccountComponentProps) => {
   const { colors, i18n } = useContext(ThemeContext);
 
@@ -98,8 +110,9 @@ const CryptoAccountComponent = ({
   const [showSliderTips, setSliderTips] = useState<boolean>(false);
 
   const [ref, setRef] = useState(null);
-
+  
   const { profile } = useContext(AuthContext);
+  const { getCryptoTransactions, cryptoTransactions, isLoadingGetCryptoTransactions } = useContext(WalletContext);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isEmpty, setIsEmpty] = useState<boolean>(false);
 
@@ -121,6 +134,9 @@ const CryptoAccountComponent = ({
   //   }
   // }, [isActive]);
 
+  useEffect(() => {
+    getCryptoTransactions();
+  }, []);
 
   return (
     <View style={styles.containerStyle}>
@@ -159,11 +175,31 @@ const CryptoAccountComponent = ({
             isEmpty={isEmpty}
           />
 
-          <CryptoTransactionsCard
-            isProtected={isVisible}
-            isEmpty={isEmpty}
-          />
-
+          <View style={styles.recentTransactionSection}>
+          <View style={styles.recentTransactionWrapper}>
+            <View style={styles.row}>
+              <Text style={styles.tilteSection}>Recent Transactions</Text>
+              <TouchableOpacity onPress={onViewAllTransactions}>
+                <Text style={styles.viewAll}>View all</Text>
+              </TouchableOpacity>
+            </View>
+            </View>
+            <FlatList 
+              data={cryptoTransactions?.slice(0, 4)}
+              ItemSeparatorComponent={() => (
+                  <SeperateLineIcon height={1} />
+              )}
+              ListEmptyComponent= {() => (
+                <View style={styles.emptyTransactionContainer}>
+                  <Text style={styles.emptyTransactionTitle}>You have no transactions yet.</Text>
+                </View>
+              )}
+              renderItem={({item}) => <CryptoTransactionsCardComponent props={{
+                data: item,
+                onSelect: onSelectCryptoTransaction
+              }} />}
+            />
+          </View>
 
       </ScrollView>
     </View>

@@ -23,11 +23,15 @@ const CryptoReviewSummaryComponent = forwardRef(
     const [isShowCancelAlert, setIsShowCancelAlert] = useState<boolean>();
     const [isShowErrorAlert, setIsShowErrorAlert] = useState<boolean>();
     const { fonts } = useContext(ThemeContext);
-    const { initMoneyin, initMoneyOut, isLoadingInitMoneyOut,  amount = 0, isLoadingInitMoneyIn, unionWallet, cryptoWallet, currentTransfer } = useContext(WalletContext);
+    const { initMoneyin, initMoneyOut, isLoadingInitMoneyOut, amount = 0, isLoadingInitMoneyIn, unionWallet, cryptoWallet, currentTransfer } = useContext(WalletContext);
     const isTransferIn = currentTransfer === 'moneyin';
     const styles = useMergeStyles(style);
     const formatedAmount = useCurrencyFormat(amount, 'PHP');
     const formatedAmountDeposite = useCurrencyFormat(amount, 'PHP');
+    const from = isTransferIn ? unionWallet : cryptoWallet;
+    const to = isTransferIn ? cryptoWallet : unionWallet;
+    const fromString = `${from?.bankAccount.bankCode} \n${from?.bankAccount.accountHolderName}`;
+    const toString = `${to?.bankAccount.bankCode} \n${to?.bankAccount.accountHolderName} \n${to?.bankAccount.accountNumber}`;
 
     useImperativeHandle(
       ref,
@@ -87,13 +91,13 @@ const CryptoReviewSummaryComponent = forwardRef(
                 <RowInfo
                   props={{
                     title: 'Send Money From',
-                    value: isTransferIn ? `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}` : `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}`,
+                    value: fromString,
                   }}
                 />
                 <RowInfo
                   props={{
                     title: 'Send Money To',
-                    value: isTransferIn ? `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}` : `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}`,
+                    value: toString,
                   }}
                 />
                 <RowInfo

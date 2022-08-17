@@ -11,11 +11,12 @@ import {
 import useMergeStyles from './styles';
 import RowInfo from '../../row-info';
 import { UnionDigitalBankIcon } from '../../../assets/images';
-import { Button } from 'react-native-theme-component';
+import { Button, useCurrencyFormat } from 'react-native-theme-component';
 import ViewShot from 'react-native-view-shot';
 import CameraRoll from '@react-native-community/cameraroll';
 import Share from 'react-native-share';
 import RNFS from 'react-native-fs';
+import moment from 'moment';
 
 export type CryptoTransactionDetailsRef = {
   onSave: () => void;
@@ -23,10 +24,32 @@ export type CryptoTransactionDetailsRef = {
 
 const CryptoTransactionDetailsComponent = forwardRef(
   ({ props, style }: CryptoTransactionDetailsComponentProps, ref) => {
-    const { id } = props || {};
+    const { transaction } = props || {};
     const styles = useMergeStyles(style);
     const refViewShot = useRef<ViewShot>(null);
+    const isMoneyOut = transaction?.txnType === 'MoneyOut';
+    const isAmountPytaka = transaction?.amount.currency === 'PHP';
+    const formatedAmount = transaction?.amount.amount ? useCurrencyFormat(transaction?.amount.amount, 'PHP') : '';
+    const displayAmount = `${isAmountPytaka ? formatedAmount : transaction?.amount.amount + ' ' + transaction?.amount.currency}`;
+    const displayTitle = `${isMoneyOut ? 'Transfer-out' : 'Transfer-in'} (${transaction?.amount.currency})`;
+    const formatedDateTime = transaction?.txnDateTime ? moment(`${transaction.txnDateTime}Z`).format('MMM DD, YYYY HH:ss A') : '';
+    const fromString = `${transaction?.sourceAccount.bankInfo.code} \n${transaction?.sourceAccount.accountName}`;
+    const toString = `${transaction?.destinationAccount.bankInfo.code} \n${transaction?.destinationAccount.accountName}\n${transaction?.destinationAccount.accountNumber}`;
+    const refNo = transaction?.txnCode || transaction?.txnId || '';
 
+    const getStringStatus = (status: string) => {
+      switch(status) {
+        case 'SUCCESS': 
+          return 'Completed';
+        case 'PROCESSING':
+          return 'Pending';
+        case 'FAILED': default:
+          return 'Failed';
+      }
+    }
+    const displayStatus = transaction?.status ? getStringStatus(transaction.status) : '';
+    const statusColor = displayStatus === 'Completed' ? '#2E7D32' : displayStatus === 'Pending' ? '#7C6D98' : '#D32F2F';
+  
     const hasAndroidPermission = async () => {
       const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
 
@@ -88,28 +111,32 @@ const CryptoTransactionDetailsComponent = forwardRef(
               <RowInfo
                 props={{
                   title: 'Type of Transaction',
-                  value: 'Transfer-out (BTC)',
+                  value: displayTitle,
                 }}
               />
-              <RowInfo props={{ title: 'Amount', value: '0.00038167 BTC' }} />
-              <RowInfo props={{ title: 'Network', value: 'Bitcoin' }} />
+              <RowInfo props={{ title: 'Amount', value: displayAmount }} />
+              {/* <RowInfo props={{ title: 'Network', value: 'Bitcoin' }} /> */}
               <RowInfo
                 props={{
                   title: 'Transaction Status',
-                  value: 'Pending',
-                  copyable: true,
+                  value: displayStatus,
+                }}
+                style={{
+                  value: {
+                    color: statusColor
+                  }
                 }}
               />
               <RowInfo
                 props={{
                   title: 'Send Crypto From',
-                  value: 'My Crypto Pitaka\nBen Santos',
+                  value: fromString,
                 }}
               />
               <RowInfo
-                props={{ title: 'Send Crypto To', value: 'Transfer-out (BTC)' }}
+                props={{ title: 'Send Crypto To', value: toString }}
               />
-              <RowInfo
+              {/* <RowInfo
                 props={{
                   title: 'Transaction Hash',
                   value: '15Jk6oy1yg5mvSFrKgEjgJ3ms7NkY28c9S',
@@ -122,16 +149,16 @@ const CryptoTransactionDetailsComponent = forwardRef(
                   value: 'a41f3d39e86331b610048046204d7d557453a809',
                   copyable: true,
                 }}
-              />
+              /> */}
             </View>
             <View>
               <View style={styles.rowBetween}>
                 <Text style={styles.infoTitle}>Transaction Date / Time</Text>
-                <Text style={styles.infoSubTitle}>Nov 2, 2021 / 07:10 AM</Text>
+                <Text style={styles.infoSubTitle}>{formatedDateTime}</Text>
               </View>
               <View style={styles.rowBetween}>
                 <Text style={styles.infoTitle}>Reference No.</Text>
-                <Text style={styles.infoSubTitle}>ABCDE12345676789</Text>
+                <Text style={styles.infoSubTitle}>{refNo}</Text>
               </View>
             </View>
             <View style={styles.logoContainer}>

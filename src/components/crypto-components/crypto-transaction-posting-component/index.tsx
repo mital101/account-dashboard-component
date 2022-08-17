@@ -23,19 +23,29 @@ const CryptoTransactionPostingComponent = ({
 
   const {isRefreshingWallets, currentTransfer, unionWallet, cryptoWallet} = useContext(WalletContext);
   const isTransferIn = currentTransfer === 'moneyin';
-  const isSuccess = status === 'Initialized' ||
-  'AcceptedCreditSettlementCompleted' ||
-  'AcceptedSettlementCompleted' ||
-  'AcceptedSettlementInProcess' ||
-  'AcceptedWithoutPosting' ||
-  'Pending' || 
-  'Complete';
+  const from = isTransferIn ? unionWallet : cryptoWallet;
+  const to = isTransferIn ? cryptoWallet : unionWallet;
+  const fromString = `${from?.bankAccount.bankCode} \n${from?.bankAccount.accountHolderName}`;
+  const toString = `${to?.bankAccount.bankCode} \n${to?.bankAccount.accountHolderName} \n${to?.bankAccount.accountNumber}`;
+
+  const isPending = status === 'Initialized' ||
+  status === 'AcceptedCreditSettlementCompleted' ||
+  status === 'AcceptedSettlementCompleted' ||
+  status === 'AcceptedSettlementInProcess' ||
+  status === 'AcceptedWithoutPosting' ||
+  status === 'Pending';
+
+  const isSuccess = !isPending && status === 'Complete';
+
 
   const formatedAmount = useCurrencyFormat(amount || 0, 'PHP');
-  const formatedDate = moment(date).format(
+  const formatedDate = moment(`${date}Z`).format(
     'ddd DD, YYYY HH:ss A'
   );
-  
+
+  const pendingTitleColor = '#3E2D68';
+  const pendingStatusColor = '#F8981D';
+
   if (isRefreshingWallets) {
     return (
       <View style={styles.containerCenter}>
@@ -54,7 +64,8 @@ const CryptoTransactionPostingComponent = ({
     );
   }
 
-  if (!isSuccess) {
+
+  if (!isSuccess && !isPending) {
     return (
       <View style={styles.containerFailed}>
         <View style={styles.errorContentWrapper}>
@@ -106,10 +117,10 @@ const CryptoTransactionPostingComponent = ({
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.titleSuccess}>Transaction Successful!</Text>
+        <Text style={[styles.titleSuccess, isPending && {color: pendingTitleColor}]}>{isPending ? 'Transaction Submitted' : 'Transaction Successful!'}</Text>
         <View style={styles.subTitleSuccessWrapper}>
           <Text style={styles.subTitleSuccess}>
-            {`#UDidIt! You have successfully transferred money from your ${isTransferIn ? 'Pitaka' : 'Crypto Pitaka'} to your ${!isTransferIn ? 'Pitaka' : 'Crypto Pitaka'}. See transaction details below:`}
+            {isPending ? 'Your transfer-out is expected to arrive in 30 minutes.' : `#UDidIt! You have successfully transferred money from your ${isTransferIn ? 'Pitaka' : 'Crypto Pitaka'} to your ${!isTransferIn ? 'Pitaka' : 'Crypto Pitaka'}. See transaction details below:`}
           </Text>
         </View>
         <View style={styles.contentSuccess}>
@@ -128,22 +139,22 @@ const CryptoTransactionPostingComponent = ({
           <RowInfo
             props={{
               title: 'Transaction Status ',
-              value: `Completed`,
+              value: isPending ? `Pending` : `Completed`,
             }}
             style={{
-              value: styles.completedTextColor,
+              value: [styles.completedTextColor, , isPending && {color: pendingStatusColor}],
             }}
           />
           <RowInfo
             props={{
               title: 'Send Money From',
-              value: isTransferIn ? `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}` : `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}`,
+              value: fromString,
             }}
           />
           <RowInfo
             props={{
               title: 'Send Money To',
-              value: !isTransferIn ? `My Pitaka\n${unionWallet?.bankAccount.accountHolderName}\n${unionWallet?.bankAccount.accountNumber}` : `My Crypto Pytaka\n${cryptoWallet?.bankAccount.accountHolderName}`,
+              value: toString,
             }}
           />
         </View>

@@ -1,15 +1,16 @@
 import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
-export type CryptoTransferInComponentProps = {
-  style?: CryptoTransferInComponentStyles;
+export type CryptoTransferComponentProps = {
+  style?: CryptoTransferComponentStyles;
   props?: {
     onSelectCrypto?: () => void;
     onTransferPHP?: () => void;
     goToAccountLimit?: () => void;
+    setVisibleCurrentBalance?: (isVisible: boolean) => void;
   };
 };
 
-export type CryptoTransferInComponentStyles = {
+export type CryptoTransferComponentStyles = {
   safeArea?: StyleProp<ViewStyle>;
   container?: StyleProp<ViewStyle>;
   pageTitle?: StyleProp<TextStyle>;

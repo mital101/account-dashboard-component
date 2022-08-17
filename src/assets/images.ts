@@ -1,6 +1,7 @@
 export const images = {
   bank: require("../assets/bank.png"),
-  maskCard: require("../assets/mask-card.png")
+  maskCard: require("../assets/mask-card.png"),
+  emptyTransactions: require("./empty-transactions.png")
 };
 
 export * from "./checked.icon";

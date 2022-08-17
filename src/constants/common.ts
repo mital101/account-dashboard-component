@@ -39,18 +39,19 @@ export const contactInfos: ContactInfoItem[] = [
 ];
 
 export const typeOfTransaction: TransactionTypes[] = [
-  { id: '1', title: 'Transfer-out (PHP) ' },
-  { id: '2', title: 'Transfer-out (Crypto)  ' },
-  { id: '3', title: 'Transfer-in (PHP) ' },
-  { id: '4', title: 'Transfer-in (Crypto) ' },
-  { id: '5', title: 'Buy ' },
-  { id: '6', title: 'Sell ' },
+  { id: '1', title: 'Transfer-out (PHP) ', code: 'MoneyOut' },
+  // { id: '2', title: 'Transfer-out (Crypto)  ', code: 'MoneyOut' },
+  { id: '3', title: 'Transfer-in (PHP) ', code: 'MoneyIn' },
+  // { id: '4', title: 'Transfer-in (Crypto) ', code: 'MoneyIn' },
+  // { id: '5', title: 'Buy ', code: 'Buy' },
+  // { id: '6', title: 'Sell ', code: 'Sell' },
 ];
 
 export const statusOfTransaction: TransactionStatus[] = [
-  { id: '1', title: 'All' },
-  { id: '2', title: 'Complete' },
-  { id: '3', title: 'Failed' },
+  { id: '1', title: 'All', code: '' },
+  { id: '2', title: 'Complete', code: 'SUCCESS' },
+  { id: '3', title: 'Failed', code: 'FAILED' },
+  { id: '4', title: 'Pending', code: 'PROCESSING' },
 ];
 
 export const filterExchangeRateOptions: FilterExchangeRateOption[] = [

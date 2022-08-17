@@ -1,17 +1,15 @@
 import { defaultsDeep } from 'lodash';
 import { StyleSheet, Dimensions } from 'react-native';
-import { CryptoCardComponentStyles } from './index';
+import { CryptoAccountComponentStyles } from './index';
 import { ThemeContext } from 'react-native-theme-component';
 import { useContext } from 'react';
 
 const useMergeStyles = (
-  style?: CryptoCardComponentStyles
-): CryptoCardComponentStyles => {
+  style?: CryptoAccountComponentStyles
+): CryptoAccountComponentStyles => {
   const { fonts, colors } = useContext(ThemeContext);
 
-  console.log('colors ',colors);
-
-  const defaultStyles: CryptoCardComponentStyles = StyleSheet.create({
+  const defaultStyles: CryptoAccountComponentStyles = StyleSheet.create({
     containerStyle: {
       flex: 1,
       height:'100%',
@@ -140,6 +138,40 @@ const useMergeStyles = (
       alignItems: 'center',
       height: 100,
     },
+    recentTransactionSection: {
+      marginTop: 20,
+      marginHorizontal: 15,
+      backgroundColor: '#FFFFFF',
+      paddingVertical: 15,
+      borderRadius: 8,
+    },
+    recentTransactionWrapper: {
+      paddingHorizontal: 20
+    },
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between'
+    },
+    tilteSection: {
+      fontSize: 16,
+      fontFamily: fonts.medium
+    },
+    viewAll: {
+      color: '#FF9800',
+      fontFamily: fonts.medium,
+      fontSize: 14,
+      textDecorationLine: 'underline'
+    },
+    emptyTransactionContainer: {
+      height: 120,
+      alignItems: 'center',
+      justifyContent: 'space-around'
+    },
+    emptyTransactionTitle: {
+      fontSize: 14,
+      color:'#7F7B82',
+      fontFamily: fonts.regular
+    }
   });
 
   return defaultsDeep(style, defaultStyles);

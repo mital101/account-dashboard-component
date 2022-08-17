@@ -25,6 +25,7 @@ export { default as CryptoListCurrencyComponent } from './src/components/crypto-
 export { default as CryptoSearchComponent } from './src/components/crypto-components/crypto-search-component';
 export { default as CryptoTransferOutReviewSummaryComponent, CryptoTransferOutReviewSummaryRef } from './src/components/crypto-components/crypto-transfer-out-review-summary';
 export { default as CryptoTransferOutVerifyOTPComponent } from './src/components/crypto-components/crypto-transfer-out-verify-otp-component';
+export { default as CryptoAccountComponent } from './src/components/crypto-components/crypto-account-component';
 
 
 export * from './src/assets/images';

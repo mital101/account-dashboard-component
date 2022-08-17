@@ -14,6 +14,14 @@ export type WalletListComponentRefs = {
 
 export type TransferType = 'moneyin' | 'moneyout';
 
+export type FilterTransaction = {
+  types?: string[];
+  status?: string;
+  from?: string;
+  to?: string;
+}
+
+
 export type WalletListComponentProps = {
   Root: {
     style?: WalletListComponentStyle;

@@ -38,16 +38,13 @@ const SelectTransactionTypeModal = ({
   isVisible,
   onClose,
   dataTransactionTypes,
-  initialValue,
   onSelectTransactionTypes,
 }: SelectTransactionTypeModalProps) => {
   const styles: SelectTransactionTypeModalStyles = useMergeStyles(style);
   const [selectedTypes, setSelectedTypes] = useState<TransactionTypes[]>(
-    initialValue || []
+    []
   );
-  const [selectedAllTypes, setSelectedAllTypes] = useState<boolean>(
-    initialValue?.length === 0
-  );
+  const [selectedAllTypes, setSelectedAllTypes] = useState<boolean>(true);
   const isValidToSubmit = !!selectedAllTypes || selectedTypes.length > 0;
 
   const onSelectItem = (id?: string) => {

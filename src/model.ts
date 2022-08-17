@@ -87,6 +87,7 @@ export interface Transaction {
   paymentTerminal: {
     name: PaymentTerminalName;
   };
+  status?: string;
 }
 
 export enum PaymentTerminalName {

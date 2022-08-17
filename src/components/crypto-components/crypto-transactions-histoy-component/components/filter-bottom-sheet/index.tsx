@@ -27,7 +27,7 @@ const FilterTransactionModal = ({
     : 0;
   const [selectedStatusIndex, setSelectedStatusIndex] =
     useState<number>(initStatusIndex);
-  const [isSelectedAllTime, setIsSelectedAllTime] = useState<boolean>(false);
+  const [isSelectedAllTime, setIsSelectedAllTime] = useState<boolean>(true);
   const [isOpenDateTimePicker, setIsOpenDateTimePicker] =
     useState<boolean>(false);
   const [isSelectFromDate, setIsSelectFromDate] = useState<boolean>(false);
@@ -51,11 +51,12 @@ const FilterTransactionModal = ({
   };
 
   const onChangeDate = (date: Date) => {
-    console.log('date selected', date, isSelectFromDate);
     if (isSelectFromDate) {
       setFromDate(date);
+      setIsSelectedAllTime(false);
     } else {
       setToDate(date);
+      setIsSelectedAllTime(false);
     }
   };
 
@@ -63,11 +64,11 @@ const FilterTransactionModal = ({
     setFromDate(undefined);
     setToDate(undefined);
     setSelectedStatusIndex(0);
-    setIsSelectedAllTime(false);
+    setIsSelectedAllTime(true);
   };
 
   const onSubmitValues = () => {
-    onSubmitFilter && onSubmitFilter();
+    onSubmitFilter && onSubmitFilter(dataTransactionStatus[selectedStatusIndex], isSelectedAllTime, fromDate, toDate);
     onClose();
   };
 

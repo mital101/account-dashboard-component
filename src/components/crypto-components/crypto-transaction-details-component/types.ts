@@ -1,12 +1,16 @@
+import { Transaction } from '../../../model';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 export type CryptoTransactionDetailsComponentProps = {
   style?: CryptoTransactionDetailsComponentStyles;
-  props?: { id: string };
+  props?: { 
+    transaction: Transaction
+   };
 };
 
 export type CryptoTransactionDetailsComponentStyles = {
-  container?: StyleProp<ViewStyle>;
+  container?: ViewStyle;
+  containerWrapper?: StyleProp<ViewStyle>;
   content?: StyleProp<ViewStyle>;
   pageTitle?: StyleProp<TextStyle>;
   rowBetween?: StyleProp<ViewStyle>;

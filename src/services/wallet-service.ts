@@ -1,3 +1,6 @@
+import { FilterTransaction } from "../types";
+import qs from 'qs';
+
 type WalletClient = {
   walletClient: any;
   financialClient: any;
@@ -619,6 +622,33 @@ export class WalletService {
         params: {
           bankId: bankId,
         },
+      });
+      return response.data;
+    } else {
+      throw new Error('Wallet Client is not registered');
+    }
+  };
+
+  getCryptoTransactions = async (pageNumber: number, pageSize: number, filter?: FilterTransaction) => {
+    if (this._walletClient) {
+      const params = {
+        walletType: 'CRYPTO_WALLET',
+        pageNumber,
+        pageSize,
+        statuses: filter?.status,
+        fromDateTime: filter?.from,
+        toDateTime: filter?.to,
+        txnTypes: filter?.types
+      };
+      console.log('getCryptoTransactions -> params', params);
+
+      const response = await this._walletClient.get('transactions', {
+        params: {
+          ...params
+        },
+        paramsSerializer: (params: any) => {
+          return qs.stringify(params, { indices: false })
+        }
       });
       return response.data;
     } else {

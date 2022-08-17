@@ -1,12 +1,12 @@
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
-import { CryptoTransferInComponentStyles } from './types';
+import { CryptoTransferComponentStyles } from './types';
 import { ThemeContext } from 'react-native-theme-component';
 
 const useMergeStyles = (
-  style?: CryptoTransferInComponentStyles
-): CryptoTransferInComponentStyles => {
+  style?: CryptoTransferComponentStyles
+): CryptoTransferComponentStyles => {
   const { fonts } = useContext(ThemeContext);
 
   const defaultStyles = StyleSheet.create({

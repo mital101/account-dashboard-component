@@ -1,10 +1,12 @@
-import { StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { Transaction } from '../../../model';
+import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 export type CryptoTransactionsHistoryComponentProps = {
   style?: CryptoTransactionsHistoryComponentStyles;
   props?: {
     isDownloadMode?: boolean;
-    onSelectTransactionItem?: (id: string) => void;
+    onSelectTransactionItem?: (transaction: Transaction) => void;
+    onSelectTransferIn?: () => void;
   };
 };
 
@@ -20,14 +22,24 @@ export type CryptoTransactionsHistoryComponentStyles = {
   loadMoreWrapper?: StyleProp<ViewStyle>;
   seperateView?: StyleProp<ViewStyle>;
   headerWrapper?: StyleProp<ViewStyle>;
+  emptyTransactionContainer?: StyleProp<ViewStyle>;
+  emptyTransactionTitle?: StyleProp<TextStyle>;
+  emptyTransactionSubTitle?: StyleProp<TextStyle>;
+  emptyTransactionTitleNormal?: StyleProp<TextStyle>;
+  imageWrapper?: StyleProp<ViewStyle>;
+  tranferInBtn?: StyleProp<ViewStyle>;
+  imageEmpty?: StyleProp<ImageStyle>;
+  transferInLabel?: StyleProp<TextStyle>;
 };
 
 export type TransactionTypes = {
   id: string;
   title: string;
+  code: string;
 };
 
 export type TransactionStatus = {
   id: string;
   title: string;
+  code: string;
 };

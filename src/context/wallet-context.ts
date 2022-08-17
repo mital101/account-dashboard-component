@@ -16,7 +16,7 @@ import {
   Currency,
 } from '../model';
 import _, { chain, groupBy, isEmpty, orderBy } from 'lodash';
-import { TransferType } from '../types';
+import { FilterTransaction, TransferType } from '../types';
 
 const walletService = WalletService.instance();
 
@@ -102,6 +102,10 @@ export interface WalletContextData {
   isLoadingInitMoneyOut: boolean;
   currentTransfer?: string;
   setCurrentTransfer: (type: TransferType) => void;
+  getCryptoTransactions: (isLoadMore?: boolean, filter?: FilterTransaction) => void;
+  cryptoTransactions?: Transaction[];
+  isLoadingGetCryptoTransactions: boolean;
+  cryptoTransactionsPaging?: Paging;
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -162,7 +166,11 @@ export const walletDefaultValue: WalletContextData = {
   initMoneyOut: async () => undefined,
   isLoadingInitMoneyOut: false,
   currentTransfer: undefined,
-  setCurrentTransfer: () => undefined
+  setCurrentTransfer: () => undefined,
+  getCryptoTransactions: () => undefined,
+  isLoadingGetCryptoTransactions: false,
+  cryptoTransactions: [],
+  cryptoTransactionsPaging: undefined
 };
 
 export const WalletContext =
@@ -214,10 +222,13 @@ export function useWalletContextValue(): WalletContextData {
   const [_paymentId, setPaymentId] = useState<string>();
   const [_amount, setAmount] = useState<number>();
   const [_currentTransfer, setCurrentTransfer] = useState<TransferType>();
-  
-  const [_walletsById, setWalletsById] = useState<Wallet[]>([]);
 
+  const [_walletsById, setWalletsById] = useState<Wallet[]>([]);
   const [_isLoadingInitMoneyOut, setIsLoadingInitMoneyOut] = useState<boolean>(false);
+
+  const [_isLoadingCryptoTransactions, setIsLoadingCryptoTransactions] = useState<boolean>(false);
+  const [_cryptoTransactions, setCryptoTransactions] = useState<Transaction[]>([]);
+  const [_cryptoTransactionsPaging, setCryptoTransactionsPaging] = useState<Paging>();
 
   const getWallets = useCallback(async () => {
     try {
@@ -772,6 +783,20 @@ export function useWalletContextValue(): WalletContextData {
     setAmount(amount);
   }, []);
   
+  const getCryptoTransactions = useCallback(async (isLoadMore = false, filter = {}) => {
+    setIsLoadingCryptoTransactions(true);
+    const pageSize = 20;
+    const pageNumber = (isLoadMore && _cryptoTransactionsPaging) ? _cryptoTransactionsPaging.pageNumber + 1 : 1;
+   
+    const result = await walletService.getCryptoTransactions(
+      pageNumber, pageSize, filter
+    );
+    setCryptoTransactions(isLoadMore ? [..._cryptoTransactions, ...result.data] : result.data);
+    setCryptoTransactionsPaging(result.paging);
+    setIsLoadingCryptoTransactions(false);
+  }, [_cryptoTransactionsPaging]);
+
+
   return useMemo(
     () => ({
       wallets: _wallets,
@@ -838,7 +863,11 @@ export function useWalletContextValue(): WalletContextData {
       initMoneyOut,
       isLoadingInitMoneyOut: _isLoadingInitMoneyOut,
       currentTransfer: _currentTransfer,
-      setCurrentTransfer
+      setCurrentTransfer,
+      getCryptoTransactions,
+      cryptoTransactions: _cryptoTransactions,
+      isLoadingGetCryptoTransactions: _isLoadingCryptoTransactions,
+      cryptoTransactionsPaging: _cryptoTransactionsPaging
     }),
     [
       _isLinkedSuccessfully,
@@ -875,7 +904,10 @@ export function useWalletContextValue(): WalletContextData {
       _unionWallets,
       _cryptoWallets,
       _isLoadingInitMoneyOut,
-      _currentTransfer
+      _currentTransfer,
+      _cryptoTransactions,
+      _isLoadingCryptoTransactions,
+      _cryptoTransactionsPaging
     ]
   );
 }

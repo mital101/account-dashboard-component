@@ -53,6 +53,8 @@ const useMergeStyles = (
       color: '#1D1C1D',
       fontSize: 12,
       fontFamily: fonts.regular,
+      textAlign: 'right',
+      maxWidth: '70%'
     },
     marginVertical: { height: 70 }
   });

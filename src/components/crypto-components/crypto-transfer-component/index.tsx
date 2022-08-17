@@ -1,5 +1,5 @@
-import { CryptoTransferInComponentProps } from './types';
-import React, { useContext, useState } from 'react';
+import { CryptoTransferComponentProps } from './types';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Text,
   View,
@@ -98,8 +98,8 @@ const walletService = WalletService.instance();
 const CryptoTransferInComponent = ({
   props,
   style,
-}: CryptoTransferInComponentProps) => {
-  const { onSelectCrypto, onTransferPHP, goToAccountLimit } = props || {};
+}: CryptoTransferComponentProps) => {
+  const { onSelectCrypto, onTransferPHP, goToAccountLimit, setVisibleCurrentBalance } = props || {};
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [transferValue, setTransferValue] = useState<number>(0);
   const [selectedCrypto, setSelectedCrypto] = React.useState<string>();
@@ -126,6 +126,12 @@ const CryptoTransferInComponent = ({
     selectedTabIndex === 0
       ? transferValue > 0 && isInputValid
       : !!selectedCrypto;
+
+
+  useEffect(() => {
+    console.log('selectedTabIndex', selectedTabIndex)
+    setVisibleCurrentBalance && setVisibleCurrentBalance(selectedTabIndex === 0)
+  }, [selectedTabIndex])
 
   const renderTabbar = (title: string, indexTabbar: number) => (
     <TouchableOpacity
