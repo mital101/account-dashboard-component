@@ -12,10 +12,10 @@ const useMergeStyles = (
   const defaultStyles: CryptoAccountComponentStyles = StyleSheet.create({
     containerStyle: {
       flex: 1,
-      height:'100%',
+      height: '100%',
     },
     containerWrapper: {
-      flex:1,
+      flex: 1,
       maxHeight: Dimensions.get('window').height - 180,
       // paddingHorizontal: 15,
     },
@@ -45,10 +45,10 @@ const useMergeStyles = (
       fontFamily: fonts.bold,
       fontSize: 24,
       lineHeight: 36,
-      color: "#3E2D68",
+      color: '#3E2D68',
       paddingHorizontal: 25,
       // marginTop: 12,
-      marginBottom:10,
+      marginBottom: 10,
     },
     containerStyleMessage: {
       marginHorizontal: 25,
@@ -120,16 +120,20 @@ const useMergeStyles = (
     titleTooltip: {
       fontWeight: '700',
       fontSize: 14,
-      lineHeight:16,
-      marginLeft:10
+      lineHeight: 16,
+      marginLeft: 10,
     },
     messageTooltip: {
       fontWeight: '500',
       fontSize: 12,
-      lineHeight:21,
+      lineHeight: 21,
     },
-    viewTooltip: { paddingVertical:15,flexDirection: 'column',paddingHorizontal:5 },
-    viewTooltipHeader: { flexDirection: 'row',paddingBottom:10, },
+    viewTooltip: {
+      paddingVertical: 15,
+      flexDirection: 'column',
+      paddingHorizontal: 5,
+    },
+    viewTooltipHeader: { flexDirection: 'row', paddingBottom: 10 },
     TopPointerView: {
       position: 'absolute',
       left: 0,
@@ -146,32 +150,32 @@ const useMergeStyles = (
       borderRadius: 8,
     },
     recentTransactionWrapper: {
-      paddingHorizontal: 20
+      paddingHorizontal: 20,
     },
     row: {
       flexDirection: 'row',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
     },
     tilteSection: {
       fontSize: 16,
-      fontFamily: fonts.medium
+      fontFamily: fonts.medium,
     },
     viewAll: {
       color: '#FF9800',
       fontFamily: fonts.medium,
       fontSize: 14,
-      textDecorationLine: 'underline'
+      textDecorationLine: 'underline',
     },
     emptyTransactionContainer: {
       height: 120,
       alignItems: 'center',
-      justifyContent: 'space-around'
+      justifyContent: 'space-around',
     },
     emptyTransactionTitle: {
       fontSize: 14,
-      color:'#7F7B82',
-      fontFamily: fonts.regular
-    }
+      color: '#7F7B82',
+      fontFamily: fonts.regular,
+    },
   });
 
   return defaultsDeep(style, defaultStyles);

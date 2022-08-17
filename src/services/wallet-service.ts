@@ -1,4 +1,4 @@
-import { FilterTransaction } from "../types";
+import { FilterTransaction } from '../types';
 import qs from 'qs';
 
 type WalletClient = {
@@ -393,41 +393,44 @@ export class WalletService {
     senderAccountNumber: string,
     receiverAccountNumber: string
   ) => {
-    console.log('moneyOutValidation -> request','outward-payments/validations',
-    {
-      Data: {
-        Initiation: {
-          LocalInstrument: 'PDAX',
-          InstructedAmount: {
-            Amount: amount,
-            Currency: 'PHP',
-          },
-          DebtorAccount: {
-            Identification: senderAccountNumber,
-            SchemeName: 'PH.BRSTN.AccountNumber',
-          },
-          DebtorAccountExt: {
-            BankCode: 'PDAX',
-          },
-          CreditorAccount: {
-            Identification: receiverAccountNumber,
-            SchemeName: 'PH.BRSTN.AccountNumber',
-          },
-          CreditorAccountExt: {
-            BankCode: 'UnionDigital',
-          },
-          RemittanceInformation: {
-            Unstructured: 'notes',
-          },
-          SupplementaryData: {
-            PaymentType: 'MoneyOut',
+    console.log(
+      'moneyOutValidation -> request',
+      'outward-payments/validations',
+      {
+        Data: {
+          Initiation: {
+            LocalInstrument: 'PDAX',
+            InstructedAmount: {
+              Amount: amount,
+              Currency: 'PHP',
+            },
+            DebtorAccount: {
+              Identification: senderAccountNumber,
+              SchemeName: 'PH.BRSTN.AccountNumber',
+            },
+            DebtorAccountExt: {
+              BankCode: 'PDAX',
+            },
+            CreditorAccount: {
+              Identification: receiverAccountNumber,
+              SchemeName: 'PH.BRSTN.AccountNumber',
+            },
+            CreditorAccountExt: {
+              BankCode: 'UnionDigital',
+            },
+            RemittanceInformation: {
+              Unstructured: 'notes',
+            },
+            SupplementaryData: {
+              PaymentType: 'MoneyOut',
+            },
           },
         },
-      },
-      Risk: {
-        PaymentContextCode: 'PartyToParty',
-      },
-    })
+        Risk: {
+          PaymentContextCode: 'PartyToParty',
+        },
+      }
+    );
     if (this._paymentClient) {
       try {
         const response = await this._paymentClient.post(
@@ -482,43 +485,40 @@ export class WalletService {
     senderAccountNumber: string,
     receiverAccountNumber: string
   ) => {
-    console.log(
-      'moneyOutInitital -> request', 'outward-payments', {
-        Data: {
-          Initiation: {
-            LocalInstrument: 'PDAX',
-            InstructedAmount: {
-              Amount: amount,
-              Currency: 'PHP',
-            },
-            DebtorAccount: {
-              Identification: senderAccountNumber,
-              SchemeName: 'PH.BRSTN.AccountNumber',
-            },
-            CreditorAccount: {
-              Identification: receiverAccountNumber,
-              SchemeName: 'PH.BRSTN.AccountNumber',
-            },
-            RemittanceInformation: {
-              Unstructured:
-                'Topup money from Pitaka account to Crypto Wallet',
-            },
-            SupplementaryData: {
-              PaymentType: 'MoneyOut',
-            },
-            CreditorAccountExt: {
-              BankCode: 'UnionDigital',
-            },
-            DebtorAccountExt: {
-              BankCode: 'PDAX',
-            },
+    console.log('moneyOutInitital -> request', 'outward-payments', {
+      Data: {
+        Initiation: {
+          LocalInstrument: 'PDAX',
+          InstructedAmount: {
+            Amount: amount,
+            Currency: 'PHP',
+          },
+          DebtorAccount: {
+            Identification: senderAccountNumber,
+            SchemeName: 'PH.BRSTN.AccountNumber',
+          },
+          CreditorAccount: {
+            Identification: receiverAccountNumber,
+            SchemeName: 'PH.BRSTN.AccountNumber',
+          },
+          RemittanceInformation: {
+            Unstructured: 'Topup money from Pitaka account to Crypto Wallet',
+          },
+          SupplementaryData: {
+            PaymentType: 'MoneyOut',
+          },
+          CreditorAccountExt: {
+            BankCode: 'UnionDigital',
+          },
+          DebtorAccountExt: {
+            BankCode: 'PDAX',
           },
         },
-        Risk: {
-          PaymentContextCode: 'PartyToParty',
-        },
-      }
-    );
+      },
+      Risk: {
+        PaymentContextCode: 'PartyToParty',
+      },
+    });
     if (this._paymentClient) {
       try {
         const response = await this._paymentClient.post('outward-payments', {
@@ -567,8 +567,7 @@ export class WalletService {
   };
 
   moneyOutConfirmation = async (id: string, otp: string) => {
-    console.log('moneyOutConfirmation -> request', 'outward-payments/' + id,
-    {
+    console.log('moneyOutConfirmation -> request', 'outward-payments/' + id, {
       Data: {
         Initiation: {
           LocalInstrument: 'PDAX',
@@ -629,7 +628,11 @@ export class WalletService {
     }
   };
 
-  getCryptoTransactions = async (pageNumber: number, pageSize: number, filter?: FilterTransaction) => {
+  getCryptoTransactions = async (
+    pageNumber: number,
+    pageSize: number,
+    filter?: FilterTransaction
+  ) => {
     if (this._walletClient) {
       const params = {
         walletType: 'CRYPTO_WALLET',
@@ -638,21 +641,37 @@ export class WalletService {
         statuses: filter?.status,
         fromDateTime: filter?.from,
         toDateTime: filter?.to,
-        txnTypes: filter?.types
+        txnTypes: filter?.types,
       };
       console.log('getCryptoTransactions -> params', params);
 
       const response = await this._walletClient.get('transactions', {
         params: {
-          ...params
+          ...params,
         },
         paramsSerializer: (params: any) => {
-          return qs.stringify(params, { indices: false })
-        }
+          return qs.stringify(params, { indices: false });
+        },
       });
       return response.data;
     } else {
       throw new Error('Wallet Client is not registered');
+    }
+  };
+
+  getFinancialProfile = async (userId: string, bankId: string) => {
+    if (this._financialClient) {
+      const response = await this._financialClient.get(
+        `users/${userId}/financial-profile`,
+        {
+          params: {
+            bankId: bankId,
+          },
+        }
+      );
+      return response.data;
+    } else {
+      throw new Error('Financial Client is not registered');
     }
   };
 }

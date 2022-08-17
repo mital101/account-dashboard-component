@@ -93,19 +93,23 @@ export interface WalletContextData {
   isLoadingInitMoneyIn: boolean;
   paymentId?: string;
   amount?: number;
-  initMoneyin: () => Promise<void>,
+  initMoneyin: () => Promise<void>;
   setAmountCryptoIn: (amount: number) => void;
   cryptoWallet?: Wallet;
   unionWallet?: Wallet;
   setAmountCryptoOut: (amount: number) => void;
-  initMoneyOut: () => Promise<void>,
+  initMoneyOut: () => Promise<void>;
   isLoadingInitMoneyOut: boolean;
   currentTransfer?: string;
   setCurrentTransfer: (type: TransferType) => void;
-  getCryptoTransactions: (isLoadMore?: boolean, filter?: FilterTransaction) => void;
+  getCryptoTransactions: (
+    isLoadMore?: boolean,
+    filter?: FilterTransaction
+  ) => void;
   cryptoTransactions?: Transaction[];
   isLoadingGetCryptoTransactions: boolean;
   cryptoTransactionsPaging?: Paging;
+  getFinancialProfile: (userId: string, bankId: string) => void;
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -170,7 +174,8 @@ export const walletDefaultValue: WalletContextData = {
   getCryptoTransactions: () => undefined,
   isLoadingGetCryptoTransactions: false,
   cryptoTransactions: [],
-  cryptoTransactionsPaging: undefined
+  cryptoTransactionsPaging: undefined,
+  getFinancialProfile: () => undefined,
 };
 
 export const WalletContext =
@@ -217,18 +222,29 @@ export function useWalletContextValue(): WalletContextData {
 
   const [_isLoadingListCurrency, setIsLoadingListCurrency] = useState(true);
   const [_listCurrency, setListCurrency] = useState<Currency[] | undefined>();
-  
-  const [_isLoadingInitMoneyIn, setIsLoadingInitMoneyIn] = useState<boolean>(false);
+
+  const [_isLoadingInitMoneyIn, setIsLoadingInitMoneyIn] =
+    useState<boolean>(false);
   const [_paymentId, setPaymentId] = useState<string>();
   const [_amount, setAmount] = useState<number>();
   const [_currentTransfer, setCurrentTransfer] = useState<TransferType>();
-
+  const [_isLoadingInitMoneyOut, setIsLoadingInitMoneyOut] =
+    useState<boolean>(false);
   const [_walletsById, setWalletsById] = useState<Wallet[]>([]);
-  const [_isLoadingInitMoneyOut, setIsLoadingInitMoneyOut] = useState<boolean>(false);
 
-  const [_isLoadingCryptoTransactions, setIsLoadingCryptoTransactions] = useState<boolean>(false);
-  const [_cryptoTransactions, setCryptoTransactions] = useState<Transaction[]>([]);
-  const [_cryptoTransactionsPaging, setCryptoTransactionsPaging] = useState<Paging>();
+  const [_isLoadingFinancialProfile, setIsLoadingFinancialProfile] =
+    useState(true);
+  const [_FinancialProfile, setFinancialProfile] = useState<
+    any[] | undefined
+  >();
+
+  const [_isLoadingCryptoTransactions, setIsLoadingCryptoTransactions] =
+    useState<boolean>(false);
+  const [_cryptoTransactions, setCryptoTransactions] = useState<Transaction[]>(
+    []
+  );
+  const [_cryptoTransactionsPaging, setCryptoTransactionsPaging] =
+    useState<Paging>();
 
   const getWallets = useCallback(async () => {
     try {
@@ -258,11 +274,17 @@ export function useWalletContextValue(): WalletContextData {
           isDefaultWallet: index === 0,
         }));
       }
-      const walletsOrdered = orderBy<Wallet>(_walletsData, ['isDefaultWallet'], ['desc']);
+      const walletsOrdered = orderBy<Wallet>(
+        _walletsData,
+        ['isDefaultWallet'],
+        ['desc']
+      );
       const unionWallet: Wallet | undefined = walletsOrdered.find(
         (w) => w.bankAccount.bankCode === 'UnionDigital'
       );
-      const cryptoWallet: Wallet | undefined = walletsOrdered.find((w) => w.bankAccount.bankCode === 'PDAX');
+      const cryptoWallet: Wallet | undefined = walletsOrdered.find(
+        (w) => w.bankAccount.bankCode === 'PDAX'
+      );
       setWallets(walletsOrdered);
       setUnionWallets(unionWallet);
       setCryptoWallets(cryptoWallet);
@@ -270,7 +292,7 @@ export function useWalletContextValue(): WalletContextData {
     }
   };
 
-  const getWalletsById = useCallback(async (bankId:string) => {
+  const getWalletsById = useCallback(async (bankId: string) => {
     try {
       setIsLoadingWallets(true);
       await _fetchWalletsById(bankId);
@@ -282,7 +304,7 @@ export function useWalletContextValue(): WalletContextData {
     }
   }, []);
 
-  const _fetchWalletsById = async (bankId:string) => {
+  const _fetchWalletsById = async (bankId: string) => {
     const resp = await walletService.getWalletsByBankId(bankId);
     let _walletsData: Wallet[] = resp.data;
     if (isEmpty(_walletsData)) {
@@ -508,7 +530,6 @@ export function useWalletContextValue(): WalletContextData {
     []
   );
 
-  
   const clearWalletErrors = useCallback(() => {
     if (_loadError) {
       setLoadError(undefined);
@@ -539,7 +560,7 @@ export function useWalletContextValue(): WalletContextData {
 
   const clearWallets = useCallback(() => {
     setWallets([]);
-    setWalletsById([])
+    setWalletsById([]);
   }, []);
 
   const fetchTransactions = useCallback(
@@ -746,14 +767,16 @@ export function useWalletContextValue(): WalletContextData {
     const unionWallet: Wallet | undefined = _wallets.find(
       (w) => w.bankAccount.bankCode === 'UnionDigital'
     );
-    const cryptoWallet: Wallet | undefined = _wallets.find((w) => w.bankAccount.bankCode === 'PDAX');
-    if(unionWallet && cryptoWallet && _amount) {
+    const cryptoWallet: Wallet | undefined = _wallets.find(
+      (w) => w.bankAccount.bankCode === 'PDAX'
+    );
+    if (unionWallet && cryptoWallet && _amount) {
       const result = await walletService.moneyInInitital(
-        _amount, 
-        unionWallet?.bankAccount.accountNumber, 
+        _amount,
+        unionWallet?.bankAccount.accountNumber,
         cryptoWallet?.bankAccount.accountNumber
-        );
-      setPaymentId(result.Data.DomesticPaymentId)
+      );
+      setPaymentId(result.Data.DomesticPaymentId);
     }
     setIsLoadingInitMoneyIn(false);
   }, [_wallets, _amount]);
@@ -763,14 +786,16 @@ export function useWalletContextValue(): WalletContextData {
     const unionWallet: Wallet | undefined = _wallets.find(
       (w) => w.bankAccount.bankCode === 'UnionDigital'
     );
-    const cryptoWallet: Wallet | undefined = _wallets.find((w) => w.bankAccount.bankCode === 'PDAX');
-    if(unionWallet && cryptoWallet && _amount) {
+    const cryptoWallet: Wallet | undefined = _wallets.find(
+      (w) => w.bankAccount.bankCode === 'PDAX'
+    );
+    if (unionWallet && cryptoWallet && _amount) {
       const result = await walletService.moneyOutInitital(
-        _amount, 
+        _amount,
         cryptoWallet?.bankAccount.accountNumber,
         unionWallet?.bankAccount.accountNumber
-        );
-      setPaymentId(result.Data.DomesticPaymentId)
+      );
+      setPaymentId(result.Data.DomesticPaymentId);
     }
     setIsLoadingInitMoneyOut(false);
   }, [_wallets, _amount]);
@@ -782,20 +807,39 @@ export function useWalletContextValue(): WalletContextData {
   const setAmountCryptoOut = useCallback((amount: number) => {
     setAmount(amount);
   }, []);
-  
-  const getCryptoTransactions = useCallback(async (isLoadMore = false, filter = {}) => {
-    setIsLoadingCryptoTransactions(true);
-    const pageSize = 20;
-    const pageNumber = (isLoadMore && _cryptoTransactionsPaging) ? _cryptoTransactionsPaging.pageNumber + 1 : 1;
-   
-    const result = await walletService.getCryptoTransactions(
-      pageNumber, pageSize, filter
-    );
-    setCryptoTransactions(isLoadMore ? [..._cryptoTransactions, ...result.data] : result.data);
-    setCryptoTransactionsPaging(result.paging);
-    setIsLoadingCryptoTransactions(false);
-  }, [_cryptoTransactionsPaging]);
 
+  const getCryptoTransactions = useCallback(
+    async (isLoadMore = false, filter = {}) => {
+      setIsLoadingCryptoTransactions(true);
+      const pageSize = 20;
+      const pageNumber =
+        isLoadMore && _cryptoTransactionsPaging
+          ? _cryptoTransactionsPaging.pageNumber + 1
+          : 1;
+
+      const result = await walletService.getCryptoTransactions(
+        pageNumber,
+        pageSize,
+        filter
+      );
+      setCryptoTransactions(
+        isLoadMore ? [..._cryptoTransactions, ...result.data] : result.data
+      );
+      setCryptoTransactionsPaging(result.paging);
+      setIsLoadingCryptoTransactions(false);
+    },
+    [_cryptoTransactionsPaging]
+  );
+
+  const getFinancialProfile = useCallback(
+    async (userId: string, bankId: string) => {
+      setIsLoadingFinancialProfile(true);
+      const result = await walletService.getFinancialProfile(userId, bankId);
+      setIsLoadingFinancialProfile(false);
+      setFinancialProfile(result.data);
+    },
+    []
+  );
 
   return useMemo(
     () => ({
@@ -867,7 +911,10 @@ export function useWalletContextValue(): WalletContextData {
       getCryptoTransactions,
       cryptoTransactions: _cryptoTransactions,
       isLoadingGetCryptoTransactions: _isLoadingCryptoTransactions,
-      cryptoTransactionsPaging: _cryptoTransactionsPaging
+      cryptoTransactionsPaging: _cryptoTransactionsPaging,
+      getFinancialProfile,
+      isLoadingFinancialProfile: _isLoadingFinancialProfile,
+      financialProfile: _FinancialProfile,
     }),
     [
       _isLinkedSuccessfully,
@@ -903,11 +950,13 @@ export function useWalletContextValue(): WalletContextData {
       _isLoadingInitMoneyIn,
       _unionWallets,
       _cryptoWallets,
+      _isLoadingFinancialProfile,
+      _FinancialProfile,
       _isLoadingInitMoneyOut,
       _currentTransfer,
       _cryptoTransactions,
       _isLoadingCryptoTransactions,
-      _cryptoTransactionsPaging
+      _cryptoTransactionsPaging,
     ]
   );
 }

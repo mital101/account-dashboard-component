@@ -54,6 +54,7 @@ export type CryptoAccountComponentProps = {
   isActive?: boolean;
   onClickMyCrypto: () => void;
   onSelectCryptoTransaction: (transaction: Transaction) => void;
+  userId: string;
 };
 
 export type CryptoAccountComponentStyles = {
@@ -99,7 +100,8 @@ const CryptoAccountComponent = ({
   children,
   isActive,
   onClickMyCrypto,
-  onSelectCryptoTransaction
+  onSelectCryptoTransaction,
+  userId,
 }: CryptoAccountComponentProps) => {
   const { colors, i18n } = useContext(ThemeContext);
 
@@ -110,29 +112,34 @@ const CryptoAccountComponent = ({
   const [showSliderTips, setSliderTips] = useState<boolean>(false);
 
   const [ref, setRef] = useState(null);
-  
+
   const { profile } = useContext(AuthContext);
-  const { getCryptoTransactions, cryptoTransactions, isLoadingGetCryptoTransactions } = useContext(WalletContext);
+  const {
+    getCryptoTransactions,
+    cryptoTransactions,
+    isLoadingGetCryptoTransactions,
+  } = useContext(WalletContext);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isEmpty, setIsEmpty] = useState<boolean>(false);
 
+  const { walletsById, getFinancialProfile, financialProfile } =
+    useContext(WalletContext);
+  const [cryptoWallet, getCryptoWallet] = useState<any>([]);
 
-  // useEffect(() => {
-  //   if (ref) {
-  //     ref.scrollTo({
-  //       x: 0,
-  //       y: 400,
-  //       animated: true,
-  //     });
-  //   }
-  //
-  // },[ref]);
+  useEffect(() => {
+    if (userId) {
+      console.log('userId ', userId);
 
-  // useEffect(() => {
-  //   if (isActive) {
-  //     setIsVisible(!isVisible);
-  //   }
-  // }, [isActive]);
+      getFinancialProfile(userId, 'PDAX');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (walletsById) {
+      let filteredArray = walletsById.find((item) => item.status === 'ACTIVE');
+      getCryptoWallet(filteredArray);
+    }
+  }, [walletsById]);
 
   useEffect(() => {
     getCryptoTransactions();
@@ -147,9 +154,13 @@ const CryptoAccountComponent = ({
           setRef(ref);
         }}
       >
-
-          <Text onPress={()=>{setIsEmpty(!isEmpty)}} style={styles.userName}>{`My Crypto Pitaka`}</Text>
-          {/*(
+        <Text
+          onPress={() => {
+            setIsEmpty(!isEmpty);
+          }}
+          style={styles.userName}
+        >{`My Crypto Pitaka`}</Text>
+        {/*(
             <EmptyWalletComponent
               onLinkAccountPressed={() => {
                 onLinkAccount();
@@ -159,23 +170,33 @@ const CryptoAccountComponent = ({
               }}
             />
           )*/}
-          <AccountSummaryCard
-            onClickHide={()=>{setIsVisible(!isVisible)}}
-            isProtected={isVisible}
-            isEmpty={isEmpty} />
+        <AccountSummaryCard
+          onClickHide={() => {
+            setIsVisible(!isVisible);
+          }}
+          isProtected={isVisible}
+          walletData={cryptoWallet}
+          financialProfile={financialProfile}
+          isEmpty={isEmpty}
+        />
 
-          <BreakdownSummaryCard
-            isProtected={isVisible}
-            isEmpty={isEmpty}
-          />
+        <BreakdownSummaryCard
+          isProtected={isVisible}
+          walletData={cryptoWallet}
+          isEmpty={isEmpty}
+          financialProfile={financialProfile}
+        />
 
-          <MyCryptoCard
-            ViewAll={()=>{onClickMyCrypto()}}
-            isProtected={isVisible}
-            isEmpty={isEmpty}
-          />
+        <MyCryptoCard
+          ViewAll={() => {
+            onClickMyCrypto();
+          }}
+          isProtected={isVisible}
+          walletData={cryptoWallet}
+          isEmpty={isEmpty}
+        />
 
-          <View style={styles.recentTransactionSection}>
+        <View style={styles.recentTransactionSection}>
           <View style={styles.recentTransactionWrapper}>
             <View style={styles.row}>
               <Text style={styles.tilteSection}>Recent Transactions</Text>
@@ -183,24 +204,27 @@ const CryptoAccountComponent = ({
                 <Text style={styles.viewAll}>View all</Text>
               </TouchableOpacity>
             </View>
-            </View>
-            <FlatList 
-              data={cryptoTransactions?.slice(0, 4)}
-              ItemSeparatorComponent={() => (
-                  <SeperateLineIcon height={1} />
-              )}
-              ListEmptyComponent= {() => (
-                <View style={styles.emptyTransactionContainer}>
-                  <Text style={styles.emptyTransactionTitle}>You have no transactions yet.</Text>
-                </View>
-              )}
-              renderItem={({item}) => <CryptoTransactionsCardComponent props={{
-                data: item,
-                onSelect: onSelectCryptoTransaction
-              }} />}
-            />
           </View>
-
+          <FlatList
+            data={cryptoTransactions?.slice(0, 4)}
+            ItemSeparatorComponent={() => <SeperateLineIcon height={1} />}
+            ListEmptyComponent={() => (
+              <View style={styles.emptyTransactionContainer}>
+                <Text style={styles.emptyTransactionTitle}>
+                  You have no transactions yet.
+                </Text>
+              </View>
+            )}
+            renderItem={({ item }) => (
+              <CryptoTransactionsCardComponent
+                props={{
+                  data: item,
+                  onSelect: onSelectCryptoTransaction,
+                }}
+              />
+            )}
+          />
+        </View>
       </ScrollView>
     </View>
   );
