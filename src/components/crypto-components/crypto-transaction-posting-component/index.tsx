@@ -1,5 +1,5 @@
 import { CryptoTransactionPostingComponentProps } from './types';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import useMergeStyles from './styles';
 import RowInfo from '../../row-info';
@@ -14,38 +14,40 @@ const CryptoTransactionPostingComponent = ({
   style,
 }: CryptoTransactionPostingComponentProps) => {
   const styles = useMergeStyles(style);
-  const { onBackToDashboard, onBackToTransfer, onGoToHelpCenter, amount, type,
+  const {
+    onBackToDashboard,
+    onBackToTransfer,
+    onGoToHelpCenter,
+    amount,
+    type,
     status,
     date,
-    refNumber 
-  } =
-    props || {};
+    refNumber,
+  } = props || {};
 
-  const {isRefreshingWallets, currentTransfer, unionWallet, cryptoWallet, getWalletLimits} = useContext(WalletContext);
+  const { isRefreshingWallets, currentTransfer, unionWallet, cryptoWallet } =
+    useContext(WalletContext);
   const isTransferIn = currentTransfer === 'moneyin';
   const from = isTransferIn ? unionWallet : cryptoWallet;
   const to = isTransferIn ? cryptoWallet : unionWallet;
   const fromString = `${from?.bankAccount.bankCode} \n${from?.bankAccount.accountHolderName}`;
   const toString = `${to?.bankAccount.bankCode} \n${to?.bankAccount.accountHolderName} \n${to?.bankAccount.accountNumber}`;
 
-  console.log('Transaction -> status', status);
-  const isPending = status === 'Initialized' ||
-  status === 'AcceptedCreditSettlementCompleted' ||
-  status === 'AcceptedSettlementCompleted' ||
-  status === 'AcceptedSettlementInProcess' ||
-  status === 'AcceptedWithoutPosting' ||
-  status === 'Pending';
+  const isPending =
+    status === 'Initialized' ||
+    status === 'AcceptedCreditSettlementCompleted' ||
+    status === 'AcceptedSettlementCompleted' ||
+    status === 'AcceptedSettlementInProcess' ||
+    status === 'AcceptedWithoutPosting' ||
+    status === 'Pending';
 
   const isSuccess = !isPending && status === 'Complete';
 
   const formatedAmount = useCurrencyFormat(amount || 0, 'PHP');
-  const formatedDate = moment(date).format(
-    'ddd DD, YYYY HH:ss A'
-  );
+  const formatedDate = moment(`${date}Z`).format('ddd DD, YYYY HH:ss A');
 
   const pendingTitleColor = '#3E2D68';
   const pendingStatusColor = '#F8981D';
-
 
   if (isRefreshingWallets) {
     return (
@@ -64,7 +66,6 @@ const CryptoTransactionPostingComponent = ({
       </View>
     );
   }
-
 
   if (!isSuccess && !isPending) {
     return (
@@ -118,10 +119,23 @@ const CryptoTransactionPostingComponent = ({
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={[styles.titleSuccess, isPending && {color: pendingTitleColor}]}>{isPending ? 'Transaction Submitted' : 'Transaction Successful!'}</Text>
+        <Text
+          style={[
+            styles.titleSuccess,
+            isPending && { color: pendingTitleColor },
+          ]}
+        >
+          {isPending ? 'Transaction Submitted' : 'Transaction Successful!'}
+        </Text>
         <View style={styles.subTitleSuccessWrapper}>
           <Text style={styles.subTitleSuccess}>
-            {isPending ? 'Your transfer-out is expected to arrive in 30 minutes.' : `#UDidIt! You have successfully transferred money from your ${isTransferIn ? 'Pitaka' : 'Crypto Pitaka'} to your ${!isTransferIn ? 'Pitaka' : 'Crypto Pitaka'}. See transaction details below:`}
+            {isPending
+              ? 'Your transfer-out is expected to arrive in 30 minutes.'
+              : `#UDidIt! You have successfully transferred money from your ${
+                  isTransferIn ? 'Pitaka' : 'Crypto Pitaka'
+                } to your ${
+                  !isTransferIn ? 'Pitaka' : 'Crypto Pitaka'
+                }. See transaction details below:`}
           </Text>
         </View>
         <View style={styles.contentSuccess}>
@@ -143,7 +157,11 @@ const CryptoTransactionPostingComponent = ({
               value: isPending ? `Pending` : `Completed`,
             }}
             style={{
-              value: [styles.completedTextColor, , isPending && {color: pendingStatusColor}],
+              value: [
+                styles.completedTextColor,
+                ,
+                isPending && { color: pendingStatusColor },
+              ],
             }}
           />
           <RowInfo

@@ -29,27 +29,45 @@ const CryptoTransactionDetailsComponent = forwardRef(
     const refViewShot = useRef<ViewShot>(null);
     const isMoneyOut = transaction?.txnType === 'MoneyOut';
     const isAmountPytaka = transaction?.amount.currency === 'PHP';
-    const formatedAmount = transaction?.amount.amount ? useCurrencyFormat(transaction?.amount.amount, 'PHP') : '';
-    const displayAmount = `${isAmountPytaka ? formatedAmount : transaction?.amount.amount + ' ' + transaction?.amount.currency}`;
-    const displayTitle = `${isMoneyOut ? 'Transfer-out' : 'Transfer-in'} (${transaction?.amount.currency})`;
-    const formatedDateTime = transaction?.txnDateTime ? moment(transaction.txnDateTime).format('MMM DD, YYYY HH:ss A') : '';
+    const formatedAmount = transaction?.amount.amount
+      ? useCurrencyFormat(transaction?.amount.amount, 'PHP')
+      : '';
+    const displayAmount = `${
+      isAmountPytaka
+        ? formatedAmount
+        : transaction?.amount.amount + ' ' + transaction?.amount.currency
+    }`;
+    const displayTitle = `${isMoneyOut ? 'Transfer-out' : 'Transfer-in'} (${
+      transaction?.amount.currency
+    })`;
+    const formatedDateTime = transaction?.txnDateTime
+      ? moment(`${transaction.txnDateTime}Z`).format('MMM DD, YYYY HH:ss A')
+      : '';
     const fromString = `${transaction?.sourceAccount.bankInfo.code} \n${transaction?.sourceAccount.accountName}`;
     const toString = `${transaction?.destinationAccount.bankInfo.code} \n${transaction?.destinationAccount.accountName}\n${transaction?.destinationAccount.accountNumber}`;
     const refNo = transaction?.txnCode || transaction?.txnId || '';
 
     const getStringStatus = (status: string) => {
-      switch(status) {
-        case 'SUCCESS': 
+      switch (status) {
+        case 'SUCCESS':
           return 'Completed';
         case 'PROCESSING':
           return 'Pending';
-        case 'FAILED': default:
+        case 'FAILED':
+        default:
           return 'Failed';
       }
-    }
-    const displayStatus = transaction?.status ? getStringStatus(transaction.status) : '';
-    const statusColor = displayStatus === 'Completed' ? '#2E7D32' : displayStatus === 'Pending' ? '#7C6D98' : '#D32F2F';
-  
+    };
+    const displayStatus = transaction?.status
+      ? getStringStatus(transaction.status)
+      : '';
+    const statusColor =
+      displayStatus === 'Completed'
+        ? '#2E7D32'
+        : displayStatus === 'Pending'
+        ? '#7C6D98'
+        : '#D32F2F';
+
     const hasAndroidPermission = async () => {
       const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
 
@@ -123,8 +141,8 @@ const CryptoTransactionDetailsComponent = forwardRef(
                 }}
                 style={{
                   value: {
-                    color: statusColor
-                  }
+                    color: statusColor,
+                  },
                 }}
               />
               <RowInfo
@@ -133,9 +151,7 @@ const CryptoTransactionDetailsComponent = forwardRef(
                   value: fromString,
                 }}
               />
-              <RowInfo
-                props={{ title: 'Send Crypto To', value: toString }}
-              />
+              <RowInfo props={{ title: 'Send Crypto To', value: toString }} />
               {/* <RowInfo
                 props={{
                   title: 'Transaction Hash',
