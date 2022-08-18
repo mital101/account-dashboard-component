@@ -34,7 +34,7 @@ const useMergeStyles = (
       marginTop: 15,
     },
     downloadBtnSection: {
-      marginTop: 15
+      marginTop: 15,
     },
     row: { flexDirection: 'row', alignItems: 'center' },
     selectTypeTitle: { color: '#1D1C1D', fontSize: 16 },
@@ -44,48 +44,48 @@ const useMergeStyles = (
     emptyTransactionContainer: {
       alignItems: 'center',
       justifyContent: 'space-around',
-      marginTop: 100
+      marginTop: 100,
     },
     emptyTransactionTitle: {
       fontSize: 16,
-      color:'#1D1C1D',
+      color: '#1D1C1D',
       fontFamily: fonts.medium,
       textAlign: 'center',
-      marginTop: 25
+      marginTop: 25,
     },
     emptyTransactionTitleNormal: {
       fontSize: 16,
-      color:'#1D1C1D',
+      color: '#1D1C1D',
       fontFamily: fonts.regular,
       textAlign: 'center',
-      marginTop: 25
+      marginTop: 25,
     },
     emptyTransactionSubTitle: {
       fontSize: 12,
       color: '#020000',
       fontFamily: fonts.regular,
       textAlign: 'center',
-      marginTop: 25
+      marginTop: 25,
     },
     imageWrapper: {
       width: 150,
       height: 150,
-      alignSelf: 'center'
+      alignSelf: 'center',
     },
     imageEmpty: {
       width: '100%',
-      height: '100%'
+      height: '100%',
     },
     tranferInBtn: {
       marginTop: 34,
-      alignSelf: 'center'
+      alignSelf: 'center',
     },
     transferInLabel: {
       color: '#F8981D',
       textDecorationLine: 'underline',
       fonstSize: 14,
-      fontFamily: fonts.medium
-    }
+      fontFamily: fonts.medium,
+    },
   });
   return defaultsDeep(style, defaultStyles);
 };

@@ -20,13 +20,14 @@ const CryptoVerifyOTPComponent = ({
   const otpRef = useRef<OTPFieldRef>();
   const countdownRef = useRef<CountDownTimerRef>();
   const { onConfirmed } = props || {};
-  const { paymentId, initMoneyin, initMoneyOut, refreshWallets, currentTransfer } = useContext(WalletContext);
+  const { paymentId, initMoneyin, initMoneyOut, currentTransfer } =
+    useContext(WalletContext);
   const [isLoadingOtpVerification, setIsLoadingOtpVerification] =
     useState<boolean>(false);
   const [value, setValue] = useState<string>('');
   const [error, setError] = useState<string>();
   const isTransferIn = currentTransfer === 'moneyin';
-   
+
   useEffect(() => {
     if (value && value.length === 6) {
       handleCompleteInputOTP();
@@ -39,26 +40,23 @@ const CryptoVerifyOTPComponent = ({
 
   const onConfirm = async () => {
     setIsLoadingOtpVerification(true);
-    const result = isTransferIn ?  await walletService.moneyInConfirmation(
-      paymentId || '',
-      value
-    ) : await walletService.moneyOutConfirmation(
-      paymentId || '',
-      value
-    );
+    const result = isTransferIn
+      ? await walletService.moneyInConfirmation(paymentId || '', value)
+      : await walletService.moneyOutConfirmation(paymentId || '', value);
 
     setIsLoadingOtpVerification(false);
     if (result.Data) {
       onConfirmed &&
         onConfirmed(
           result.Data.Initiation.InstructedAmount.Amount,
-          `${result.Data.Initiation.InstructedAmount.Currency} ${isTransferIn ? 'transfer-in' : 'transfer-out'}`,
+          `${result.Data.Initiation.InstructedAmount.Currency} ${
+            isTransferIn ? 'transfer-in' : 'transfer-out'
+          }`,
           result.Data.Status,
           result.Data.StatusUpdateDateTime,
           result.Data.Initiation.SupplementaryData.PaymentServiceProviderExt
             .PspReference
         );
-      refreshWallets(2000);
     } else if (result.response?.data?.errors) {
       setError(
         `${result.response?.data?.errors[0].message}. Please try again.`

@@ -7,7 +7,12 @@ export type FilterTransactionModalProps = {
   initValue?: TransactionStatus;
   style?: FilterTransactionModalStyles;
   dataTransactionStatus: TransactionStatus[];
-  onSubmitFilter?: (status?: TransactionStatus, isSelectAllTime?: boolean, from?: Date, to?: Date) => void;
+  onSubmitFilter?: (
+    status?: TransactionStatus,
+    isSelectAllTime?: boolean,
+    from?: Date,
+    to?: Date
+  ) => void;
 };
 
 export type FilterTransactionModalStyles = {

@@ -22,8 +22,6 @@ import {
 import { ArrowRightIcon, InformationIcon } from '../../../assets/images';
 import { WalletService } from '../../../services/wallet-service';
 import { WalletContext } from '../../../context/wallet-context';
-import { AuthContext } from 'react-native-auth-component';
-import { useFocusEffect } from '@react-navigation/native';
 
 const randomCryptoImgUrl =
   'https://cdn.pixabay.com/photo/2017/03/12/02/57/bitcoin-2136339_960_720.png';
@@ -117,23 +115,27 @@ const CryptoTransferInComponent = ({
   const transferValueFormated =
     transferValue > 0 ? useCurrencyFormat(transferValue, '', '') : '';
 
-  const styles = useMergeStyles(style);
-
-  const minimumError = transferValueFormated.length > 0 && transferValue < 200;
-  const higherCurrentBalanceErorr =
-    transferValue > ((isTransferIn ? unionWallet?.currentBalance : cryptoWallet?.currentBalance) || 0);
-  const isInputValid = !minimumError && !higherCurrentBalanceErorr;
-
-  const isValidToSubmit =
-    selectedTabIndex === 0
-      ? transferValue > 0 && isInputValid
-      : !!selectedCrypto;
-
   const dailyLimit = walletLimits ? walletLimits.find(l => l.frequence === 'Daily') : null;
   const limitValueFormated = dailyLimit ? useCurrencyFormat(dailyLimit.limitValue, 'PHP') : 0; 
   const limitRemainingValueFormated = dailyLimit ? useCurrencyFormat(dailyLimit.remainingLimitValue, 'PHP') : 0; 
   const percentRemainning = dailyLimit ? (1 - (dailyLimit.remainingLimitValue / dailyLimit.limitValue)) * 100 : 0;
   
+  const styles = useMergeStyles(style);
+
+  const minimumError = transferValueFormated.length > 0 && transferValue < 200;
+  const maximumError = transferValueFormated.length > 0 && transferValue > 100000;
+
+  const higherCurrentBalanceError =
+    transferValue > ((isTransferIn ? unionWallet?.currentBalance : cryptoWallet?.currentBalance) || 0);
+  const isOverDailyLimitError = dailyLimit ? transferValue > dailyLimit?.remainingLimitValue : false;
+  const isReachDailyLimitError = dailyLimit ? dailyLimit?.remainingLimitValue === 0 : false;
+  const isInputValid = !minimumError && !maximumError && !higherCurrentBalanceError && !isOverDailyLimitError && !isReachDailyLimitError;
+ 
+  const isValidToSubmit =
+    selectedTabIndex === 0
+      ? transferValue > 0 && isInputValid
+      : !!selectedCrypto;
+
   useEffect(() => {
     setVisibleCurrentBalance && setVisibleCurrentBalance(selectedTabIndex === 0)
   }, [selectedTabIndex]);
@@ -184,10 +186,12 @@ const CryptoTransferInComponent = ({
             {!isInputValid && (
               <View style={styles.errorRow}>
                 <Text style={styles.errorText}>
-                  {minimumError
+                  {maximumError ? 'The maximum amount that you’re allowed to transfer-in is ₱100,000.00' : minimumError
                     ? `The minimum amount that you’re allowed to transfer-in is ₱200.0`
-                    : higherCurrentBalanceErorr
+                    : higherCurrentBalanceError
                     ? 'You have insufficient balance in your Pitaka.'
+                    : isOverDailyLimitError ? 'The amount you entered exceeded your the daily limit of P100,000.00.' :
+                    isReachDailyLimitError ? 'You have reached your daily limit of P100,000.00. Please wait for the following day to transact again.' 
                     : 'Invalid amount'}
                 </Text>
               </View>

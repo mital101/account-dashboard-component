@@ -68,7 +68,13 @@ const FilterTransactionModal = ({
   };
 
   const onSubmitValues = () => {
-    onSubmitFilter && onSubmitFilter(dataTransactionStatus[selectedStatusIndex], isSelectedAllTime, fromDate, toDate);
+    onSubmitFilter &&
+      onSubmitFilter(
+        dataTransactionStatus[selectedStatusIndex],
+        isSelectedAllTime,
+        fromDate,
+        toDate
+      );
     onClose();
   };
 

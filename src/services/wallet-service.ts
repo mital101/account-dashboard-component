@@ -550,6 +550,19 @@ export class WalletService {
     }
   };
 
+  getCryptoPaymentTransaction = async (paymentId: string) => {
+    if (this._paymentClient) {
+      try {
+        const response = await this._paymentClient.get('payments/' + paymentId);
+        return response.data;
+      } catch (error) {
+        return error;
+      }
+    } else {
+      throw new Error('Payment client service is not registered');
+    }
+  };
+
   getFinancialProfile = async (userId: string, bankId: string) => {
     if (this._financialClient) {
       const response = await this._financialClient.get(
@@ -568,15 +581,12 @@ export class WalletService {
 
   getLimitByWalletId = async (walletId: string) => {
     if (this._limitClient) {
-      const response = await this._limitClient.get(
-        `limits`,
-        {
-          params: {
-            walletId: walletId,
-            serviceProvider: 'UD'
-          },
-        }
-      );
+      const response = await this._limitClient.get(`limits`, {
+        params: {
+          walletId: walletId,
+          serviceProvider: 'UD',
+        },
+      });
       console.log('getLimitByWalletId -> data', response.data);
       return response.data;
     } else {
