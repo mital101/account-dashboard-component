@@ -12,7 +12,7 @@ export { default as OnboardingComponent } from './src/components/onboarding-comp
 export { default as MarketPricesComponent } from './src/components/market-price-component';
 export { default as HelpCenterComponent } from './src/components/help-center-component';
 export { default as SettingComponent } from './src/components/setting-component';
-export { default as AccountLimitsComponent } from './src/components/account-limits-component';
+export { default as AccountLimitsComponent } from './src/components/crypto-components/crypto-account-limits-component';
 export { default as CryptoTransactionsHistoryComponent } from './src/components/crypto-components/crypto-transactions-histoy-component';
 export { default as CryptoTransactionDetailsComponent, CryptoTransactionDetailsRef } from './src/components/crypto-components/crypto-transaction-details-component';
 export { default as CryptoTransferComponent } from './src/components/crypto-components/crypto-transfer-component';

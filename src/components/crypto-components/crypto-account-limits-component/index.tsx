@@ -1,19 +1,13 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
+import React, { useContext } from 'react';
+import { View, Text, TouchableOpacity, Image, ScrollView, RefreshControl } from 'react-native';
 import {
   AccountLimitsComponentProps,
   CryptoLimitItem,
-  FiatLimitItem,
 } from './types';
 import useMergeStyles from './styles';
-import { ProcessBar } from 'react-native-theme-component';
-import { PDAXIcon } from '../../assets/PDAX.icon';
-
-const fiatDummyData: FiatLimitItem[] = [
-  { title: 'Daily', limit: 100000, remain: 50000 },
-  { title: 'Monthly', limit: 2000000, remain: 1950000 },
-  { title: 'Annual', limit: 20000000, remain: 19950000 },
-];
+import { ProcessBar, useCurrencyFormat } from 'react-native-theme-component';
+import { PDAXIcon } from '../../../assets/PDAX.icon';
+import { WalletContext } from '../../../context/wallet-context';
 
 const cryptoDummyData: CryptoLimitItem[] = [
   {
@@ -54,7 +48,9 @@ const AccountLimitsComponent = ({ Root }: AccountLimitsComponentProps) => {
   const { props, style } = Root || {};
   const {} = props || {};
   const [index, setIndex] = React.useState(0);
-
+  const { walletLimits, isRefreshingWallets, refreshWallets } =
+    useContext(WalletContext);
+  
   const styles = useMergeStyles(style);
 
   const renderTabbar = (title: string, indexTabbar: number) => (
@@ -70,22 +66,23 @@ const AccountLimitsComponent = ({ Root }: AccountLimitsComponentProps) => {
   );
 
   const renderFialContent = () => {
-    return fiatDummyData.map((item) => {
-      const percent = 100 - (item.remain / item.limit) * 100;
+    return walletLimits ? walletLimits.map((item) => {
+      const limitValueFormated = useCurrencyFormat(item.limitValue, 'PHP'); 
+      const limitRemainingValueFormated = useCurrencyFormat(item.remainingLimitValue, 'PHP'); 
+      const percentRemainning = (1 - (item.remainingLimitValue / item.limitValue)) * 100;
+      
       return (
-        <View style={styles.rowItem} key={`FialItem-${item.title}`}>
+        <View style={styles.rowItem} key={`FialItem-${item.frequence}`}>
           <View style={styles.rowBetween}>
             <Text style={styles.limitTitle}>{`${
-              item.title
-            } (₱ ${formatNumberToCurrency(item.limit)})`}</Text>
-            <Text style={styles.remainTitle}>{`₱ ${formatNumberToCurrency(
-              item.remain
-            )} remaining`}</Text>
+              item.frequence
+            } (${limitValueFormated})`}</Text>
+            <Text style={styles.remainTitle}>{`${limitRemainingValueFormated} remaining`}</Text>
           </View>
-          <ProcessBar processPercent={percent} />
+          <ProcessBar processPercent={percentRemainning} />
         </View>
       );
-    });
+    }) : <View />;
   };
 
   const renderCryptoContent = () => {
@@ -119,7 +116,10 @@ const AccountLimitsComponent = ({ Root }: AccountLimitsComponentProps) => {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView 
+    refreshControl={
+      <RefreshControl refreshing={isRefreshingWallets} onRefresh={refreshWallets} />
+    } style={styles.container} showsVerticalScrollIndicator={false}>
       <Text style={styles.pageTitle}>Account Limits</Text>
       <View style={styles.tabbar}>
         <View style={styles.headerWrapper}>

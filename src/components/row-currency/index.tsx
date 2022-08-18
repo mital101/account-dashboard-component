@@ -58,7 +58,7 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
       100
     );
     if (responeData.data.length > 0) {
-      const rates = responeData.data.map((d: any) => d.exchangeRate);
+      const rates = responeData.data.reverse().map((d: any) => d.exchangeRate);
       setExchangeRateHistory(rates);
     }
   };

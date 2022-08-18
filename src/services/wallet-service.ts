@@ -8,6 +8,7 @@ type WalletClient = {
   exchangeRateClient: any;
   countryInformationClient: any;
   paymentClient: any;
+  limitClient: any;
 };
 
 export class WalletService {
@@ -19,6 +20,7 @@ export class WalletService {
   private _exchangeRateClient?: any;
   private _countryInformationClient?: any;
   private _paymentClient?: any;
+  private _limitClient?: any;
 
   constructor() {
     if (WalletService._instance) {
@@ -40,6 +42,7 @@ export class WalletService {
     this._exchangeRateClient = clients.exchangeRateClient;
     this._countryInformationClient = clients.countryInformationClient;
     this._paymentClient = clients.paymentClient;
+    this._limitClient = clients.limitClient;
   };
 
   getWallets = async () => {
@@ -560,6 +563,24 @@ export class WalletService {
       return response.data;
     } else {
       throw new Error('Financial Client is not registered');
+    }
+  };
+
+  getLimitByWalletId = async (walletId: string) => {
+    if (this._limitClient) {
+      const response = await this._limitClient.get(
+        `limits`,
+        {
+          params: {
+            walletId: walletId,
+            serviceProvider: 'UD'
+          },
+        }
+      );
+      console.log('getLimitByWalletId -> data', response.data);
+      return response.data;
+    } else {
+      throw new Error('Limit Client is not registered');
     }
   };
 }

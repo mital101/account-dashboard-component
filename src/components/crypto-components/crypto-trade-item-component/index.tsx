@@ -11,7 +11,7 @@ import {
   Dimensions,
 } from 'react-native';
 import useMergeStyles from './styles';
-import { Button } from 'react-native-theme-component';
+import { Button, useCurrencyFormat } from 'react-native-theme-component';
 import { LineChart } from 'react-native-gifted-charts';
 import { Currency, CurrencyExchangeRateData } from '../../../model';
 import { WalletService } from '../../../services/wallet-service';
@@ -98,6 +98,8 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
   const reducingColor = '#EB001B';
   const rasingColor = '#6CBE58';
 
+  const selectedExchangeValueFormated = selectedExchangeValue ? useCurrencyFormat(selectedExchangeValue.value, 'PHP') : '';
+
   const getCurrencyExchangeData = async () => {
     const responeData = await walletService.getCurrenciesHistoricalExchangeRate(
       filterExchangeRateOptions[selectedFilterOptionsIndex].date,
@@ -107,8 +109,9 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
       100
     );
     if (responeData.data.length > 0) {
-      let maxExchangeRate = responeData.data[0].exchangeRate;
-      const chartData: ChartDataItem[] = responeData.data.map(
+      const reverseData = responeData.data.reverse();
+      let maxExchangeRate = reverseData[0].exchangeRate;
+      const chartData: ChartDataItem[] = reverseData.map(
         (e: CurrencyExchangeRateData) => {
           if (e.exchangeRate > maxExchangeRate) {
             maxExchangeRate = e.exchangeRate;
@@ -129,6 +132,8 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
   useEffect(() => {
     getCurrencyExchangeData();
   }, [selectedFilterOptionsIndex]);
+
+
 
   return (
     <View style={styles.containerStyle}>
@@ -183,7 +188,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
           {selectedExchangeValue && (
             <Text
               style={styles.exchangePrecentage}
-            >{`₱ ${selectedExchangeValue.value}`}</Text>
+            >{`${selectedExchangeValueFormated}`}</Text>
           )}
           {selectedExchangeValue && (
             <Text style={styles.subTitle}>{`As of ${moment(

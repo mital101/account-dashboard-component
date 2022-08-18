@@ -19,9 +19,11 @@ import {
   ProcessBar,
   useCurrencyFormat,
 } from 'react-native-theme-component';
-import { InformationIcon } from '../../../assets/images';
+import { ArrowRightIcon, InformationIcon } from '../../../assets/images';
 import { WalletService } from '../../../services/wallet-service';
 import { WalletContext } from '../../../context/wallet-context';
+import { AuthContext } from 'react-native-auth-component';
+import { useFocusEffect } from '@react-navigation/native';
 
 const randomCryptoImgUrl =
   'https://cdn.pixabay.com/photo/2017/03/12/02/57/bitcoin-2136339_960_720.png';
@@ -105,7 +107,7 @@ const CryptoTransferInComponent = ({
   const [selectedCrypto, setSelectedCrypto] = React.useState<string>();
   const [isLoadingValidation, setIsLoadingValidation] =
     useState<boolean>(false);
-  const { setAmountCryptoIn, unionWallet, cryptoWallet, currentTransfer } =
+  const { walletLimits, setAmountCryptoIn, unionWallet, cryptoWallet, currentTransfer } =
     useContext(WalletContext);
   const isTransferIn = currentTransfer === 'moneyin'; 
   const currentAvailableBalance = useCurrencyFormat(
@@ -127,11 +129,14 @@ const CryptoTransferInComponent = ({
       ? transferValue > 0 && isInputValid
       : !!selectedCrypto;
 
-
+  const dailyLimit = walletLimits ? walletLimits.find(l => l.frequence === 'Daily') : null;
+  const limitValueFormated = dailyLimit ? useCurrencyFormat(dailyLimit.limitValue, 'PHP') : 0; 
+  const limitRemainingValueFormated = dailyLimit ? useCurrencyFormat(dailyLimit.remainingLimitValue, 'PHP') : 0; 
+  const percentRemainning = dailyLimit ? (1 - (dailyLimit.remainingLimitValue / dailyLimit.limitValue)) * 100 : 0;
+  
   useEffect(() => {
-    console.log('selectedTabIndex', selectedTabIndex)
     setVisibleCurrentBalance && setVisibleCurrentBalance(selectedTabIndex === 0)
-  }, [selectedTabIndex])
+  }, [selectedTabIndex]);
 
   const renderTabbar = (title: string, indexTabbar: number) => (
     <TouchableOpacity
@@ -206,21 +211,21 @@ const CryptoTransferInComponent = ({
             </Text>
           </TouchableOpacity>
         </View>
-        {/* <View style={styles.dailyLimit}>
+        {dailyLimit && <View style={styles.dailyLimit}>
           <View style={styles.rowBetween}>
             <Text style={styles.dailyLimitLabel}>
-              Daily Limit (₱ 100,000.00)
+              {`Daily Limit (${limitValueFormated})`}
             </Text>
             <TouchableOpacity style={styles.row} onPress={goToAccountLimit}>
               <Text style={styles.aboutLimitLabel}>About Limit</Text>
-              <ArrowRightIcon width={15} height={15} color={'#F8981D'} />
+              <ArrowRightIcon width={13} height={13} color={'#F8981D'} />
             </TouchableOpacity>
           </View>
-          <ProcessBar processPercent={50} />
+          <ProcessBar processPercent={percentRemainning} />
           <View style={styles.remainingWrapper}>
-            <Text style={styles.remainLabel}>₱ 100,000.00 remaining</Text>
+            <Text style={styles.remainLabel}>{`${limitRemainingValueFormated} remaining`}</Text>
           </View>
-        </View> */}
+        </View>}
       </View>
     );
   };

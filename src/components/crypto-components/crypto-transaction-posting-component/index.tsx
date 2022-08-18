@@ -21,13 +21,14 @@ const CryptoTransactionPostingComponent = ({
   } =
     props || {};
 
-  const {isRefreshingWallets, currentTransfer, unionWallet, cryptoWallet} = useContext(WalletContext);
+  const {isRefreshingWallets, currentTransfer, unionWallet, cryptoWallet, getWalletLimits} = useContext(WalletContext);
   const isTransferIn = currentTransfer === 'moneyin';
   const from = isTransferIn ? unionWallet : cryptoWallet;
   const to = isTransferIn ? cryptoWallet : unionWallet;
   const fromString = `${from?.bankAccount.bankCode} \n${from?.bankAccount.accountHolderName}`;
   const toString = `${to?.bankAccount.bankCode} \n${to?.bankAccount.accountHolderName} \n${to?.bankAccount.accountNumber}`;
 
+  console.log('Transaction -> status', status);
   const isPending = status === 'Initialized' ||
   status === 'AcceptedCreditSettlementCompleted' ||
   status === 'AcceptedSettlementCompleted' ||
@@ -37,7 +38,6 @@ const CryptoTransactionPostingComponent = ({
 
   const isSuccess = !isPending && status === 'Complete';
 
-
   const formatedAmount = useCurrencyFormat(amount || 0, 'PHP');
   const formatedDate = moment(date).format(
     'ddd DD, YYYY HH:ss A'
@@ -45,6 +45,7 @@ const CryptoTransactionPostingComponent = ({
 
   const pendingTitleColor = '#3E2D68';
   const pendingStatusColor = '#F8981D';
+
 
   if (isRefreshingWallets) {
     return (

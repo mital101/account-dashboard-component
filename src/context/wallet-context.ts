@@ -14,6 +14,8 @@ import {
   CryptoTCData,
   CurrencyExchangeRateData,
   Currency,
+  WalletLimit,
+  FinancialProfile,
 } from '../model';
 import _, { chain, groupBy, isEmpty, orderBy } from 'lodash';
 import { FilterTransaction, TransferType } from '../types';
@@ -110,6 +112,10 @@ export interface WalletContextData {
   isLoadingGetCryptoTransactions: boolean;
   cryptoTransactionsPaging?: Paging;
   getFinancialProfile: (userId: string, bankId: string) => void;
+  getWalletLimits: (walletId: string) => void;
+  isLoadingWalletLimits: boolean;
+  walletLimits?: WalletLimit[];
+  financialProfile?: FinancialProfile;
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -176,6 +182,10 @@ export const walletDefaultValue: WalletContextData = {
   cryptoTransactions: [],
   cryptoTransactionsPaging: undefined,
   getFinancialProfile: () => undefined,
+  getWalletLimits: () => undefined,
+  isLoadingWalletLimits: false,
+  walletLimits: undefined,
+  financialProfile: undefined
 };
 
 export const WalletContext =
@@ -234,9 +244,7 @@ export function useWalletContextValue(): WalletContextData {
 
   const [_isLoadingFinancialProfile, setIsLoadingFinancialProfile] =
     useState(true);
-  const [_FinancialProfile, setFinancialProfile] = useState<
-    any[] | undefined
-  >();
+  const [_financialProfile, setFinancialProfile] = useState<FinancialProfile>();
 
   const [_isLoadingCryptoTransactions, setIsLoadingCryptoTransactions] =
     useState<boolean>(false);
@@ -245,6 +253,11 @@ export function useWalletContextValue(): WalletContextData {
   );
   const [_cryptoTransactionsPaging, setCryptoTransactionsPaging] =
     useState<Paging>();
+
+  const [_isLoadingWalletLimits, setIsLoadingWalletLimits] =
+  useState<boolean>(false);
+
+  const [_walletLimits, setWalletLimits] = useState<WalletLimit[]>([]); 
 
   const getWallets = useCallback(async () => {
     try {
@@ -285,6 +298,9 @@ export function useWalletContextValue(): WalletContextData {
       const cryptoWallet: Wallet | undefined = walletsOrdered.find(
         (w) => w.bankAccount.bankCode === 'PDAX'
       );
+      if(unionWallet) {
+        getWalletLimits(unionWallet?.walletId);
+      }
       setWallets(walletsOrdered);
       setUnionWallets(unionWallet);
       setCryptoWallets(cryptoWallet);
@@ -748,7 +764,7 @@ export function useWalletContextValue(): WalletContextData {
       updateAtFrom,
       type,
       'PHP',
-      100,
+      1000,
       1
     );
     setIsLoadingHistoricalExchangeRate(false);
@@ -833,10 +849,21 @@ export function useWalletContextValue(): WalletContextData {
 
   const getFinancialProfile = useCallback(
     async (userId: string, bankId: string) => {
+      console.log('getFinancialProfile -> request');
       setIsLoadingFinancialProfile(true);
       const result = await walletService.getFinancialProfile(userId, bankId);
       setIsLoadingFinancialProfile(false);
       setFinancialProfile(result.data);
+    },
+    []
+  );
+
+  const getWalletLimits = useCallback(
+    async (walletId: string) => {
+      setIsLoadingWalletLimits(true);
+      const result = await walletService.getLimitByWalletId(walletId);
+      setIsLoadingWalletLimits(false);
+      setWalletLimits(result.data);
     },
     []
   );
@@ -914,7 +941,10 @@ export function useWalletContextValue(): WalletContextData {
       cryptoTransactionsPaging: _cryptoTransactionsPaging,
       getFinancialProfile,
       isLoadingFinancialProfile: _isLoadingFinancialProfile,
-      financialProfile: _FinancialProfile,
+      financialProfile: _financialProfile,
+      getWalletLimits,
+      isLoadingWalletLimits: _isLoadingWalletLimits,
+      walletLimits: _walletLimits
     }),
     [
       _isLinkedSuccessfully,
@@ -951,12 +981,14 @@ export function useWalletContextValue(): WalletContextData {
       _unionWallets,
       _cryptoWallets,
       _isLoadingFinancialProfile,
-      _FinancialProfile,
+      _financialProfile,
       _isLoadingInitMoneyOut,
       _currentTransfer,
       _cryptoTransactions,
       _isLoadingCryptoTransactions,
       _cryptoTransactionsPaging,
+      _isLoadingWalletLimits,
+      _walletLimits
     ]
   );
 }

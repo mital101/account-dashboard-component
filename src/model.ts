@@ -21,12 +21,36 @@ export interface Wallet {
   isAggregated?: boolean;
 }
 
+export interface FinancialProfileWalletSummary {
+  walletId: string;
+  currentBalance?: number;
+  availableBalance?: number;
+  currency?: string;
+  baseCurrency?: string;
+  currentBalanceInBaseCurrency?: number;
+  availableBalanceInBaseCurrency?: number;
+}
+export interface FinancialProfile {
+  totalAvailableBalance: number;
+  totalCurrentBalance: number;
+  walletSummaries: FinancialProfileWalletSummary[];
+}
+
 export interface WalletSummary {
   availableBalance: number;
   currentBalance: number;
   minimumBalance: number;
   totalMoneyIn: number;
   totalMoneyOut: number;
+}
+
+export interface WalletLimit {
+  limitValue: number;
+  remainingLimitValue: number;
+  limitUnit: string;
+  serviceProvider: string;
+  userId: string;
+  frequence: string;
 }
 
 export interface Bank {

@@ -32,12 +32,6 @@ export type AccountLimitsComponentStyles = {
   titleSection?: StyleProp<ImageStyle>;
 };
 
-export type FiatLimitItem = {
-  title: string;
-  limit: number;
-  remain: number;
-};
-
 export type CryptoLimitItem = {
   name: string;
   limit: number;

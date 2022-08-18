@@ -30,6 +30,7 @@ export type CryptoTransactionsHistoryComponentStyles = {
   tranferInBtn?: StyleProp<ViewStyle>;
   imageEmpty?: StyleProp<ImageStyle>;
   transferInLabel?: StyleProp<TextStyle>;
+  downloadBtnSection?: StyleProp<ViewStyle>;
 };
 
 export type TransactionTypes = {

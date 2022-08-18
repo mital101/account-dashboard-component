@@ -217,6 +217,7 @@ const useMergeStyles = (
       color: '#F8981D',
       textDecorationLine: 'underline',
       fontFamily: fonts.medium,
+      fontSize: 12,
       marginRight: 5,
     },
     input: {

@@ -184,7 +184,7 @@ const CryptoTransactionsHistoryComponent = ({
     <>
     {renderGroupTransaction()}
     {isDownloadMode && (
-      <View style={styles.loadMoreWrapper}>
+      <View style={styles.downloadBtnSection}>
         <Button label="Download to this device" disabled={cryptoTransactions?.length === 0} onPress={() => {}} />
       </View>
     )}

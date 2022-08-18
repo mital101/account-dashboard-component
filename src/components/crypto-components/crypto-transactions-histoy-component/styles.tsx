@@ -33,6 +33,9 @@ const useMergeStyles = (
       alignItems: 'center',
       marginTop: 15,
     },
+    downloadBtnSection: {
+      marginTop: 15
+    },
     row: { flexDirection: 'row', alignItems: 'center' },
     selectTypeTitle: { color: '#1D1C1D', fontSize: 16 },
     loadMoreWrapper: { marginTop: 25, marginBottom: 60 },
