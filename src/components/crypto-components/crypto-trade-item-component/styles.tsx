@@ -1,10 +1,10 @@
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
-import { AccountInfoCardThemeStyles } from './index';
+import { CryptoTradeComponentStyles } from './index';
 import { ThemeContext } from 'react-native-theme-component';
 
-const useMergeStyles = (style?: AccountInfoCardThemeStyles) => {
+const useMergeStyles = (style?: CryptoTradeComponentStyles) => {
   const { fonts, colors } = useContext(ThemeContext);
 
   const defaultStyles = StyleSheet.create({
@@ -94,6 +94,11 @@ const useMergeStyles = (style?: AccountInfoCardThemeStyles) => {
       flexDirection: 'row',
       alignItems: 'center',
       marginTop: 10,
+    },
+    rowAbout: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 25,
     },
     title2: {
       fontWeight: '700',

@@ -98,6 +98,7 @@ const useMergeStyles = (style?: AccountInfoCardThemeStyles) => {
       fontSize: 12,
       lineHeight:21,
     },
+    viewTooltipBalance: {paddingVertical:5,paddingHorizontal:5,width:200 },
     viewTooltip: { paddingVertical:15,paddingHorizontal:10,width:290 },
     viewTooltipHeader: { flexDirection: 'row',paddingBottom:10, },
   });

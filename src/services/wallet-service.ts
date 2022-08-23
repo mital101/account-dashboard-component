@@ -195,7 +195,7 @@ export class WalletService {
   };
 
   getCurrenciesHistoricalExchangeRate = async (
-    updateAtFrom?: string,
+    updatedAtFrom?: string,
     fromCurrency?: string,
     toCurrency?: string,
     pageNum?: number,
@@ -210,7 +210,7 @@ export class WalletService {
             pageSize,
             fromCurrency,
             toCurrency,
-            updateAtFrom: updateAtFrom,
+            updatedAtFrom,
           },
         }
       );

@@ -747,7 +747,7 @@ export function useWalletContextValue(): WalletContextData {
     setIsLoadingCryptoExchange(true);
     const result = await walletService.getCurrenciesExchangeRate(
       1,
-      limit ?? 100,
+      limit ?? 1000,
       'PHP'
     );
     setCryptoExchangeData(result.data);
@@ -764,8 +764,8 @@ export function useWalletContextValue(): WalletContextData {
       updateAtFrom,
       type,
       'PHP',
-      1000,
-      1
+      1,
+      1000
     );
     setIsLoadingHistoricalExchangeRate(false);
     return result;

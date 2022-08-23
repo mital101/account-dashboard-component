@@ -62,10 +62,12 @@ const AccountInfoCard = (props: AccountInfoCardProps) => {
   } = props;
   const styles = useMergeStyles(style);
 
+  const [showTipBalance, setShowTipBalance] = useState<boolean>(false);
   const [showTip1, setTip1] = useState<boolean>(false);
   const [showTip2, setTip2] = useState<boolean>(false);
   const [showTip3, setTip3] = useState<boolean>(false);
-
+  const [isHideBalance, setIsHideBalance] = useState<boolean>(false);
+  const ballance = isHideBalance ? '***' :  useCurrencyFormat(walletData.currentBalance, walletData.currencyCode);
   useEffect(() => {
     if (isShowTips) {
       setTip1(true)
@@ -76,10 +78,37 @@ const AccountInfoCard = (props: AccountInfoCardProps) => {
     <View style={styles.containerStyle}>
       <View  style={styles.rowSpaceBetween}>
         <View style={styles.marginHorizontalView}>
-          <Text style={styles.text}>My Balance</Text>
-          <TooltipIcon width={12} height={12} />
+          <Text style={styles.text}>My Crypto Pitaka</Text>
+          <Tooltip
+            isVisible={showTipBalance}
+            allowChildInteraction={false}
+            onClose={() => setShowTipBalance(false)}
+            showChildInTooltip={true}
+            useInteractionManager={true}
+            displayInsets={{ top: 20, bottom: 20, left: 35, right: 10 }}
+            placement="bottom"
+            tooltipStyle={{alignItems:'center'}}
+            arrowSize={{ width: 20, height: 10 }}
+            backgroundColor={'transparent'}
+            contentStyle={{backgroundColor: '#FFF0D9'}}
+            content={
+              <View style={styles.viewTooltipBalance}>
+                <Text style={styles.messageTooltip}>
+                This displays the total amount of your portfolio, including all your crypto assets and available cash on hand for buying other crypto.
+                </Text>
+              </View>
+            }
+            >
+          <TooltipChildrenContext.Consumer>
+            {({ tooltipDuplicate }) => (
+              <TouchableOpacity onPress={() => setShowTipBalance(true)}>
+                <TooltipIcon width={12} height={12} />
+              </TouchableOpacity>
+            )}
+          </TooltipChildrenContext.Consumer>
+        </Tooltip>
         </View>
-        <TouchableOpacity onPress={()=>{onViewAccount()}} style={styles.marginHorizontalView}>
+        <TouchableOpacity onPress={() => onViewAccount()} style={styles.marginHorizontalView}>
           <Text style={styles.profileLink}>View </Text>
           <ArrowRightIcon width={14} height={14} color={'#F8981D'} />
         </TouchableOpacity>
@@ -87,7 +116,7 @@ const AccountInfoCard = (props: AccountInfoCardProps) => {
       <View style={styles.rowSpaceBetween}>
         <View style={styles.rowCurrency}>
           {walletData ? <Text style={styles.currency}>
-            {useCurrencyFormat(walletData.currentBalance, walletData.currencyCode)}
+            {ballance}
           </Text>:
           <>
           <PytakaCurrencyIcon width={16} height={18} />
@@ -95,7 +124,9 @@ const AccountInfoCard = (props: AccountInfoCardProps) => {
           </>
         }
         </View>
-        <EyesIcon width={18} height={18} />
+        <TouchableOpacity onPress={() => setIsHideBalance(!isHideBalance)}>
+          <EyesIcon width={18} height={18} />
+        </TouchableOpacity>
       </View>
       <View style={styles.buttonWrapper}>
         <Tooltip

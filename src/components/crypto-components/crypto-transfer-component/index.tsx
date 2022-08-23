@@ -186,11 +186,11 @@ const CryptoTransferInComponent = ({
             {!isInputValid && (
               <View style={styles.errorRow}>
                 <Text style={styles.errorText}>
-                  {maximumError ? 'The maximum amount that you’re allowed to transfer-in is ₱100,000.00' : minimumError
+                  {isOverDailyLimitError ? 'The amount you entered exceeded your the daily limit of P100,000.00.' : maximumError ? 'The maximum amount that you’re allowed to transfer-in is ₱100,000.00' : minimumError
                     ? `The minimum amount that you’re allowed to transfer-in is ₱200.0`
                     : higherCurrentBalanceError
                     ? 'You have insufficient balance in your Pitaka.'
-                    : isOverDailyLimitError ? 'The amount you entered exceeded your the daily limit of P100,000.00.' :
+                    : 
                     isReachDailyLimitError ? 'You have reached your daily limit of P100,000.00. Please wait for the following day to transact again.' 
                     : 'Invalid amount'}
                 </Text>
