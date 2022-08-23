@@ -175,7 +175,11 @@ export class WalletService {
   getCurrenciesExchangeRate = async (
     pageNum?: number,
     pageSize?: number,
-    toCurrency?: string
+    toCurrency?: string,
+    fromCurrency?: string,
+    includePercentageChange?: boolean,
+    percentageChangeUnit?: string,
+    percentageChangeOffset?: number
   ) => {
     if (this._exchangeRateClient) {
       const response = await this._exchangeRateClient.get(
@@ -185,6 +189,10 @@ export class WalletService {
             pageNum: pageNum,
             pageSize: pageSize,
             toCurrency: toCurrency,
+            fromCurrency: fromCurrency,
+            includePercentageChange: includePercentageChange,
+            percentageChangeUnit: percentageChangeUnit,
+            percentageChangeOffset: percentageChangeOffset,
           },
         }
       );

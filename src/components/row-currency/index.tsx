@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,15 +8,15 @@ import {
   TouchableOpacity,
   ImageStyle,
   Image,
-  TextStyle,
-} from 'react-native';
-import { defaultsDeep } from 'lodash';
-import { useContext } from 'react';
-import { ThemeContext } from 'react-native-theme-component';
-import { Currency } from '../../model';
-import { LineChart } from 'react-native-svg-charts';
-import moment from 'moment';
-import { WalletService } from '../../services/wallet-service';
+  TextStyle
+} from "react-native";
+import { defaultsDeep } from "lodash";
+import { useContext } from "react";
+import { ThemeContext } from "react-native-theme-component";
+import { Currency } from "../../model";
+import { LineChart } from "react-native-svg-charts";
+import moment from "moment";
+import { WalletService } from "../../services/wallet-service";
 
 export type RowCurrencyProps = {
   currency: Currency;
@@ -38,10 +38,12 @@ const walletService = WalletService.instance();
 const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
   const styles = useMergeStyles(style);
   const [exchangeRateHistory, setExchangeRateHistory] = useState<number[]>([]);
+  const [currencyRateData, setCurrencyRateData] = useState<any>();
+  const [isValueReducing, setIsValueReducing] = useState<boolean>();
 
   const arrayMax = (arr: number[]) => {
     if (arr.length > 0) {
-      return arr.reduce(function (p, v) {
+      return arr.reduce(function(p, v) {
         return p > v ? p : v;
       });
     }
@@ -49,11 +51,13 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
   };
 
   const getChartData = async () => {
-    const sevenDayBeforeTime = moment().subtract(7, 'd').format();
+    const sevenDayBeforeTime = moment()
+      .subtract(7, "d")
+      .format();
     const responeData = await walletService.getCurrenciesHistoricalExchangeRate(
       sevenDayBeforeTime,
       currency.code,
-      'PHP',
+      "PHP",
       1,
       1000
     );
@@ -63,9 +67,31 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
     }
   };
 
+  const getCurrencyData = async () => {
+    const responeData = await walletService.getCurrenciesExchangeRate(
+      1,
+      10,
+      "PHP",
+      currency.code,
+      true,
+      "DAY",
+      7
+    );
+    if (responeData.data.length > 0) {
+      setCurrencyRateData(responeData.data[0]);
+    }
+  };
+
   useEffect(() => {
     getChartData();
+    getCurrencyData();
   }, []);
+
+  useEffect(() => {
+    if (currencyRateData) {
+      setIsValueReducing(currencyRateData.percentageChange < 0 ? true : false);
+    }
+  }, [currencyRateData]);
 
   const onSelectItem = () => {
     onSelect && onSelect(currency);
@@ -73,24 +99,10 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
 
   const max = arrayMax(exchangeRateHistory);
 
-  const dataLine = exchangeRateHistory.map((n) => (n / max) * 100);
+  const dataLine = exchangeRateHistory.map(n => (n / max) * 100);
 
-  const lastValue = exchangeRateHistory[exchangeRateHistory.length - 1];
-
-  const firstValue = exchangeRateHistory[0];
-
-  const isValueReducing = firstValue > lastValue;
-
-  let diff = '';
-
-  if (isValueReducing) {
-    diff = `-${(((firstValue - lastValue) / firstValue) * 100).toFixed(2)}%`;
-  } else {
-    diff = `+${(((lastValue - firstValue) / firstValue) * 100).toFixed(2)}%`;
-  }
-
-  const reducingColor = '#EB001B';
-  const rasingColor = '#6CBE58';
+  const reducingColor = "#EB001B";
+  const rasingColor = "#6CBE58";
 
   return (
     <TouchableOpacity
@@ -98,10 +110,10 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
       key={currency.code}
       style={[styles.row, { marginTop: 15 }]}
     >
-      <View style={[styles.row, { height: '100%' }]}>
+      <View style={[styles.row, { height: "100%" }]}>
         <Image
           source={{
-            uri: currency.logo,
+            uri: currency.logo
           }}
           style={styles.image}
         />
@@ -121,16 +133,22 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
         </View>
       </View>
       <View>
-        <View style={[styles.rowInfo, { alignItems: 'flex-end' }]}>
-          <Text style={styles.rate}>{`₱ ${lastValue}`}</Text>
-          <Text
-            style={[
-              styles.diff,
-              { color: isValueReducing ? reducingColor : rasingColor },
-            ]}
-          >
-            {diff}
-          </Text>
+        <View style={[styles.rowInfo, { alignItems: "flex-end" }]}>
+          {currencyRateData && (
+            <Text
+              style={styles.rate}
+            >{`₱ ${currencyRateData.exchangeRate}`}</Text>
+          )}
+          {currencyRateData && (
+            <Text
+              style={[
+                styles.diff,
+                { color: isValueReducing ? reducingColor : rasingColor }
+              ]}
+            >
+              {currencyRateData.percentageChange}
+            </Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -141,35 +159,35 @@ const useMergeStyles = (style?: RowCurrencyStyle): RowCurrencyStyle => {
   const { fonts } = useContext(ThemeContext);
 
   const defaultStyles = StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center' },
+    row: { flexDirection: "row", alignItems: "center" },
     image: { width: 43, height: 43 },
     rowInfo: {
-      flexDirection: 'column',
+      flexDirection: "column",
       marginLeft: 10,
       height: 43,
-      justifyContent: 'space-between',
+      justifyContent: "space-between"
     },
     rowSubInfo: {
       flex: 1,
-      height: '100%',
+      height: "100%",
       paddingHorizontal: 10,
-      alignItems: 'center',
+      alignItems: "center"
     },
     rate: {
       fontFamily: fonts.regular,
       fontSize: 14,
-      color: '#020000',
+      color: "#020000"
     },
     diff: {
       fontFamily: fonts.regular,
-      fontSize: 10,
+      fontSize: 10
     },
     reducingStyle: {
-      color: '#EB001B',
+      color: "#EB001B"
     },
     rasingStyle: {
-      color: '#2E7D32',
-    },
+      color: "#2E7D32"
+    }
   });
   return defaultsDeep(style, defaultStyles);
 };

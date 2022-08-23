@@ -78,20 +78,23 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
   const isValueReducing = firstExchangeRate > lastExchangeRate;
 
   if (isValueReducing) {
-    diffRateLabel = `-${
-      (((firstExchangeRate - lastExchangeRate) / firstExchangeRate) * 100).toFixed(2)
-    }%`;
+    diffRateLabel = `-${(
+      ((firstExchangeRate - lastExchangeRate) / firstExchangeRate) *
+      100
+    ).toFixed(2)}%`;
   } else {
-    diffRateLabel = `+${
-      (((lastExchangeRate - firstExchangeRate) / lastExchangeRate) * 100).toFixed(2)
-    }%`;
+    diffRateLabel = `+${(
+      ((lastExchangeRate - firstExchangeRate) / lastExchangeRate) *
+      100
+    ).toFixed(2)}%`;
   }
 
   const reducingColor = '#EB001B';
   const rasingColor = '#6CBE58';
 
-  const selectedExchangeValueFormated = selectedExchangeValue ? useCurrencyFormat(selectedExchangeValue.value, 'PHP') : '';
-
+  const selectedExchangeValueFormated = selectedExchangeValue
+    ? useCurrencyFormat(selectedExchangeValue.value, 'PHP')
+    : '';
 
   useEffect(() => {
     getCurrencyExchangeData(0);
@@ -106,7 +109,12 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
       1000
     );
     if (responeData.data.length > 0) {
-      const showingData = selectedOptionIndex > 2 ? responeData.data.filter((_: any, index: number) => index % (selectedOptionIndex + 1) === 0) : responeData.data;
+      const showingData =
+        selectedOptionIndex > 2
+          ? responeData.data.filter(
+              (_: any, index: number) => index % (selectedOptionIndex + 1) === 0
+            )
+          : responeData.data;
       console.log(selectedOptionIndex, showingData);
       const reverseData = showingData.reverse();
       let maxExchangeRate = reverseData[0].exchangeRate;
@@ -116,7 +124,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
             maxExchangeRate = e.exchangeRate;
           }
 
-          if(selectedOptionIndex > 1) {
+          if (selectedOptionIndex > 1) {
             return {
               value: e.exchangeRate,
               date: e.updatedAt,
@@ -136,7 +144,6 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
       setSelectedFilterOptionsIndex(selectedOptionIndex);
     }
   };
-
 
   return (
     <View style={styles.containerStyle}>
@@ -196,7 +203,11 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
           {selectedExchangeValue && (
             <Text style={styles.subTitle}>{`As of ${moment(
               selectedExchangeValue.date
-            ).format(selectedFilterOptionsIndex > 1 ? 'YYYY-MM-DD' : 'ddd DD, YYYY HH:ssA')}`}</Text>
+            ).format(
+              selectedFilterOptionsIndex > 1
+                ? 'YYYY-MM-DD'
+                : 'ddd DD, YYYY HH:ssA'
+            )}`}</Text>
           )}
         </View>
 
@@ -234,7 +245,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
             },
           }}
         />
-        {/* 
+        {/*
         <View style={styles.rowCurrency}>
           <Text style={styles.title2}>{`My Assets`}</Text>
         </View>

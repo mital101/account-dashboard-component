@@ -185,7 +185,7 @@ export const walletDefaultValue: WalletContextData = {
   getWalletLimits: () => undefined,
   isLoadingWalletLimits: false,
   walletLimits: undefined,
-  financialProfile: undefined
+  financialProfile: undefined,
 };
 
 export const WalletContext =
@@ -255,9 +255,9 @@ export function useWalletContextValue(): WalletContextData {
     useState<Paging>();
 
   const [_isLoadingWalletLimits, setIsLoadingWalletLimits] =
-  useState<boolean>(false);
+    useState<boolean>(false);
 
-  const [_walletLimits, setWalletLimits] = useState<WalletLimit[]>([]); 
+  const [_walletLimits, setWalletLimits] = useState<WalletLimit[]>([]);
 
   const getWallets = useCallback(async () => {
     try {
@@ -298,7 +298,7 @@ export function useWalletContextValue(): WalletContextData {
       const cryptoWallet: Wallet | undefined = walletsOrdered.find(
         (w) => w.bankAccount.bankCode === 'PDAX'
       );
-      if(unionWallet) {
+      if (unionWallet) {
         getWalletLimits(unionWallet?.walletId);
       }
       setWallets(walletsOrdered);
@@ -743,16 +743,29 @@ export function useWalletContextValue(): WalletContextData {
     walletService.getAccountStatus();
   }, []);
 
-  const getCryptoExchangeData = useCallback(async (limit?: number) => {
-    setIsLoadingCryptoExchange(true);
-    const result = await walletService.getCurrenciesExchangeRate(
-      1,
-      limit ?? 1000,
-      'PHP'
-    );
-    setCryptoExchangeData(result.data);
-    setIsLoadingCryptoExchange(false);
-  }, []);
+  const getCryptoExchangeData = useCallback(
+    async (
+      limit?: number,
+      fromCurrency?: string,
+      includePercentageChange?: boolean,
+      percentageChangeUnit?: string,
+      percentageChangeOffset?: number
+    ) => {
+      setIsLoadingCryptoExchange(true);
+      const result = await walletService.getCurrenciesExchangeRate(
+        1,
+        limit ?? 100,
+        'PHP',
+        fromCurrency,
+        includePercentageChang,
+        percentageChangeUnit,
+        percentageChangeOffset
+      );
+      setCryptoExchangeData(result.data);
+      setIsLoadingCryptoExchange(false);
+    },
+    []
+  );
 
   const getHistoricalExchangeRate = async (
     updateAtFrom: string,
@@ -764,8 +777,8 @@ export function useWalletContextValue(): WalletContextData {
       updateAtFrom,
       type,
       'PHP',
-      1,
-      1000
+      1000,
+      1
     );
     setIsLoadingHistoricalExchangeRate(false);
     return result;
@@ -858,15 +871,12 @@ export function useWalletContextValue(): WalletContextData {
     []
   );
 
-  const getWalletLimits = useCallback(
-    async (walletId: string) => {
-      setIsLoadingWalletLimits(true);
-      const result = await walletService.getLimitByWalletId(walletId);
-      setIsLoadingWalletLimits(false);
-      setWalletLimits(result.data);
-    },
-    []
-  );
+  const getWalletLimits = useCallback(async (walletId: string) => {
+    setIsLoadingWalletLimits(true);
+    const result = await walletService.getLimitByWalletId(walletId);
+    setIsLoadingWalletLimits(false);
+    setWalletLimits(result.data);
+  }, []);
 
   return useMemo(
     () => ({
@@ -944,7 +954,7 @@ export function useWalletContextValue(): WalletContextData {
       financialProfile: _financialProfile,
       getWalletLimits,
       isLoadingWalletLimits: _isLoadingWalletLimits,
-      walletLimits: _walletLimits
+      walletLimits: _walletLimits,
     }),
     [
       _isLinkedSuccessfully,
@@ -988,7 +998,7 @@ export function useWalletContextValue(): WalletContextData {
       _isLoadingCryptoTransactions,
       _cryptoTransactionsPaging,
       _isLoadingWalletLimits,
-      _walletLimits
+      _walletLimits,
     ]
   );
 }
