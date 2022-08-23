@@ -38,6 +38,8 @@ const walletService = WalletService.instance();
 const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
   const styles = useMergeStyles(style);
   const [exchangeRateHistory, setExchangeRateHistory] = useState<number[]>([]);
+  const [currencyRateData, setCurrencyRateData] = useState<any>();
+  const [isValueReducing, setIsValueReducing] = useState<boolean>();
 
   const arrayMax = (arr: number[]) => {
     if (arr.length > 0) {
@@ -65,9 +67,31 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
     }
   };
 
+  const getCurrencyData = async () => {
+    const responeData = await walletService.getCurrenciesExchangeRate(
+      1,
+      10,
+      "PHP",
+      currency.code,
+      true,
+      "DAY",
+      7
+    );
+    if (responeData.data.length > 0) {
+      setCurrencyRateData(responeData.data[0]);
+    }
+  };
+
   useEffect(() => {
     getChartData();
+    getCurrencyData();
   }, []);
+
+  useEffect(() => {
+    if (currencyRateData) {
+      setIsValueReducing(currencyRateData.percentageChange < 0 ? true : false);
+    }
+  }, [currencyRateData]);
 
   const onSelectItem = () => {
     onSelect && onSelect(currency);
@@ -76,20 +100,6 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
   const max = arrayMax(exchangeRateHistory);
 
   const dataLine = exchangeRateHistory.map(n => (n / max) * 100);
-
-  const lastValue = exchangeRateHistory[exchangeRateHistory.length - 1];
-
-  const firstValue = exchangeRateHistory[0];
-
-  const isValueReducing = firstValue > lastValue;
-
-  let diff = "";
-
-  if (isValueReducing) {
-    diff = `-${(((firstValue - lastValue) / firstValue) * 100).toFixed(2)}%`;
-  } else {
-    diff = `+${(((lastValue - firstValue) / firstValue) * 100).toFixed(2)}%`;
-  }
 
   const reducingColor = "#EB001B";
   const rasingColor = "#6CBE58";
@@ -124,15 +134,21 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
       </View>
       <View>
         <View style={[styles.rowInfo, { alignItems: "flex-end" }]}>
-          <Text style={styles.rate}>{`₱ ${lastValue}`}</Text>
-          <Text
-            style={[
-              styles.diff,
-              { color: isValueReducing ? reducingColor : rasingColor }
-            ]}
-          >
-            {diff}
-          </Text>
+          {currencyRateData && (
+            <Text
+              style={styles.rate}
+            >{`₱ ${currencyRateData.exchangeRate}`}</Text>
+          )}
+          {currencyRateData && (
+            <Text
+              style={[
+                styles.diff,
+                { color: isValueReducing ? reducingColor : rasingColor }
+              ]}
+            >
+              {currencyRateData.percentageChange}
+            </Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>
