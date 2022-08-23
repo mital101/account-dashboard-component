@@ -85,12 +85,7 @@ export interface WalletContextData {
   getCryptoExchangeData: (limit?: number) => void;
   getAccountStatus: () => void;
   isLoadingHistoricalExchangeRate: boolean;
-  getHistoricalExchangeRate: (
-    updateAtFrom: string,
-    type: string,
-    percentageChangeUnit: string,
-    percentageChangeOffset: number
-  ) => void;
+  getHistoricalExchangeRate: (updateAtFrom: string, type: string) => void;
   getListCurrency: () => void;
   isLoadingListCurrency: boolean;
   listCurrency?: Currency[];
@@ -760,22 +755,33 @@ export function useWalletContextValue(): WalletContextData {
     walletService.getAccountStatus();
   }, []);
 
-  const getCryptoExchangeData = useCallback(async (limit?: number) => {
-    setIsLoadingCryptoExchange(true);
-    const result = await walletService.getCurrenciesExchangeRate(
-      1,
-      limit ?? 100,
-      "PHP"
-    );
-    setCryptoExchangeData(result.data);
-    setIsLoadingCryptoExchange(false);
-  }, []);
+  const getCryptoExchangeData = useCallback(
+    async (
+      limit?: number,
+      fromCurrency?: string,
+      includePercentageChange?: boolean,
+      percentageChangeUnit?: string,
+      percentageChangeOffset?: number
+    ) => {
+      setIsLoadingCryptoExchange(true);
+      const result = await walletService.getCurrenciesExchangeRate(
+        1,
+        limit ?? 100,
+        "PHP",
+        fromCurrency,
+        includePercentageChang,
+        percentageChangeUnit,
+        percentageChangeOffset
+      );
+      setCryptoExchangeData(result.data);
+      setIsLoadingCryptoExchange(false);
+    },
+    []
+  );
 
   const getHistoricalExchangeRate = async (
     updateAtFrom: string,
-    type: string,
-    percentageChangeUnit?: string,
-    percentageChangeOffset?: number
+    type: string
   ) => {
     setIsLoadingHistoricalExchangeRate(true);
     console.log("getHistoricalExchangeRate -> from", updateAtFrom);
@@ -783,11 +789,8 @@ export function useWalletContextValue(): WalletContextData {
       updateAtFrom,
       type,
       "PHP",
-      100,
-      1,
-      true,
-      percentageChangeUnit,
-      percentageChangeOffset
+      1000,
+      1
     );
     setIsLoadingHistoricalExchangeRate(false);
     return result;

@@ -108,10 +108,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
       currency.code,
       "PHP",
       1,
-      100,
-      true,
-      "DAY",
-      10
+      100
     );
     if (responeData.data.length > 0) {
       const reverseData = responeData.data.reverse();

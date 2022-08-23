@@ -57,10 +57,7 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
       currency.code,
       "PHP",
       1,
-      100,
-      true,
-      "DAY",
-      10
+      100
     );
     if (responeData.data.length > 0) {
       const rates = responeData.data.reverse().map((d: any) => d.exchangeRate);
