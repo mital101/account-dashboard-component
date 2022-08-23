@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   StyleProp,
   Text,
@@ -8,15 +8,15 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  Dimensions,
-} from 'react-native';
-import useMergeStyles from './styles';
-import { Button, useCurrencyFormat } from 'react-native-theme-component';
-import { LineChart } from 'react-native-gifted-charts';
-import { Currency, CurrencyExchangeRateData } from '../../../model';
-import { WalletService } from '../../../services/wallet-service';
-import { filterExchangeRateOptions } from '../../../constants/common';
-import moment from 'moment';
+  Dimensions
+} from "react-native";
+import useMergeStyles from "./styles";
+import { Button, useCurrencyFormat } from "react-native-theme-component";
+import { LineChart } from "react-native-gifted-charts";
+import { Currency, CurrencyExchangeRateData } from "../../../model";
+import { WalletService } from "../../../services/wallet-service";
+import { filterExchangeRateOptions } from "../../../constants/common";
+import moment from "moment";
 
 export type CryptoTradeComponentThemeProps = {
   style?: CryptoTradeComponentThemeStyles;
@@ -57,17 +57,19 @@ export type ChartDataItem = {
 };
 
 const walletService = WalletService.instance();
-const screenWidth = Dimensions.get('screen').width;
+const screenWidth = Dimensions.get("screen").width;
 
 const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
   const { style, currency, onClick } = props;
   const styles = useMergeStyles(style);
-  const [selectedFilterOptionsIndex, setSelectedFilterOptionsIndex] =
-    useState<number>(0);
+  const [selectedFilterOptionsIndex, setSelectedFilterOptionsIndex] = useState<
+    number
+  >(0);
   const [chartData, setChartData] = useState<ChartDataItem[]>([]);
   const [maxExchangeRate, setMaxExchangeRate] = useState<number>();
-  const [selectedExchangeValue, setSelectedExchangeValue] =
-    useState<ChartDataItem>();
+  const [selectedExchangeValue, setSelectedExchangeValue] = useState<
+    ChartDataItem
+  >();
   const firstExchangeRate =
     chartData && chartData.length > 0 ? chartData[0].value : 0;
   const lastExchangeRate =
@@ -77,36 +79,39 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
   const lastExchangeDate =
     chartData && chartData.length > 0
       ? moment(chartData[chartData.length - 1].date).format(
-          'ddd DD, YYYY HH:ssA'
+          "ddd DD, YYYY HH:ssA"
         )
-      : '';
+      : "";
 
-  let diffRateLabel: string = '';
+  let diffRateLabel: string = "";
 
   const isValueReducing = firstExchangeRate > lastExchangeRate;
 
   if (isValueReducing) {
-    diffRateLabel = `-${
-      (firstExchangeRate - lastExchangeRate) / firstExchangeRate
-    }%`;
+    diffRateLabel = `-${(firstExchangeRate - lastExchangeRate) /
+      firstExchangeRate}%`;
   } else {
-    diffRateLabel = `+${
-      (lastExchangeRate - firstExchangeRate) / lastExchangeRate
-    }%`;
+    diffRateLabel = `+${(lastExchangeRate - firstExchangeRate) /
+      lastExchangeRate}%`;
   }
 
-  const reducingColor = '#EB001B';
-  const rasingColor = '#6CBE58';
+  const reducingColor = "#EB001B";
+  const rasingColor = "#6CBE58";
 
-  const selectedExchangeValueFormated = selectedExchangeValue ? useCurrencyFormat(selectedExchangeValue.value, 'PHP') : '';
+  const selectedExchangeValueFormated = selectedExchangeValue
+    ? useCurrencyFormat(selectedExchangeValue.value, "PHP")
+    : "";
 
   const getCurrencyExchangeData = async () => {
     const responeData = await walletService.getCurrenciesHistoricalExchangeRate(
       filterExchangeRateOptions[selectedFilterOptionsIndex].date,
       currency.code,
-      'PHP',
+      "PHP",
       1,
-      100
+      100,
+      true,
+      "DAY",
+      10
     );
     if (responeData.data.length > 0) {
       const reverseData = responeData.data.reverse();
@@ -119,8 +124,8 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
           return {
             value: e.exchangeRate,
             date: e.updatedAt,
-            labelTextStyle: { color: '#7F7B82', fontSize: 10, marginLeft: 10 },
-            label: moment(e.updatedAt).format('DD/MM'),
+            labelTextStyle: { color: "#7F7B82", fontSize: 10, marginLeft: 10 },
+            label: moment(e.updatedAt).format("DD/MM")
           };
         }
       );
@@ -132,8 +137,6 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
   useEffect(() => {
     getCurrencyExchangeData();
   }, [selectedFilterOptionsIndex]);
-
-
 
   return (
     <View style={styles.containerStyle}>
@@ -193,7 +196,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
           {selectedExchangeValue && (
             <Text style={styles.subTitle}>{`As of ${moment(
               selectedExchangeValue.date
-            ).format('ddd DD, YYYY HH:ssA')}`}</Text>
+            ).format("ddd DD, YYYY HH:ssA")}`}</Text>
           )}
         </View>
 
@@ -221,18 +224,18 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
           xAxisColor="#DDD9E4"
           showStripOnPress={true}
           pointerConfig={{
-            pointerStripColor: '#000000',
+            pointerStripColor: "#000000",
             pointerStripWidth: 2,
             pointerStripUptoDataPoint: true,
             pointerComponent: () => <View style={styles.pointer} />,
             pointerLabelComponent: (items: [ChartDataItem]) => {
-              console.log('pointerLabelComponent -> items', items);
+              console.log("pointerLabelComponent -> items", items);
               setSelectedExchangeValue(items[0]);
               return <View />;
-            },
+            }
           }}
         />
-        {/* 
+        {/*
         <View style={styles.rowCurrency}>
           <Text style={styles.title2}>{`My Assets`}</Text>
         </View>
@@ -251,21 +254,21 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
         <View style={styles.footerButtonWrapper}>
           <Button
             onPress={() => {
-              onClick({ type: 'Buy', item: chartData });
+              onClick({ type: "Buy", item: chartData });
             }}
             // label={
             //   i18n?.t("customer_invoke_component.lbl_continue") ??
             //   "Continue"
             // }
-            label={'Buy'}
+            label={"Buy"}
           />
         </View>
         <View style={styles.footerButtonWrapper}>
           <Button
             onPress={() => {
-              onClick({ type: 'Sell', item: chartData });
+              onClick({ type: "Sell", item: chartData });
             }}
-            label={'Sell'}
+            label={"Sell"}
           />
         </View>
       </View>

@@ -1,5 +1,5 @@
-import { FilterTransaction } from '../types';
-import qs from 'qs';
+import { FilterTransaction } from "../types";
+import qs from "qs";
 
 type WalletClient = {
   walletClient: any;
@@ -25,7 +25,7 @@ export class WalletService {
   constructor() {
     if (WalletService._instance) {
       throw new Error(
-        'Error: Instantiation failed: Use WalletService.getInstance() instead of new.'
+        "Error: Instantiation failed: Use WalletService.getInstance() instead of new."
       );
     }
     WalletService._instance = this;
@@ -47,15 +47,15 @@ export class WalletService {
 
   getWallets = async () => {
     if (this._walletClient) {
-      const response = await this._walletClient.get('wallets', {
+      const response = await this._walletClient.get("wallets", {
         params: {
           pageSize: 0,
-          pageNumber: 0,
-        },
+          pageNumber: 0
+        }
       });
       return response.data;
     } else {
-      throw new Error('Wallet Client is not registered');
+      throw new Error("Wallet Client is not registered");
     }
   };
 
@@ -64,7 +64,7 @@ export class WalletService {
       const response = await this._walletClient.get(`wallets/${walletId}`);
       return response.data;
     } else {
-      throw new Error('Wallet Client is not registered');
+      throw new Error("Wallet Client is not registered");
     }
   };
 
@@ -75,17 +75,17 @@ export class WalletService {
   ) => {
     if (this._walletClient) {
       const response = await this._walletClient.post(
-        'wallets/link-bank-accounts',
+        "wallets/link-bank-accounts",
         {
           bankId,
           consentId,
           accountIds,
-          async: true,
+          async: true
         }
       );
       return response.data;
     } else {
-      throw new Error('Wallet Client is not registered');
+      throw new Error("Wallet Client is not registered");
     }
   };
 
@@ -94,18 +94,18 @@ export class WalletService {
       const response = await this._walletClient.delete(`wallets/${walletId}`);
       return response.data;
     } else {
-      throw new Error('Wallet Client is not registered');
+      throw new Error("Wallet Client is not registered");
     }
   };
 
   setDefaultWallet = async (walletId: string, isDefaultWallet: boolean) => {
     if (this._walletClient) {
       const response = await this._walletClient.patch(`wallets/${walletId}`, {
-        isDefaultWallet,
+        isDefaultWallet
       });
       return response.data;
     } else {
-      throw new Error('Wallet Client is not registered');
+      throw new Error("Wallet Client is not registered");
     }
   };
 
@@ -126,29 +126,29 @@ export class WalletService {
           fromDateTime,
           toDateTime,
           maskAccountNumber: true,
-          fileFormat: 'EXCEL',
+          fileFormat: "EXCEL",
           sendAsEmbeddedAttachment: true,
-          expiryDateTime,
+          expiryDateTime
         }
       );
       return response.data;
     } else {
-      throw new Error('Financial Client is not registered');
+      throw new Error("Financial Client is not registered");
     }
   };
 
   getTransactions = async (walletIds: string, pageNumber?: number) => {
     if (this._walletClient) {
-      const response = await this._walletClient.get('transactions', {
+      const response = await this._walletClient.get("transactions", {
         params: {
           walletIds: walletIds,
           pageNumber,
-          pageSize: 10,
-        },
+          pageSize: 10
+        }
       });
       return response.data;
     } else {
-      throw new Error('Wallet Client is not registered');
+      throw new Error("Wallet Client is not registered");
     }
   };
 
@@ -159,16 +159,16 @@ export class WalletService {
     format: string
   ) => {
     if (this._contentTemplateClient) {
-      const response = await this._contentTemplateClient.post('contents', {
+      const response = await this._contentTemplateClient.post("contents", {
         appId: appId,
         documentFormat: format,
         entityId: entityId,
         templateName: templateName,
-        data: {},
+        data: {}
       });
       return response.data;
     } else {
-      throw new Error('Content Template Client is not registered');
+      throw new Error("Content Template Client is not registered");
     }
   };
 
@@ -179,18 +179,18 @@ export class WalletService {
   ) => {
     if (this._exchangeRateClient) {
       const response = await this._exchangeRateClient.get(
-        'currencies/exchange-rates',
+        "currencies/exchange-rates",
         {
           params: {
             pageNum: pageNum,
             pageSize: pageSize,
-            toCurrency: toCurrency,
-          },
+            toCurrency: toCurrency
+          }
         }
       );
       return response.data;
     } else {
-      throw new Error('Exchange rate client service is not registered');
+      throw new Error("Exchange rate client service is not registered");
     }
   };
 
@@ -199,11 +199,14 @@ export class WalletService {
     fromCurrency?: string,
     toCurrency?: string,
     pageNum?: number,
-    pageSize?: number
+    pageSize?: number,
+    includePercentageChange?: boolean,
+    percentageChangeUnit?: string,
+    percentageChangeOffset?: number
   ) => {
     if (this._exchangeRateClient) {
       const response = await this._exchangeRateClient.get(
-        'currencies/historical-exchange-rates',
+        "currencies/historical-exchange-rates",
         {
           params: {
             pageNum,
@@ -211,13 +214,16 @@ export class WalletService {
             fromCurrency,
             toCurrency,
             updateAtFrom: updateAtFrom,
-          },
+            includePercentageChange: includePercentageChange,
+            percentageChangeUnit: percentageChangeUnit,
+            percentageChangeOffset: percentageChangeOffset
+          }
         }
       );
       return response.data;
     } else {
       throw new Error(
-        'Historical exchange rate client service is not registered'
+        "Historical exchange rate client service is not registered"
       );
     }
   };
@@ -225,12 +231,12 @@ export class WalletService {
   getListCurrency = async () => {
     if (this._countryInformationClient) {
       const response = await this._countryInformationClient.get(
-        'currencies?currencyType=CRYPTO'
+        "currencies?currencyType=CRYPTO"
       );
       return response.data;
     } else {
       throw new Error(
-        'Historical exchange rate client service is not registered'
+        "Historical exchange rate client service is not registered"
       );
     }
   };
@@ -243,48 +249,48 @@ export class WalletService {
     if (this._paymentClient) {
       try {
         const response = await this._paymentClient.post(
-          'inward-payments/validations',
+          "inward-payments/validations",
           {
             Data: {
               Initiation: {
-                LocalInstrument: 'PDAX',
+                LocalInstrument: "PDAX",
                 InstructedAmount: {
                   Amount: amount,
-                  Currency: 'PHP',
+                  Currency: "PHP"
                 },
                 DebtorAccount: {
                   Identification: senderAccountNumber,
-                  SchemeName: 'PH.BRSTN.AccountNumber',
+                  SchemeName: "PH.BRSTN.AccountNumber"
                 },
                 DebtorAccountExt: {
-                  BankCode: 'UnionDigital',
+                  BankCode: "UnionDigital"
                 },
                 CreditorAccount: {
                   Identification: receiverAccountNumber,
-                  SchemeName: 'PH.BRSTN.AccountNumber',
+                  SchemeName: "PH.BRSTN.AccountNumber"
                 },
                 CreditorAccountExt: {
-                  BankCode: 'PDAX',
+                  BankCode: "PDAX"
                 },
                 RemittanceInformation: {
-                  Unstructured: 'notes',
+                  Unstructured: "notes"
                 },
                 SupplementaryData: {
-                  PaymentType: 'MoneyIn',
-                },
-              },
+                  PaymentType: "MoneyIn"
+                }
+              }
             },
             Risk: {
-              PaymentContextCode: 'PartyToParty',
-            },
+              PaymentContextCode: "PartyToParty"
+            }
           }
         );
         return response.data;
       } catch (error) {
-        return 'error: ' + error;
+        return "error: " + error;
       }
     } else {
-      throw new Error('Payment client service is not registered');
+      throw new Error("Payment client service is not registered");
     }
   };
 
@@ -295,47 +301,46 @@ export class WalletService {
   ) => {
     if (this._paymentClient) {
       try {
-        const response = await this._paymentClient.post('inward-payments', {
+        const response = await this._paymentClient.post("inward-payments", {
           Data: {
             Initiation: {
-              LocalInstrument: 'PDAX',
+              LocalInstrument: "PDAX",
               InstructedAmount: {
                 Amount: amount,
-                Currency: 'PHP',
+                Currency: "PHP"
               },
               DebtorAccount: {
                 Identification: senderAccountNumber,
-                SchemeName: 'PH.BRSTN.AccountNumber',
+                SchemeName: "PH.BRSTN.AccountNumber"
               },
               CreditorAccount: {
                 Identification: receiverAccountNumber,
-                SchemeName: 'PH.BRSTN.AccountNumber',
+                SchemeName: "PH.BRSTN.AccountNumber"
               },
               RemittanceInformation: {
-                Unstructured:
-                  'Topup money from Pitaka account to Crypto Wallet',
+                Unstructured: "Topup money from Pitaka account to Crypto Wallet"
               },
               SupplementaryData: {
-                PaymentType: 'MoneyIn',
+                PaymentType: "MoneyIn"
               },
               CreditorAccountExt: {
-                BankCode: 'PDAX',
+                BankCode: "PDAX"
               },
               DebtorAccountExt: {
-                BankCode: 'UnionDigital',
-              },
-            },
+                BankCode: "UnionDigital"
+              }
+            }
           },
           Risk: {
-            PaymentContextCode: 'PartyToParty',
-          },
+            PaymentContextCode: "PartyToParty"
+          }
         });
         return response.data;
       } catch (error) {
-        return 'error: ' + error;
+        return "error: " + error;
       }
     } else {
-      throw new Error('Payment client service is not registered');
+      throw new Error("Payment client service is not registered");
     }
   };
 
@@ -343,22 +348,22 @@ export class WalletService {
     if (this._paymentClient) {
       try {
         const response = await this._paymentClient.patch(
-          'inward-payments/' + id,
+          "inward-payments/" + id,
           {
             Data: {
               Initiation: {
-                LocalInstrument: 'PDAX',
+                LocalInstrument: "PDAX",
                 SupplementaryData: {
-                  PaymentType: 'MoneyIn',
+                  PaymentType: "MoneyIn",
                   CustomFields: [
                     {
-                      Key: 'OTP',
-                      Value: `${otp}`,
-                    },
-                  ],
-                },
-              },
-            },
+                      Key: "OTP",
+                      Value: `${otp}`
+                    }
+                  ]
+                }
+              }
+            }
           }
         );
         return response.data;
@@ -366,7 +371,7 @@ export class WalletService {
         return error;
       }
     } else {
-      throw new Error('Payment client service is not registered');
+      throw new Error("Payment client service is not registered");
     }
   };
 
@@ -380,48 +385,48 @@ export class WalletService {
     if (this._paymentClient) {
       try {
         const response = await this._paymentClient.post(
-          'outward-payments/validations',
+          "outward-payments/validations",
           {
             Data: {
               Initiation: {
-                LocalInstrument: 'PDAX',
+                LocalInstrument: "PDAX",
                 InstructedAmount: {
                   Amount: amount,
-                  Currency: 'PHP',
+                  Currency: "PHP"
                 },
                 DebtorAccount: {
                   Identification: senderAccountNumber,
-                  SchemeName: 'PH.BRSTN.AccountNumber',
+                  SchemeName: "PH.BRSTN.AccountNumber"
                 },
                 DebtorAccountExt: {
-                  BankCode: 'PDAX',
+                  BankCode: "PDAX"
                 },
                 CreditorAccount: {
                   Identification: receiverAccountNumber,
-                  SchemeName: 'PH.BRSTN.AccountNumber',
+                  SchemeName: "PH.BRSTN.AccountNumber"
                 },
                 CreditorAccountExt: {
-                  BankCode: 'UnionDigital',
+                  BankCode: "UnionDigital"
                 },
                 RemittanceInformation: {
-                  Unstructured: 'notes',
+                  Unstructured: "notes"
                 },
                 SupplementaryData: {
-                  PaymentType: 'MoneyOut',
-                },
-              },
+                  PaymentType: "MoneyOut"
+                }
+              }
             },
             Risk: {
-              PaymentContextCode: 'PartyToParty',
-            },
+              PaymentContextCode: "PartyToParty"
+            }
           }
         );
         return response.data;
       } catch (error) {
-        return 'error: ' + error;
+        return "error: " + error;
       }
     } else {
-      throw new Error('Payment client service is not registered');
+      throw new Error("Payment client service is not registered");
     }
   };
 
@@ -432,47 +437,46 @@ export class WalletService {
   ) => {
     if (this._paymentClient) {
       try {
-        const response = await this._paymentClient.post('outward-payments', {
+        const response = await this._paymentClient.post("outward-payments", {
           Data: {
             Initiation: {
-              LocalInstrument: 'PDAX',
+              LocalInstrument: "PDAX",
               InstructedAmount: {
                 Amount: amount,
-                Currency: 'PHP',
+                Currency: "PHP"
               },
               DebtorAccount: {
                 Identification: senderAccountNumber,
-                SchemeName: 'PH.BRSTN.AccountNumber',
+                SchemeName: "PH.BRSTN.AccountNumber"
               },
               CreditorAccount: {
                 Identification: receiverAccountNumber,
-                SchemeName: 'PH.BRSTN.AccountNumber',
+                SchemeName: "PH.BRSTN.AccountNumber"
               },
               RemittanceInformation: {
-                Unstructured:
-                  'Topup money from Pitaka account to Crypto Wallet',
+                Unstructured: "Topup money from Pitaka account to Crypto Wallet"
               },
               SupplementaryData: {
-                PaymentType: 'MoneyOut',
+                PaymentType: "MoneyOut"
               },
               CreditorAccountExt: {
-                BankCode: 'UnionDigital',
+                BankCode: "UnionDigital"
               },
               DebtorAccountExt: {
-                BankCode: 'PDAX',
-              },
-            },
+                BankCode: "PDAX"
+              }
+            }
           },
           Risk: {
-            PaymentContextCode: 'PartyToParty',
-          },
+            PaymentContextCode: "PartyToParty"
+          }
         });
         return response.data;
       } catch (error) {
-        return 'error: ' + error;
+        return "error: " + error;
       }
     } else {
-      throw new Error('Payment client service is not registered');
+      throw new Error("Payment client service is not registered");
     }
   };
 
@@ -480,22 +484,22 @@ export class WalletService {
     if (this._paymentClient) {
       try {
         const response = await this._paymentClient.patch(
-          'outward-payments/' + id,
+          "outward-payments/" + id,
           {
             Data: {
               Initiation: {
-                LocalInstrument: 'PDAX',
+                LocalInstrument: "PDAX",
                 SupplementaryData: {
-                  PaymentType: 'MoneyOut',
+                  PaymentType: "MoneyOut",
                   CustomFields: [
                     {
-                      Key: 'OTP',
-                      Value: `${otp}`,
-                    },
-                  ],
-                },
-              },
-            },
+                      Key: "OTP",
+                      Value: `${otp}`
+                    }
+                  ]
+                }
+              }
+            }
           }
         );
         return response.data;
@@ -503,20 +507,20 @@ export class WalletService {
         return error;
       }
     } else {
-      throw new Error('Payment client service is not registered');
+      throw new Error("Payment client service is not registered");
     }
   };
 
   getWalletsByBankId = async (bankId: string) => {
     if (this._walletClient) {
-      const response = await this._walletClient.get('wallets', {
+      const response = await this._walletClient.get("wallets", {
         params: {
-          bankId: bankId,
-        },
+          bankId: bankId
+        }
       });
       return response.data;
     } else {
-      throw new Error('Wallet Client is not registered');
+      throw new Error("Wallet Client is not registered");
     }
   };
 
@@ -527,39 +531,39 @@ export class WalletService {
   ) => {
     if (this._walletClient) {
       const params = {
-        walletType: 'CRYPTO_WALLET',
+        walletType: "CRYPTO_WALLET",
         pageNumber,
         pageSize,
         statuses: filter?.status,
         fromDateTime: filter?.from,
         toDateTime: filter?.to,
-        txnTypes: filter?.types,
+        txnTypes: filter?.types
       };
 
-      const response = await this._walletClient.get('transactions', {
+      const response = await this._walletClient.get("transactions", {
         params: {
-          ...params,
+          ...params
         },
         paramsSerializer: (params: any) => {
           return qs.stringify(params, { indices: false });
-        },
+        }
       });
       return response.data;
     } else {
-      throw new Error('Wallet Client is not registered');
+      throw new Error("Wallet Client is not registered");
     }
   };
 
   getCryptoPaymentTransaction = async (paymentId: string) => {
     if (this._paymentClient) {
       try {
-        const response = await this._paymentClient.get('payments/' + paymentId);
+        const response = await this._paymentClient.get("payments/" + paymentId);
         return response.data;
       } catch (error) {
         return error;
       }
     } else {
-      throw new Error('Payment client service is not registered');
+      throw new Error("Payment client service is not registered");
     }
   };
 
@@ -569,13 +573,13 @@ export class WalletService {
         `users/${userId}/financial-profile`,
         {
           params: {
-            bankId: bankId,
-          },
+            bankId: bankId
+          }
         }
       );
       return response.data;
     } else {
-      throw new Error('Financial Client is not registered');
+      throw new Error("Financial Client is not registered");
     }
   };
 
@@ -584,13 +588,13 @@ export class WalletService {
       const response = await this._limitClient.get(`limits`, {
         params: {
           walletId: walletId,
-          serviceProvider: 'UD',
-        },
+          serviceProvider: "UD"
+        }
       });
-      console.log('getLimitByWalletId -> data', response.data);
+      console.log("getLimitByWalletId -> data", response.data);
       return response.data;
     } else {
-      throw new Error('Limit Client is not registered');
+      throw new Error("Limit Client is not registered");
     }
   };
 }

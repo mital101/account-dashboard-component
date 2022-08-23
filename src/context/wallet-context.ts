@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { WalletService } from '../services/wallet-service';
-import { showMessage } from 'react-native-theme-component';
-import moment from 'moment';
+import React, { useCallback, useMemo, useState } from "react";
+import { WalletService } from "../services/wallet-service";
+import { showMessage } from "react-native-theme-component";
+import moment from "moment";
 import {
   GroupedTransactions,
   GroupedWallets,
@@ -15,10 +15,10 @@ import {
   CurrencyExchangeRateData,
   Currency,
   WalletLimit,
-  FinancialProfile,
-} from '../model';
-import _, { chain, groupBy, isEmpty, orderBy } from 'lodash';
-import { FilterTransaction, TransferType } from '../types';
+  FinancialProfile
+} from "../model";
+import _, { chain, groupBy, isEmpty, orderBy } from "lodash";
+import { FilterTransaction, TransferType } from "../types";
 
 const walletService = WalletService.instance();
 
@@ -85,7 +85,12 @@ export interface WalletContextData {
   getCryptoExchangeData: (limit?: number) => void;
   getAccountStatus: () => void;
   isLoadingHistoricalExchangeRate: boolean;
-  getHistoricalExchangeRate: (updateAtFrom: string, type: string) => void;
+  getHistoricalExchangeRate: (
+    updateAtFrom: string,
+    type: string,
+    percentageChangeUnit: string,
+    percentageChangeOffset: number
+  ) => void;
   getListCurrency: () => void;
   isLoadingListCurrency: boolean;
   listCurrency?: Currency[];
@@ -166,7 +171,7 @@ export const walletDefaultValue: WalletContextData = {
   getWalletsById: () => null,
   refreshWalletsById: () => null,
   isLoadingInitMoneyIn: false,
-  paymentId: '',
+  paymentId: "",
   amount: 0,
   initMoneyin: async () => undefined,
   setAmountCryptoIn: () => undefined,
@@ -188,8 +193,9 @@ export const walletDefaultValue: WalletContextData = {
   financialProfile: undefined
 };
 
-export const WalletContext =
-  React.createContext<WalletContextData>(walletDefaultValue);
+export const WalletContext = React.createContext<WalletContextData>(
+  walletDefaultValue
+);
 
 export function useWalletContextValue(): WalletContextData {
   const [_wallets, setWallets] = useState<Wallet[]>([]);
@@ -227,37 +233,46 @@ export function useWalletContextValue(): WalletContextData {
   const [_cryptoExchangeData, setCryptoExchangeData] = useState<
     CurrencyExchangeRateData[] | undefined
   >();
-  const [_isLoadingHistoricalExchangeRate, setIsLoadingHistoricalExchangeRate] =
-    useState<boolean>(false);
+  const [
+    _isLoadingHistoricalExchangeRate,
+    setIsLoadingHistoricalExchangeRate
+  ] = useState<boolean>(false);
 
   const [_isLoadingListCurrency, setIsLoadingListCurrency] = useState(true);
   const [_listCurrency, setListCurrency] = useState<Currency[] | undefined>();
 
-  const [_isLoadingInitMoneyIn, setIsLoadingInitMoneyIn] =
-    useState<boolean>(false);
+  const [_isLoadingInitMoneyIn, setIsLoadingInitMoneyIn] = useState<boolean>(
+    false
+  );
   const [_paymentId, setPaymentId] = useState<string>();
   const [_amount, setAmount] = useState<number>();
   const [_currentTransfer, setCurrentTransfer] = useState<TransferType>();
-  const [_isLoadingInitMoneyOut, setIsLoadingInitMoneyOut] =
-    useState<boolean>(false);
+  const [_isLoadingInitMoneyOut, setIsLoadingInitMoneyOut] = useState<boolean>(
+    false
+  );
   const [_walletsById, setWalletsById] = useState<Wallet[]>([]);
 
-  const [_isLoadingFinancialProfile, setIsLoadingFinancialProfile] =
-    useState(true);
+  const [_isLoadingFinancialProfile, setIsLoadingFinancialProfile] = useState(
+    true
+  );
   const [_financialProfile, setFinancialProfile] = useState<FinancialProfile>();
 
-  const [_isLoadingCryptoTransactions, setIsLoadingCryptoTransactions] =
-    useState<boolean>(false);
+  const [
+    _isLoadingCryptoTransactions,
+    setIsLoadingCryptoTransactions
+  ] = useState<boolean>(false);
   const [_cryptoTransactions, setCryptoTransactions] = useState<Transaction[]>(
     []
   );
-  const [_cryptoTransactionsPaging, setCryptoTransactionsPaging] =
-    useState<Paging>();
+  const [_cryptoTransactionsPaging, setCryptoTransactionsPaging] = useState<
+    Paging
+  >();
 
-  const [_isLoadingWalletLimits, setIsLoadingWalletLimits] =
-  useState<boolean>(false);
+  const [_isLoadingWalletLimits, setIsLoadingWalletLimits] = useState<boolean>(
+    false
+  );
 
-  const [_walletLimits, setWalletLimits] = useState<WalletLimit[]>([]); 
+  const [_walletLimits, setWalletLimits] = useState<WalletLimit[]>([]);
 
   const getWallets = useCallback(async () => {
     try {
@@ -273,32 +288,32 @@ export function useWalletContextValue(): WalletContextData {
 
   const _fetchWallets = async () => {
     const resp = await walletService.getWallets();
-    console.log('_fetchWallets -> resp', resp);
+    console.log("_fetchWallets -> resp", resp);
     let _walletsData: Wallet[] = resp.data;
     if (isEmpty(_walletsData)) {
       setWallets([]);
       setSummary(undefined);
     } else {
-      const _defaultWallet = _walletsData.find((w) => w.isDefaultWallet);
+      const _defaultWallet = _walletsData.find(w => w.isDefaultWallet);
       if (!_defaultWallet) {
         await walletService.setDefaultWallet(_walletsData[0].walletId, true);
         _walletsData = _walletsData.map((w, index) => ({
           ...w,
-          isDefaultWallet: index === 0,
+          isDefaultWallet: index === 0
         }));
       }
       const walletsOrdered = orderBy<Wallet>(
         _walletsData,
-        ['isDefaultWallet'],
-        ['desc']
+        ["isDefaultWallet"],
+        ["desc"]
       );
       const unionWallet: Wallet | undefined = walletsOrdered.find(
-        (w) => w.bankAccount.bankCode === 'UnionDigital'
+        w => w.bankAccount.bankCode === "UnionDigital"
       );
       const cryptoWallet: Wallet | undefined = walletsOrdered.find(
-        (w) => w.bankAccount.bankCode === 'PDAX'
+        w => w.bankAccount.bankCode === "PDAX"
       );
-      if(unionWallet) {
+      if (unionWallet) {
         getWalletLimits(unionWallet?.walletId);
       }
       setWallets(walletsOrdered);
@@ -351,7 +366,7 @@ export function useWalletContextValue(): WalletContextData {
         setCryptoTC(resp.data);
         // clearWalletErrors();
       } catch (err) {
-        console.log('err ', err);
+        console.log("err ", err);
 
         setIsLoadingCryptoTC(false);
         setLoadError(err as Error);
@@ -361,7 +376,7 @@ export function useWalletContextValue(): WalletContextData {
   );
 
   const sleep = (ms: number) => {
-    return new Promise((resolve) => setTimeout(() => resolve(true), ms));
+    return new Promise(resolve => setTimeout(() => resolve(true), ms));
   };
 
   const refreshWallets = useCallback(
@@ -407,8 +422,8 @@ export function useWalletContextValue(): WalletContextData {
       refreshWallets();
       setIsUpdatingPrimary(false);
       showMessage({
-        message: 'Primary Account Changed Successfully',
-        backgroundColor: '#44ac44',
+        message: "Primary Account Changed Successfully",
+        backgroundColor: "#44ac44"
       });
     } catch (error) {
       setIsUpdatingPrimary(false);
@@ -424,8 +439,8 @@ export function useWalletContextValue(): WalletContextData {
         refreshWallets();
         setIsUnlinking(false);
         showMessage({
-          message: 'Account successfully removed',
-          backgroundColor: '#44ac44',
+          message: "Account successfully removed",
+          backgroundColor: "#44ac44"
         });
       } catch (error) {
         setIsUnlinking(false);
@@ -443,29 +458,31 @@ export function useWalletContextValue(): WalletContextData {
       return _wallets;
     }
     const aggregatedWallet: Wallet = {
-      walletName: 'All Accounts',
-      walletId: _wallets.map((w: Wallet) => w.walletId).join(','),
+      walletName: "All Accounts",
+      walletId: _wallets.map((w: Wallet) => w.walletId).join(","),
       availableBalance: _summary?.availableBalance ?? 0,
       currentBalance: _summary?.currentBalance ?? 0,
       isDefaultWallet: false,
       type: _wallets[0].type,
       bankAccount: _wallets[0].bankAccount,
       currencyCode: _wallets[0].currencyCode,
-      isAggregated: true,
+      isAggregated: true
     };
     return [aggregatedWallet, ..._wallets];
   }, [_wallets, _summary]);
 
   const getGroupWallets = useCallback(() => {
-    const group = chain(_wallets).groupBy('type').value();
-    return Object.keys(group).map((key) => {
+    const group = chain(_wallets)
+      .groupBy("type")
+      .value();
+    return Object.keys(group).map(key => {
       let section;
       switch (key) {
-        case 'BANK_WALLET':
-          section = 'Bank Accounts';
+        case "BANK_WALLET":
+          section = "Bank Accounts";
           break;
-        case 'VIRTUAL_WALLET':
-          section = 'Wallets';
+        case "VIRTUAL_WALLET":
+          section = "Wallets";
           break;
         default:
           section = key;
@@ -473,13 +490,13 @@ export function useWalletContextValue(): WalletContextData {
       }
       return {
         section,
-        data: orderBy<Wallet>(group[key], ['isDefaultWallet'], ['desc']),
+        data: orderBy<Wallet>(group[key], ["isDefaultWallet"], ["desc"])
       };
     });
   }, [_wallets]);
 
   const getDefaultWallet = useCallback(() => {
-    return _wallets.find((wallet) => wallet.isDefaultWallet);
+    return _wallets.find(wallet => wallet.isDefaultWallet);
   }, [_wallets]);
 
   const getWalletDetail = useCallback(
@@ -488,7 +505,7 @@ export function useWalletContextValue(): WalletContextData {
         return undefined;
       }
       const wallet = _wallets.find(
-        (item) => item.walletId.replace(/-/g, '') === walletId.replace(/-/g, '')
+        item => item.walletId.replace(/-/g, "") === walletId.replace(/-/g, "")
       );
       return wallet;
     },
@@ -571,7 +588,7 @@ export function useWalletContextValue(): WalletContextData {
     _unlinkError,
     _updatePrimaryError,
     _linkWalletError,
-    _transactionError,
+    _transactionError
   ]);
 
   const clearWallets = useCallback(() => {
@@ -590,23 +607,23 @@ export function useWalletContextValue(): WalletContextData {
           walletId,
           pageNumber
         );
-        const index = _transactions.findIndex((ts) => ts.walletId === walletId);
+        const index = _transactions.findIndex(ts => ts.walletId === walletId);
         if (index === -1) {
           // is transactions not existed, add new
           setTransactions([
             ..._transactions,
-            { walletId, data, paging, summary },
+            { walletId, data, paging, summary }
           ]);
         } else {
           // update transactions
           setTransactions(
-            _transactions.map((ts) => {
+            _transactions.map(ts => {
               if (ts.walletId === walletId) {
                 return {
                   ...ts,
                   data: [...ts.data, ...data],
                   paging: paging,
-                  summary: summary,
+                  summary: summary
                 };
               }
               return ts;
@@ -634,23 +651,23 @@ export function useWalletContextValue(): WalletContextData {
           walletId,
           1
         );
-        const index = _transactions.findIndex((ts) => ts.walletId === walletId);
+        const index = _transactions.findIndex(ts => ts.walletId === walletId);
         if (index === -1) {
           // is transactions not existed, add new
           setTransactions([
             ..._transactions,
-            { walletId, data, paging, summary },
+            { walletId, data, paging, summary }
           ]);
         } else {
           // update transactions
           setTransactions(
-            _transactions.map((ts) => {
+            _transactions.map(ts => {
               if (ts.walletId === walletId) {
                 return {
                   ...ts,
                   data: data,
                   paging: paging,
-                  summary: summary,
+                  summary: summary
                 };
               }
               return ts;
@@ -673,7 +690,7 @@ export function useWalletContextValue(): WalletContextData {
         return undefined;
       }
       const transaction = _transactions.find(
-        (item) => item.walletId === walletId
+        item => item.walletId === walletId
       );
       return transaction?.paging;
     },
@@ -682,7 +699,7 @@ export function useWalletContextValue(): WalletContextData {
 
   const getTransactionByWalletId = useCallback(
     (walletId: string) => {
-      return _transactions.find((item) => item.walletId === walletId);
+      return _transactions.find(item => item.walletId === walletId);
     },
     [_transactions]
   );
@@ -693,7 +710,7 @@ export function useWalletContextValue(): WalletContextData {
         return [];
       }
       const walletTransaction = _transactions.find(
-        (item) => item.walletId === walletId
+        item => item.walletId === walletId
       );
       const data = walletTransaction?.data;
       if (!data) {
@@ -702,16 +719,16 @@ export function useWalletContextValue(): WalletContextData {
       const sortedByDate = orderBy<Transaction>(
         data,
         [(txn: any) => new Date(txn.txnDateTime)],
-        ['desc']
+        ["desc"]
       );
       const group = groupBy<Transaction>(
         sortedByDate,
         (transaction: Transaction) =>
-          moment(transaction.txnDateTime).format('DD MMM YYYY')
+          moment(transaction.txnDateTime).format("DD MMM YYYY")
       );
-      return Object.keys(group).map((key) => ({
-        section: moment(key, 'DD MMM YYYY').toISOString(),
-        data: orderBy<Transaction>(group[key], ['txnDateTime'], ['desc']),
+      return Object.keys(group).map(key => ({
+        section: moment(key, "DD MMM YYYY").toISOString(),
+        data: orderBy<Transaction>(group[key], ["txnDateTime"], ["desc"])
       }));
     },
     [_transactions]
@@ -723,7 +740,7 @@ export function useWalletContextValue(): WalletContextData {
         return undefined;
       }
       const walletTransaction = _transactions.find(
-        (item) => item.walletId === walletId
+        item => item.walletId === walletId
       );
       const summary = walletTransaction?.summary;
 
@@ -748,7 +765,7 @@ export function useWalletContextValue(): WalletContextData {
     const result = await walletService.getCurrenciesExchangeRate(
       1,
       limit ?? 100,
-      'PHP'
+      "PHP"
     );
     setCryptoExchangeData(result.data);
     setIsLoadingCryptoExchange(false);
@@ -756,16 +773,21 @@ export function useWalletContextValue(): WalletContextData {
 
   const getHistoricalExchangeRate = async (
     updateAtFrom: string,
-    type: string
+    type: string,
+    percentageChangeUnit?: string,
+    percentageChangeOffset?: number
   ) => {
     setIsLoadingHistoricalExchangeRate(true);
-    console.log('getHistoricalExchangeRate -> from', updateAtFrom);
+    console.log("getHistoricalExchangeRate -> from", updateAtFrom);
     const result = await walletService.getCurrenciesHistoricalExchangeRate(
       updateAtFrom,
       type,
-      'PHP',
-      1000,
-      1
+      "PHP",
+      100,
+      1,
+      true,
+      percentageChangeUnit,
+      percentageChangeOffset
     );
     setIsLoadingHistoricalExchangeRate(false);
     return result;
@@ -781,10 +803,10 @@ export function useWalletContextValue(): WalletContextData {
   const initMoneyin = useCallback(async () => {
     setIsLoadingInitMoneyIn(true);
     const unionWallet: Wallet | undefined = _wallets.find(
-      (w) => w.bankAccount.bankCode === 'UnionDigital'
+      w => w.bankAccount.bankCode === "UnionDigital"
     );
     const cryptoWallet: Wallet | undefined = _wallets.find(
-      (w) => w.bankAccount.bankCode === 'PDAX'
+      w => w.bankAccount.bankCode === "PDAX"
     );
     if (unionWallet && cryptoWallet && _amount) {
       const result = await walletService.moneyInInitital(
@@ -800,10 +822,10 @@ export function useWalletContextValue(): WalletContextData {
   const initMoneyOut = useCallback(async () => {
     setIsLoadingInitMoneyOut(true);
     const unionWallet: Wallet | undefined = _wallets.find(
-      (w) => w.bankAccount.bankCode === 'UnionDigital'
+      w => w.bankAccount.bankCode === "UnionDigital"
     );
     const cryptoWallet: Wallet | undefined = _wallets.find(
-      (w) => w.bankAccount.bankCode === 'PDAX'
+      w => w.bankAccount.bankCode === "PDAX"
     );
     if (unionWallet && cryptoWallet && _amount) {
       const result = await walletService.moneyOutInitital(
@@ -849,7 +871,7 @@ export function useWalletContextValue(): WalletContextData {
 
   const getFinancialProfile = useCallback(
     async (userId: string, bankId: string) => {
-      console.log('getFinancialProfile -> request');
+      console.log("getFinancialProfile -> request");
       setIsLoadingFinancialProfile(true);
       const result = await walletService.getFinancialProfile(userId, bankId);
       setIsLoadingFinancialProfile(false);
@@ -858,15 +880,12 @@ export function useWalletContextValue(): WalletContextData {
     []
   );
 
-  const getWalletLimits = useCallback(
-    async (walletId: string) => {
-      setIsLoadingWalletLimits(true);
-      const result = await walletService.getLimitByWalletId(walletId);
-      setIsLoadingWalletLimits(false);
-      setWalletLimits(result.data);
-    },
-    []
-  );
+  const getWalletLimits = useCallback(async (walletId: string) => {
+    setIsLoadingWalletLimits(true);
+    const result = await walletService.getLimitByWalletId(walletId);
+    setIsLoadingWalletLimits(false);
+    setWalletLimits(result.data);
+  }, []);
 
   return useMemo(
     () => ({
