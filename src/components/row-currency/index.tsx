@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
-import { ThemeContext } from 'react-native-theme-component';
+import { ThemeContext, useCurrencyFormat } from 'react-native-theme-component';
 import { Currency } from '../../model';
 import { LineChart } from 'react-native-svg-charts';
 import { WalletService } from '../../services/wallet-service';
@@ -137,7 +137,7 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
           {currencyRateData && (
             <Text
               style={styles.rate}
-            >{`₱ ${currencyRateData.exchangeRate}`}</Text>
+            >{`${useCurrencyFormat(currencyRateData.exchangeRate, 'PHP')}`}</Text>
           )}
           {currencyRateData && (
             <Text
@@ -146,7 +146,7 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
                 { color: isValueReducing ? reducingColor : rasingColor },
               ]}
             >
-              {currencyRateData.percentageChange}
+              {`${isValueReducing ? currencyRateData.percentageChange : `+${currencyRateData.percentageChange}`}%`}
             </Text>
           )}
         </View>

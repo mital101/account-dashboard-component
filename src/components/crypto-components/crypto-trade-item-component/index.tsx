@@ -42,6 +42,8 @@ export type FilterExchangeRateOption = {
   id: string;
   label: string;
   date: string;
+  unit?: string;
+  offset?: number;
 };
 
 export type ChartDataItem = {
@@ -60,37 +62,15 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
   const [selectedFilterOptionsIndex, setSelectedFilterOptionsIndex] =
     useState<number>(0);
   const [chartData, setChartData] = useState<ChartDataItem[]>([]);
+  const [currencyRateChange, setCurrencyRateChange] = useState<string>();
   const [maxExchangeRate, setMaxExchangeRate] = useState<number>();
+  const [currentExchangeRate, setCurrentExchangeRate] = useState<number>(0);
+  const [currentExchangeRateDate, setCurrentExchangeRateDate] = useState<string>();
   const [selectedExchangeValue, setSelectedExchangeValue] =
     useState<ChartDataItem>();
-  const firstExchangeRate =
-    chartData && chartData.length > 0 ? chartData[0].value : 0;
-  const lastExchangeRate =
-    chartData && chartData.length > 0
-      ? chartData[chartData.length - 1].value
-      : 0;
-  const lastExchangeDate =
-    chartData && chartData.length > 0
-      ? moment(chartData[chartData.length - 1].date).format(
-          'ddd DD, YYYY HH:ssA'
-        )
-      : '';
 
-  let diffRateLabel: string = '';
-
-  const isValueReducing = firstExchangeRate > lastExchangeRate;
-
-  if (isValueReducing) {
-    diffRateLabel = `-${(
-      ((firstExchangeRate - lastExchangeRate) / firstExchangeRate) *
-      100
-    ).toFixed(2)}%`;
-  } else {
-    diffRateLabel = `+${(
-      ((lastExchangeRate - firstExchangeRate) / lastExchangeRate) *
-      100
-    ).toFixed(2)}%`;
-  }
+  const isValueReducing = currencyRateChange && currencyRateChange.toString()[0] === '-';
+  const currentExchangeRateShowing = useCurrencyFormat(currentExchangeRate, 'PHP')
 
   const reducingColor = '#EB001B';
   const rasingColor = '#6CBE58';
@@ -99,11 +79,32 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
     ? useCurrencyFormat(selectedExchangeValue.value, 'PHP')
     : '';
 
+
+  const getCurrencyExchangeRateData = async (selectedOptionIndex: number) => {
+    if(filterExchangeRateOptions[selectedOptionIndex]) {
+      const responeData = await walletService.getCurrenciesExchangeRate(
+        1,
+        10,
+        'PHP',
+        currency.code,
+        true,
+        filterExchangeRateOptions[selectedOptionIndex].unit,
+        filterExchangeRateOptions[selectedOptionIndex].offset
+      );
+      if (responeData.data.length > 0) {
+        setCurrencyRateChange(`${responeData.data[0].percentageChange}%`);
+        setCurrentExchangeRate(responeData.data[0].exchangeRate);
+        setCurrentExchangeRateDate(responeData.data[0].updatedAt);
+      }
+    }
+  };
+
   useEffect(() => {
-    getCurrencyExchangeData(0);
+    getChartData(0);
+    getCurrencyExchangeRateData(0);
   }, []);
 
-  const getCurrencyExchangeData = async (selectedOptionIndex: number) => {
+  const getChartData = async (selectedOptionIndex: number) => {
     const responeData = await walletService.getCurrenciesHistoricalExchangeRate(
       filterExchangeRateOptions[selectedOptionIndex].date,
       currency.code,
@@ -163,12 +164,12 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
         </View>
 
         <View style={styles.rowCurrency}>
-          <Text style={styles.subTitle}>{`As of ${lastExchangeDate}`}</Text>
+          <Text style={styles.subTitle}>{`As of ${currentExchangeRateDate}`}</Text>
         </View>
         <View style={styles.headerWrapper}>
           <Text
             style={styles.exchangePrecentage}
-          >{`1 ${currency.code} ≈ ₱ ${lastExchangeRate}`}</Text>
+          >{`1 ${currency.code} ≈ ${currentExchangeRateShowing}`}</Text>
           <Text
             style={
               isValueReducing
@@ -176,14 +177,15 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
                 : styles.exchangeRate
             }
           >
-            {diffRateLabel}
+            {isValueReducing ? currencyRateChange : `+${currencyRateChange}`}
           </Text>
         </View>
         <View style={styles.rowWrapper}>
           {filterExchangeRateOptions.map((opt, index) => (
             <TouchableOpacity
               onPress={() => {
-                getCurrencyExchangeData(index);
+                getChartData(index);
+                getCurrencyExchangeRateData(index);
               }}
               style={
                 selectedFilterOptionsIndex === index
@@ -225,7 +227,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
           startOpacity={0.9}
           endOpacity={0.1}
           initialSpacing={20}
-          noOfSections={selectedFilterOptionsIndex + 2}
+          noOfSections={5}
           yAxisColor="#DDD9E4"
           yAxisThickness={1}
           rulesType="solid"
