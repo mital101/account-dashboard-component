@@ -15,7 +15,10 @@ import { Button, useCurrencyFormat } from 'react-native-theme-component';
 import { LineChart } from 'react-native-gifted-charts';
 import { Currency, CurrencyExchangeRateData } from '../../../model';
 import { WalletService } from '../../../services/wallet-service';
-import { filterExchangeRateOptions } from '../../../constants/common';
+import {
+  filterExchangeRateOptions,
+  maxLengthExchangeRateHistory,
+} from '../../../constants/common';
 import moment from 'moment';
 
 export type CryptoTradeComponentStyles = {
@@ -106,7 +109,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
       currency.code,
       'PHP',
       1,
-      1000
+      maxLengthExchangeRateHistory
     );
     if (responeData.data.length > 0) {
       const showingData =
@@ -115,7 +118,6 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
               (_: any, index: number) => index % (selectedOptionIndex + 1) === 0
             )
           : responeData.data;
-      console.log(selectedOptionIndex, showingData);
       const reverseData = showingData.reverse();
       let maxExchangeRate = reverseData[0].exchangeRate;
       const chartData: ChartDataItem[] = reverseData.map(

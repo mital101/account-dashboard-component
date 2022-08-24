@@ -19,6 +19,7 @@ import {
 } from '../model';
 import _, { chain, groupBy, isEmpty, orderBy } from 'lodash';
 import { FilterTransaction, TransferType } from '../types';
+import { maxLengthExchangeRateHistory } from '../constants/common';
 
 const walletService = WalletService.instance();
 
@@ -757,7 +758,7 @@ export function useWalletContextValue(): WalletContextData {
         limit ?? 100,
         'PHP',
         fromCurrency,
-        includePercentageChang,
+        includePercentageChange,
         percentageChangeUnit,
         percentageChangeOffset
       );
@@ -772,12 +773,11 @@ export function useWalletContextValue(): WalletContextData {
     type: string
   ) => {
     setIsLoadingHistoricalExchangeRate(true);
-    console.log('getHistoricalExchangeRate -> from', updateAtFrom);
     const result = await walletService.getCurrenciesHistoricalExchangeRate(
       updateAtFrom,
       type,
       'PHP',
-      1000,
+      maxLengthExchangeRateHistory,
       1
     );
     setIsLoadingHistoricalExchangeRate(false);
