@@ -21,6 +21,8 @@ export class WalletService {
   private _countryInformationClient?: any;
   private _paymentClient?: any;
   private _limitClient?: any;
+  private _paymentQuoteClient?: any;
+  private _paymentOrderClient?: any;
 
   constructor() {
     if (WalletService._instance) {
@@ -43,6 +45,8 @@ export class WalletService {
     this._countryInformationClient = clients.countryInformationClient;
     this._paymentClient = clients.paymentClient;
     this._limitClient = clients.limitClient;
+    this._paymentQuoteClient = clients.paymentQuoteClient;
+    this._paymentOrderClient = clients.paymentOrderClient;
   };
 
   getWallets = async () => {
@@ -599,6 +603,55 @@ export class WalletService {
       return response.data;
     } else {
       throw new Error('Limit Client is not registered');
+    }
+  };
+
+  createTradeQuote = async (
+    amount: number,
+    quoteType: string,
+    itemCode: string,
+    itemName: string
+  ) => {
+    if (this._paymentQuoteClient) {
+      try {
+        const response = await this._paymentQuoteClient.post('/quotes', {
+          quotes: [
+              {
+                  quoteType: quoteType,
+                  currency: "PHP",
+                  totalAmount: amount,
+                  lineItems: [
+                      {
+                          itemName: itemName,
+                          itemCode: itemCode
+                      }
+                  ]
+              }
+          ]
+        });
+        return response.data;
+      } catch (error) {
+        return 'error: ' + error;
+      }
+    } else {
+      throw new Error('Payment quotes client service is not registered');
+    }
+  };
+
+  placeTradeOrder = async (
+    quoteId: string,
+  ) => {
+    if (this._paymentOrderClient) {
+      try {
+        const response = await this._paymentOrderClient.post('/orders', {
+          "quoteId": quoteId
+        });
+        return response.data;
+      } catch (error) {
+        return 'error: ' + error;
+      }
+    } else {
+      throw new Error('Payment quotes client service is not registered');
     }
   };
 }

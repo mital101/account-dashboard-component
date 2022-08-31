@@ -14,6 +14,10 @@ const useMergeStyles = (style?: AccountInfoCardThemeStyles) => {
       justifyContent: 'space-between',
       marginTop: 24,
     },
+    image:{
+      width: 43,
+      height: 43
+    },
     containerStyle: {
       borderRadius: 10,
       flex:1,
@@ -130,6 +134,19 @@ const useMergeStyles = (style?: AccountInfoCardThemeStyles) => {
       lineHeight:24,
       paddingBottom:5
     },
+    cardInputLabelText:{
+      fontWeight: '700',
+      fontSize: 16,
+      color: '#1D1C1D',
+      lineHeight:20,
+      paddingBottom:5
+    },
+    textBoxWrapper:{
+      flex:1,
+      flexDirection:'row',
+      alignItems:'center',
+      textAlignVertical: 'center'
+    },
     cardValueText:{
       fontWeight: '500',
       fontSize: 14,
@@ -152,6 +169,14 @@ const useMergeStyles = (style?: AccountInfoCardThemeStyles) => {
     },
     cardButtonItem:{
       backgroundColor:'#DDD9E4',
+      paddingVertical:4,
+      paddingHorizontal:20,
+      marginHorizontal:3,
+      borderRadius:4,
+      // opacity:
+    },
+    activeCardButtonItem:{
+      backgroundColor:'#F8981D',
       paddingVertical:4,
       paddingHorizontal:20,
       marginHorizontal:3,
@@ -341,7 +366,72 @@ const useMergeStyles = (style?: AccountInfoCardThemeStyles) => {
       backgroundColor: '#fff',
       borderColor:colors.primaryButtonColor,
       borderWidth:2,
-    }
+    },
+    containerFailed: {
+      padding: 20,
+      flex: 1,
+      backgroundColor: '#3E2D68',
+    },
+    columnBetween: {
+      flex: 1,
+      justifyContent: 'space-around',
+    },
+    errorContentWrapper: {
+      flex: 1,
+      alignItems: 'center',
+      paddingBottom: 50,
+    },
+    errorTitleWrapper: {
+      alignItems: 'center',
+    },
+    errorMessageWrapper: {
+      marginTop: 24,
+    },
+    errorMessageLabel: {
+      color: '#FFFFFF',
+      fontSize: 16,
+      fontFamily: fonts.medium,
+      textAlign: 'center',
+    },
+    iconErrorWrapper: {
+      marginBottom: 30,
+    },
+    statusLabel: {
+      color: '#E06D6D',
+      fontSize: 24,
+      fontFamily: fonts.medium,
+      lineHeight: 36,
+    },
+    rowErrorBetween: {
+      marginTop: 50,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    containerFailed: {
+      padding: 20,
+      flex: 1,
+      backgroundColor: '#3E2D68',
+    },
+    infoTitle: {
+      color: '#7F7B82',
+      fontSize: 12,
+      fontFamily: fonts.regular,
+    },
+    infoSubTitle: {
+      color: '#1D1C1D',
+      fontSize: 12,
+      fontFamily: fonts.regular,
+    },
+    errorInfoTitleColor: {
+      color: '#FFFFFF',
+    },
+    btnTransparent: {
+      borderColor: colors.primaryButtonColor,
+      borderWidth: 1,
+      marginTop: 10,
+    },
+    labelBtnTransaprent: { color: colors.primaryButtonColor },
 
   });
   return defaultsDeep(style, defaultStyles);

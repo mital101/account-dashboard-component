@@ -119,7 +119,8 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
               (_: any, index: number) => index % (selectedOptionIndex + 1) === 0
             )
           : responeData.data;
-      const reverseData = showingData.reverse();
+      // const reverseData = showingData.reverse();
+      const reverseData = showingData;
       let maxExchangeRate = reverseData[0].exchangeRate;
       const chartData: ChartDataItem[] = reverseData.map(
         (e: CurrencyExchangeRateData) => {
@@ -243,11 +244,11 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
             pointerStripUptoDataPoint: true,
             pointerComponent: () => <View style={styles.pointer} />,
             pointerLabelComponent: (items: [ChartDataItem]) => {
-              console.log('pointerLabelComponent -> items', items);
               setSelectedExchangeValue(items[0]);
               return <View />;
             },
           }}
+          // yAxisOffset={117500}
         />
         {/*
         <View style={styles.rowCurrency}>
@@ -268,7 +269,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
         <View style={styles.footerButtonWrapper}>
           <Button
             onPress={() => {
-              onClick && onClick({ type: 'Buy', item: chartData });
+              onClick && onClick({ type: 'Buy', item: currency,currentExchangeRateShowing });
             }}
             // label={
             //   i18n?.t("customer_invoke_component.lbl_continue") ??
@@ -280,7 +281,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
         <View style={styles.footerButtonWrapper}>
           <Button
             onPress={() => {
-              onClick && onClick({ type: 'Sell', item: chartData });
+              onClick && onClick({ type: 'Sell', item: currency,currentExchangeRateShowing  });
             }}
             label={'Sell'}
           />

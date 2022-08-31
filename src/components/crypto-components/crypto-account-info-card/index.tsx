@@ -67,7 +67,10 @@ const AccountInfoCard = (props: AccountInfoCardProps) => {
   const [showTip2, setTip2] = useState<boolean>(false);
   const [showTip3, setTip3] = useState<boolean>(false);
   const [isHideBalance, setIsHideBalance] = useState<boolean>(false);
-  const ballance = isHideBalance ? '***' :  useCurrencyFormat(walletData.currentBalance, walletData.currencyCode);
+  let ballance = '***'
+  if (walletData) {
+    ballance = isHideBalance ? '***' :  useCurrencyFormat(walletData.currentBalance, walletData.currencyCode);
+  }
   useEffect(() => {
     if (isShowTips) {
       setTip1(true)
