@@ -20,7 +20,7 @@ import {
 import useMergeStyles from './styles';
 import Tooltip, { TooltipChildrenContext } from 'react-native-walkthrough-tooltip';
 
-import { BottomSheet, Button } from 'react-native-theme-component';
+import { BottomSheet, Button,ProcessBar } from 'react-native-theme-component';
 import {
   useCurrencyFormat,
   getAmountRawValue
@@ -90,6 +90,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
   const [orderResponse, setOrderResponse] = useState<any>();
   const [isFailed, setIsFailed] = useState<boolean>(false);
   const [cryptoWalletCurrentBalance, setCryptoWalletCurrentBalance] = useState<string>('');
+  const [seconds, setSeconds ] =  useState(15);
 
   const transferValueFormated =  transferValue > 0 ? useCurrencyFormat(transferValue, "", "") : "";
 
@@ -133,13 +134,28 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
     }
   },[financialProfile]);
 
+  useEffect(()=>{
+    if (isVisible) {
+      let myInterval = setInterval(() => {
+              if (seconds > 0) {
+                  setSeconds(seconds - 1);
+              }
+          }, 1000)
+          return ()=> {
+              clearInterval(myInterval);
+            };
+    }
+
+  });
+
+  console.log('(seconds/15)*100 ',(seconds/15)*100);
+
+
   const getUserFinancialProfile =()=>{
     if (profile.userId) {
       getFinancialProfile(profile.userId, 'PDAX');
     }
   }
-
-
 
   const unionWalletCurrentBalance = useCurrencyFormat(
     cryptoWallet?.availableBalance || 0,
@@ -159,6 +175,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
 
       if (responeData.data) {
         setIsVisible(true)
+        setSeconds(15)
         setQuotesResponse(responeData.data[0]);
         setIsLoadingValidation(false);
       }else{
@@ -220,6 +237,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
     }
 
   }
+
 
   if (isFailed) {
     return (
@@ -303,11 +321,11 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
 
           <View style={styles.successDetailWrapper}>
             <Text style={styles.successDetailLabel}>Transaction Date / Time</Text>
-            <Text style={styles.successDetailValue}>{moment().format('ddd DD, YYYY HH:ss A')}</Text>
+            <Text style={styles.successDetailValue}>{moment(orderResponse.updatedAt).locale('en').format('MMM DD, YYYY/ HH:ss A')}</Text>
           </View>
           <View style={styles.successDetailWrapper}>
             <Text style={styles.successDetailLabel}>Reference No.</Text>
-            {orderResponse && <Text style={styles.successDetailValue}>{orderResponse.quoteId}</Text>}
+            {orderResponse && <Text style={styles.successDetailValue}>{orderResponse.id}</Text>}
           </View>
           <View style={styles.successLogoWrapper}>
             <UnionDigitalBankIcon height={40} width={150} />
@@ -483,6 +501,10 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
                 'PHP'
               )}</Text>}
             </View>
+            <View style={styles.modalItemTimer}>
+              <Text style={styles.itemLabelStyle}>{`Price Valid for ${seconds}s`}</Text>
+            </View>
+            <ProcessBar processPercent={((seconds/15)*100)} />
 
             <Button
               onPress={() => {

@@ -272,6 +272,11 @@ const useMergeStyles = (style?: AccountInfoCardThemeStyles) => {
       justifyContent:'space-between',
       marginVertical: 5,
     },
+    modalItemTimer:{
+      flexDirection:'row',
+      justifyContent:'center',
+      marginVertical: 5,
+    },
     itemLabelStyle: {
       fontWeight:'500',
       fontSize: 14,
