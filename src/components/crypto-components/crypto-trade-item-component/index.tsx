@@ -71,6 +71,8 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
 
   const isValueReducing = currencyRateChange && currencyRateChange.toString()[0] === '-';
   const currentExchangeRateShowing = useCurrencyFormat(currentExchangeRate, 'PHP')
+  const [exchangeRateHistory, setExchangeRateHistory] = useState<number[]>([]);
+
 
   const reducingColor = '#EB001B';
   const rasingColor = '#6CBE58';
@@ -95,6 +97,9 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
         setCurrencyRateChange(`${responeData.data[0].percentageChange}%`);
         setCurrentExchangeRate(responeData.data[0].exchangeRate);
         setCurrentExchangeRateDate(responeData.data[0].updatedAt);
+        const rates = responeData.data.map((d: any) => d.exchangeRate);
+        setExchangeRateHistory(rates);
+
       }
     }
   };
@@ -121,12 +126,15 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
           : responeData.data;
       // const reverseData = showingData.reverse();
       const reverseData = showingData;
-      let maxExchangeRate = reverseData[0].exchangeRate;
+      // let maxExchangeRate = reverseData[0].exchangeRate;
+      let maxExchangeRate =  Math.max(...reverseData.map(o => o.exchangeRate))
+      let minExchangeRate =  Math.min(...reverseData.map(o => o.exchangeRate))
+      let dataDif = maxExchangeRate - minExchangeRate;
       const chartData: ChartDataItem[] = reverseData.map(
         (e: CurrencyExchangeRateData) => {
-          if (e.exchangeRate > maxExchangeRate) {
-            maxExchangeRate = e.exchangeRate;
-          }
+          // if (e.exchangeRate > maxExchangeRate) {
+          //   maxExchangeRate = e.exchangeRate;
+          // }
 
           if (selectedOptionIndex > 1) {
             return {
@@ -136,7 +144,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
           }
 
           return {
-            value: e.exchangeRate,
+            value: (e.exchangeRate),
             date: e.updatedAt,
             labelTextStyle: { color: '#7F7B82', fontSize: 10, marginLeft: 10 },
             label: moment(e.updatedAt).format('DD/MM'),
@@ -148,6 +156,21 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
       setSelectedFilterOptionsIndex(selectedOptionIndex);
     }
   };
+
+  const arrayMax = (arr: number[]) => {
+    if (arr.length > 0) {
+      return arr.reduce(function (p, v) {
+        return p > v ? p : v;
+      });
+    }
+    return 0;
+  };
+
+  const max = arrayMax(exchangeRateHistory);
+
+  const dataLine = exchangeRateHistory.map((n) => (n / max) * 100);
+  console.log('chartData ',chartData);
+
 
   return (
     <View style={styles.containerStyle}>
@@ -208,7 +231,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
           {selectedExchangeValue && (
             <Text style={styles.subTitle}>{`As of ${moment(
               selectedExchangeValue.date
-            ).format(
+            ).locale('en').format(
               selectedFilterOptionsIndex > 1
                 ? 'YYYY-MM-DD'
                 : 'ddd DD, YYYY HH:ssA'

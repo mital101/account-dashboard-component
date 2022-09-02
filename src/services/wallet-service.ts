@@ -51,12 +51,7 @@ export class WalletService {
 
   getWallets = async () => {
     if (this._walletClient) {
-      const response = await this._walletClient.get('wallets', {
-        params: {
-          pageSize: 0,
-          pageNumber: 0,
-        },
-      });
+      const response = await this._walletClient.get('wallets');
       return response.data;
     } else {
       throw new Error('Wallet Client is not registered');

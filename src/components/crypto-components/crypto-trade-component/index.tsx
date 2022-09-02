@@ -10,7 +10,8 @@ import {
   Image,
   NativeSyntheticEvent,
   TextInputKeyPressEventData,
-  TextInput
+  TextInput,
+  Dimensions
 } from 'react-native';
 import {
   ArrowBack,
@@ -29,6 +30,8 @@ import { WalletContext } from "../../../context/wallet-context";
 import { WalletService } from "../../../services/wallet-service";
 import moment from 'moment';
 import { AuthContext } from 'react-native-auth-component';
+import * as Progress from 'react-native-progress';
+
 export type CryptoTradeComponentThemeProps = {
   style?: CryptoTradeComponentThemeStyles;
   props: {
@@ -91,7 +94,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
   const [isFailed, setIsFailed] = useState<boolean>(false);
   const [cryptoWalletCurrentBalance, setCryptoWalletCurrentBalance] = useState<string>('');
   const [seconds, setSeconds ] =  useState(15);
-
+  const windowWidth = Dimensions.get('window').width;
   const transferValueFormated =  transferValue > 0 ? useCurrencyFormat(transferValue, "", "") : "";
 
 
@@ -147,9 +150,6 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
     }
 
   });
-
-  console.log('(seconds/15)*100 ',(seconds/15)*100);
-
 
   const getUserFinancialProfile =()=>{
     if (profile.userId) {
@@ -505,6 +505,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
               <Text style={styles.itemLabelStyle}>{`Price Valid for ${seconds}s`}</Text>
             </View>
             <ProcessBar processPercent={((seconds/15)*100)} />
+           
 
             <Button
               onPress={() => {
