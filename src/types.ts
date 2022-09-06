@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { ImageSourcePropType, ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { AlertModalStyles } from 'react-native-theme-component/src/alert';
 import { EmptyWalletThemeProps } from './components/no-wallet-component';
 import { BankImagesMap, Transaction, TransactionSummary, Wallet } from './model';
@@ -307,4 +307,13 @@ export type TransactionItemStyle = {
   descriptionTextStyle?: StyleProp<TextStyle>;
   walletNameTextStyle?: StyleProp<TextStyle>;
   amountTextStyle?: StyleProp<TextStyle>;
+};
+
+export type OnboardingItem = {
+  title: string;
+  image?: ImageSourcePropType;
+  imageUrl?: string;
+  subtitle?: string;
+  description?: string;
+  imageComponent: ReactNode;
 };

@@ -3,10 +3,10 @@ import * as Progress from 'react-native-progress';
 
 export type LoadingSpinnerProps = {
   props?: {
-    size: number;
-    indeterminate: boolean;
-    borderWidth: number;
-    borderColor: string;
+    size?: number;
+    indeterminate?: boolean;
+    borderWidth?: number;
+    borderColor?: string;
   };
 };
 

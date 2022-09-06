@@ -26,7 +26,9 @@ export { default as CryptoSearchComponent } from './src/components/crypto-compon
 export { default as CryptoTransferOutReviewSummaryComponent, CryptoTransferOutReviewSummaryRef } from './src/components/crypto-components/crypto-transfer-out-review-summary';
 export { default as CryptoTransferOutVerifyOTPComponent } from './src/components/crypto-components/crypto-transfer-out-verify-otp-component';
 export { default as CryptoAccountComponent } from './src/components/crypto-components/crypto-account-component';
-
+export { default as CardTermAndConditionsComponent } from './src/components/card-components/card-term-and-conditions';
+export { default as ActiveCardRequestComponent } from './src/components/card-components/card-active-card-request';
+export { default as MyCardComponent } from './src/components/card-components/my-card';
 
 export * from './src/assets/images';
 export * from './src/types';

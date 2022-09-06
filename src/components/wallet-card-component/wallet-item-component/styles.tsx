@@ -10,7 +10,8 @@ const useMergeStyles = (style?: WalletItemComponentStyle) => {
   const defaultStyles: WalletItemComponentStyle = StyleSheet.create({
     containerStyle: {
       backgroundColor: '#ffffff',
-      borderRadius: 5,
+      borderTopLeftRadius: 5,
+      borderTopRightRadius: 5,
       justifyContent: 'center',
       height: 173,
       elevation: 2,
@@ -21,7 +22,6 @@ const useMergeStyles = (style?: WalletItemComponentStyle) => {
       },
       shadowOpacity: 0.1,
       shadowRadius: 1,
-      margin: 1,
     },
     cardBackgroundStyle: {
       position: 'absolute',
@@ -61,6 +61,36 @@ const useMergeStyles = (style?: WalletItemComponentStyle) => {
     bottomContainerStyle: {
       flexDirection: 'row',
     },
+    myCardContainer: {
+      backgroundColor: 'white', 
+      flexDirection: 'row', 
+      justifyContent: 'space-between',
+      paddingHorizontal: 15, 
+      paddingVertical: 22, 
+      borderBottomEndRadius: 5, 
+      borderBottomStartRadius: 5, 
+      borderTopWidth: 1, 
+      borderTopColor: colors.dividerColor,
+    },
+    myCardBtn: {
+      flexDirection: 'row', 
+      justifyContent: 'space-between', 
+      alignItems: 'center', 
+      flex: 1
+    },
+    myCardRow: {
+      flexDirection: 'row', 
+      alignItems: 'center'
+    },
+    myCardTitle: {
+      fontFamily: fonts.medium,
+      fontSize: 14,
+    },
+    learnMoreLabel: {
+      color: '#FF9800',
+      marginRight: 5,
+    },
+
   });
 
   return defaultsDeep(style, defaultStyles);

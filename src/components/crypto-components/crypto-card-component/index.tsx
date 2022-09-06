@@ -137,8 +137,8 @@ const CryptoCardComponent = ({
     onTransfer && onTransfer();
   }
 
-
   const firstName = `${profile?.firstName}`.trim();
+
   return (
     <View style={styles.containerStyle}>
       {

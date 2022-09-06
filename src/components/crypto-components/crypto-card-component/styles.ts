@@ -137,7 +137,7 @@ const useMergeStyles = (
     TopPointerView: {
       position: 'absolute',
       left: 0,
-      bottom: 500,
+      bottom: 200,
       right: 0,
       alignItems: 'center',
       height: 100,

@@ -18,10 +18,14 @@ const useMergeStyles = (
       backgroundColor: colors.primaryColor,
       flex: 1,
       justifyContent: 'space-between',
-      padding: horizontalPaddingTotal / 2,
+      paddingBottom: 20,
+      paddingHorizontal: 20,
     },
-    sliderWrapper: { width: itemWidth, alignItems: 'center', marginTop: 45 },
-    imageWrapper: { width: 150, height: 150, marginTop: 30 },
+    sliderWrapper: { width: itemWidth, alignItems: 'center', marginTop: 25,flex: 1, },
+    imageWrapper: {
+      marginTop: 25,
+      alignItems: 'center',
+    },
     image: { width: '100%', height: '100%' },
     title: {
       color: colors.backgroundTextColor,
@@ -46,6 +50,18 @@ const useMergeStyles = (
       textAlign: 'center',
       fontFamily: fonts.regular,
     },
+    secondaryTitle: {
+      textDecorationLine: 'underline',
+      fontFamily: fonts.medium,
+      color: colors.primaryButtonColor,
+    },
+    secondaryBtn: {
+      marginTop: 12,
+      paddingVertical: 10,
+      alignItems: 'center',
+      justifyContent: 'space-around',
+      textDecorationLine: 'underline',
+    }
   });
   return defaultsDeep(style, defaultStyles);
 };

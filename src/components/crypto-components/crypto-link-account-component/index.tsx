@@ -54,7 +54,7 @@ const CryptoLinkAccountComponent = ({ style, onNext,onPressBack }: CryptoLinkAcc
     clearErrors
   } = useContext(CustomerInvokeContext);
 
-  const { getCryptoTcData, cryptoTC, isLoadingCryptoTC,getWalletsById } = useContext(WalletContext);
+  const { getCryptoTcData, cryptoTC, isLoadingCryptoTC, getWalletsById } = useContext(WalletContext);
 
   // const [isMount, setIsMount] = useState<boolean>(false);
   const [isSelected1, setSelected1] = useState(false);

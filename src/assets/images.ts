@@ -1,7 +1,10 @@
 export const images = {
   bank: require("../assets/bank.png"),
   maskCard: require("../assets/mask-card.png"),
-  emptyTransactions: require("./empty-transactions.png")
+  emptyTransactions: require("./empty-transactions.png"),
+  myCard: require("./my-card.png"),
+  visa: require("./visa.png"),
+  udVCCard: require("./ud-vc-card.png")
 };
 
 export * from "./checked.icon";
@@ -88,3 +91,9 @@ export * from "./dashboard-poster-1.icon";
 export * from "./dashboard-poster-2.icon";
 export * from "./dashboard-poster-3.icon";
 export * from "./padax.icon";
+
+export * from "./crypto-card.icon";
+export * from "./crypto-card-2.icon";
+export * from "./crypto-card-3.icon";
+export * from "./question-mark.icon";
+

@@ -1,18 +1,16 @@
-import { ReactNode } from 'react';
-import {
-  ImageSourcePropType,
-  ImageStyle,
-  StyleProp,
-  TextStyle,
-  ViewStyle,
-} from 'react-native';
+import { OnboardingItem } from '../../types';
+import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 export type OnboardingComponentProps = {
   Root?: {
     style?: OnboardingComponentStyles;
-    data?: OnboardingItem[];
     props?: {
       onFinished?: () => void;
+      data?: OnboardingItem[];
+      lastSlideBtnConfirmTitle?: string;
+      secondaryBtnActionVisible?: boolean;
+      secondaryBtnActionTitle?: string;
+      onPressSecondaryBtnAction?: () => void;
     };
   };
 };
@@ -25,13 +23,6 @@ export type OnboardingComponentStyles = {
   title?: StyleProp<TextStyle>;
   subTitle?: StyleProp<TextStyle>;
   description?: StyleProp<TextStyle>;
-};
-
-export type OnboardingItem = {
-  title: string;
-  image?: ImageSourcePropType;
-  imageUrl?: string;
-  subtitle?: string;
-  description?: string;
-  imageSvg?: ReactNode;
+  secondaryTitle?: StyleProp<TextStyle>;
+  secondaryBtn?: StyleProp<ViewStyle>;
 };

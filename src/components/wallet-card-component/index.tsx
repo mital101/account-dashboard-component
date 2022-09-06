@@ -15,6 +15,7 @@ import {
   ScrollView,
   Text,
   Platform,
+  Image,
 } from "react-native";
 import Carousel from "react-native-snap-carousel";
 import { ThemeContext } from "react-native-theme-component";
@@ -28,9 +29,10 @@ import TransactionCardComponent, {
 import WalletItemComponent, {
   WalletItemComponentStyle
 } from "./wallet-item-component";
-
+import AlertModal from '../alert-model';
 import  {  CryptoItemComponent,OnboardingComponent } from "../crypto-components";
-import { CryptoLinkIcon } from "../../assets/images";
+import { CryptoLinkIcon, images } from "../../assets/images";
+
 
 // import {OnboardingComponent} from "../crypto-components/onboarding-component";
 
@@ -50,7 +52,10 @@ export type WalletCardComponentProps = {
   onLinkAccount?: () => void;
   onViewAccount?: () => void;
   children?: ReactNode;
-  walletList?:WalletTypeList[]
+  walletList?:WalletTypeList[];
+  onSelectActivateCard?: () => void;
+  onSelectLearnMore?: () => void;
+  isShowVCCard?: boolean;
 };
 
 export type WalletCardComponentStyles = {
@@ -75,7 +80,10 @@ const WalletCardComponent = ({
   dateFormat,
   onTransactionDetails,
   children,
-  walletList
+  walletList,
+  onSelectActivateCard,
+  onSelectLearnMore,
+  isShowVCCard
 }: WalletCardComponentProps) => {
   const { colors, i18n } = useContext(ThemeContext);
   const styles: WalletCardComponentStyles = useMergeStyles(style);
@@ -90,6 +98,7 @@ const WalletCardComponent = ({
   const carouselRef: any = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSliderShow, setSliderShow] = useState<boolean>(false);
+  const [isShowMyCardAlert, setIsShowMyCardAlert] = useState<boolean>(false);
   const [currentWallet, setCurrentWallet] = useState<Wallet | undefined>(
     undefined
   );
@@ -127,6 +136,21 @@ const WalletCardComponent = ({
     carouselRef?.current?.snapToItem(index);
   };
 
+  const onActivateNow = () => {
+    console.log('on activate now');
+    setIsShowMyCardAlert(false);
+    onSelectActivateCard && onSelectActivateCard();
+  };
+
+  const onLearnMore = () => {
+    console.log('onLearnMore');
+    setIsShowMyCardAlert(false);
+    onSelectLearnMore && onSelectLearnMore();
+  };
+
+
+  console.log('wallets', wallets);
+
   useEffect(() => {
     if (!isEmpty(wallets)) {
       let focusWallet = wallets[currentIndex];
@@ -141,6 +165,7 @@ const WalletCardComponent = ({
   }, [currentIndex, wallets]);
 
   if (isEmpty(wallets)) {
+    console.log('isEmpty');
     if (isLoadingWallets) {
       return (
         <View style={styles.loadingContainerStyle}>
@@ -184,6 +209,7 @@ const WalletCardComponent = ({
               style={styles.emptyWalletItemComponentStyle}
               arrowRightIcon={false}
               isWithMask={true}
+              isShowVCCard={isShowVCCard}
             />
           </View>
           <View style={styles.containerStyleMessage}>
@@ -208,6 +234,7 @@ const WalletCardComponent = ({
   }
 
   if (isSliderShow) {
+    console.log('if');
     return (
       < View style={{flex:1,marginTop:-250,minHeight:Dimensions.get('window').height}}>
         <OnboardingComponent
@@ -218,14 +245,16 @@ const WalletCardComponent = ({
         />
       </View>
     )
-  }else{
+  } else {
+    console.log('else');
     return (
       <View style={styles.containerStyle}>
-        <ScrollView   style={styles.containerWrapper}    >
+        <ScrollView  style={styles.containerWrapper}    >
           {walletList && walletList.map((item:WalletTypeList,key:number)=>{
+            console.log('item', item);
             if (item.itemName === 'Pitaka') {
               return (
-                < View key={key}>
+                <View key={key}>
                   <View  style={styles.carouselContainerStyle}>
                     <Carousel
                       scrollEnabled={wallets.length > 1}
@@ -239,6 +268,8 @@ const WalletCardComponent = ({
                           return (
                             <WalletItemComponent
                               wallet={item}
+                              isShowVCCard={isShowVCCard}
+                              onSelectMyCard={() => setIsShowMyCardAlert(true)}
                               onAddMoney={() => onAddMoney(item)}
                               onSendMoney={() => onSendMoney(item)}
                               phoneNumber={phoneNumber}
@@ -274,7 +305,7 @@ const WalletCardComponent = ({
                   )}
                 </View>
               )
-            }else if (item.itemName === 'Crypto') {
+            } else if (item.itemName === 'Crypto') {
               return(
                 <View  key={key} style={styles.emptyCarouselContainerStyle}>
                   <CryptoItemComponent
@@ -300,6 +331,20 @@ const WalletCardComponent = ({
 
           {children && <View>{children}</View>}
         </ScrollView>
+        <AlertModal 
+          isVisible={isShowMyCardAlert} 
+          title={'UnionDigital Virtual Card'}
+          onConfirmed={onActivateNow}
+          onCancel={onLearnMore}
+          onBackdropPress={() => setIsShowMyCardAlert(false)}
+          iconColor={'#FBC02D'}
+          subtitle={'Enjoy cashless transactions with your UD Card, Activate your card now!'}
+          btnLabel={'Activate Now'} 
+          secondaryBtnLabel={'Learn More'}
+          icon={
+            <Image source={images.myCard} style={{width: 200, height: 120}}/>
+          }
+        />
       </View>
     );
   }

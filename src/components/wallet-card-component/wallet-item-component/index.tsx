@@ -5,7 +5,8 @@ import {
   StyleProp,
   ImageStyle,
   TextStyle,
-  ViewStyle
+  ViewStyle,
+  TouchableOpacity
 } from "react-native";
 import { ArrowRightIcon, images } from "../../../assets/images";
 import {
@@ -22,10 +23,12 @@ export type WalletItemComponentProps = {
   wallet: Wallet;
   onAddMoney: () => void;
   onSendMoney: () => void;
+  onSelectMyCard?: () => void;
   phoneNumber: string;
   arrowRightIcon?: ReactNode;
   isWithMask?: boolean;
   style?: WalletItemComponentStyle;
+  isShowVCCard?: boolean;
 };
 
 export type WalletItemComponentStyle = {
@@ -37,6 +40,11 @@ export type WalletItemComponentStyle = {
   accountNumberStyle?: StyleProp<TextStyle>;
   headerContainerStyle?: StyleProp<ViewStyle>;
   bottomContainerStyle?: StyleProp<ViewStyle>;
+  myCardContainer?: StyleProp<ViewStyle>;
+  myCardBtn?: StyleProp<ViewStyle>;
+  myCardRow?: StyleProp<ViewStyle>;
+  myCardTitle?: StyleProp<TextStyle>;
+  learnMoreLabel?: StyleProp<TextStyle>;
 };
 
 const WalletItemComponent = (props: WalletItemComponentProps) => {
@@ -45,9 +53,11 @@ const WalletItemComponent = (props: WalletItemComponentProps) => {
     style,
     onAddMoney,
     onSendMoney,
+    onSelectMyCard,
     arrowRightIcon,
     phoneNumber,
-    isWithMask
+    isWithMask,
+    isShowVCCard
   } = props;
   const { i18n } = useContext(ThemeContext);
   const [isShowDetail, setShowDetail] = useState(false);
@@ -122,6 +132,15 @@ const WalletItemComponent = (props: WalletItemComponentProps) => {
           </View>
         </View>
       </View>
+      {isShowVCCard ? <View style={styles.myCardContainer}>
+        <TouchableOpacity style={styles.myCardBtn} onPress={onSelectMyCard}>
+            <Text style={styles.myCardTitle}>My Card</Text>
+            <View style={styles.myCardRow}>
+              <Text style={styles.learnMoreLabel}>Learn more</Text>
+              <ArrowRightIcon width={10} height={10} color={'#FF9800'} />
+            </View>
+        </TouchableOpacity>
+      </View> : <View />}
       <WalletDetailsModal
         isVisible={isShowDetail}
         onClose={() => {
