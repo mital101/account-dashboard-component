@@ -4,7 +4,9 @@ export const images = {
   emptyTransactions: require("./empty-transactions.png"),
   myCard: require("./my-card.png"),
   visa: require("./visa.png"),
-  udVCCard: require("./ud-vc-card.png")
+  udVCCard: require("./ud-vc-card.png"),
+  udVCCardDisable: require("./ud-vc-card-disable.png"),
+  vcCardPreview: require("./vc-card-preview.png"),
 };
 
 export * from "./checked.icon";

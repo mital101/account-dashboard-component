@@ -3,6 +3,7 @@ import { StyleProp, TextStyle, ViewStyle } from "react-native";
 export type CardTermAndConditionsProps = {
     style?: CardTermAndConditionsStyles;
     onAccept?: () => void
+    onErrorCreateVCApplication?: () => void;
   };
   
   export type CardTermAndConditionsStyles = {

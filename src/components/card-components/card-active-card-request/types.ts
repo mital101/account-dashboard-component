@@ -4,6 +4,7 @@ export type ActiveCardRequestProps = {
     style?: ActiveCardRequestStyles;
     onNavigateToMyCard?: () => void;
     onBackToDashboard?: () => void;
+    onFailed: () => void;
   };
   
   export type ActiveCardRequestStyles = {

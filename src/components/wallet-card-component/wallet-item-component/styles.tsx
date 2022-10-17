@@ -83,13 +83,16 @@ const useMergeStyles = (style?: WalletItemComponentStyle) => {
       alignItems: 'center'
     },
     myCardTitle: {
-      fontFamily: fonts.medium,
+      fontFamily: fonts.semiBold,
       fontSize: 14,
     },
     learnMoreLabel: {
       color: '#FF9800',
       marginRight: 5,
     },
+    lastFourDigitLabel: {
+      marginLeft: 10
+    }
 
   });
 

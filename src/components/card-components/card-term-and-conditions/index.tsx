@@ -11,43 +11,55 @@ import { InfoIcon } from '../../../assets/info.icon';
 import { WalletContext } from '../../../context/wallet-context';
 import { Button } from 'react-native-theme-component';
 import LoadingSpinner from '../../loading-spinner';
+import { CustomerInvokeContext } from 'customer-invoke-component';
 
 const CardTermAndCondition = ({
   style,
-  onAccept
+  onAccept,
+  onErrorCreateVCApplication
 }: CardTermAndConditionsProps) => {
   const styles = useMergeStyles(style);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isEnableSubmitTC, setIsEnableSubmitTC] = useState<boolean>(false);
   const [isEnableSubmitPrivacy, setIsEnableSubmitPrivacy] = useState<boolean>(false);
   const { getCryptoTcData, cryptoTC, isLoadingCryptoTC } = useContext(WalletContext);
+  const { createVCApplication, acceptApplication, isLoadingAcceptApplication, errorCreateVCApplication } = useContext(CustomerInvokeContext);
   
   const scrollViewRef = useRef<ScrollView>(null);
   const selectedBG = '#FFF0D9'
 
   useEffect(() => {
+    createVCApplication();
     getCryptoTcData("vc-debit-card-terms-conditions","UnionDigital","UD","HTML");
   }, []);
 
+  useEffect(() => {
+    if(errorCreateVCApplication) {
+      onErrorCreateVCApplication && onErrorCreateVCApplication();
+    }
+  }, [errorCreateVCApplication]);
 
-  const onSelectTC = () => {
-    console.log('onSelectTC');
-    setSelectedIndex(0);
+  const onAcceptTC = async () => {
+    setIsEnableSubmitTC(false);
+    if(cryptoTC) {
+      const isAccepted = await acceptApplication(cryptoTC.templateId);
+      console.log('onAcceptTC -> isAccepted', isAccepted);
+      if(isAccepted) {
+        scrollViewRef.current?.scrollTo(0,0,false);
+        getCryptoTcData("vc-debit-card-privacy-notice","UnionDigital","UD","HTML");
+        setSelectedIndex(1);
+      }
+    }
   }
 
-  const onSelectPrivacy = () => {
-    console.log('onSelectPrivacy');
-    setSelectedIndex(1);
-  }
-
-  const onAcceptTC = () => {
-    scrollViewRef.current?.scrollTo(0,0,false);
-    getCryptoTcData("vc-debit-card-privacy-notice","UnionDigital","UD","HTML");
-    setSelectedIndex(1);
-  }
-
-  const onAcceptPrivacy = () => {
-    onAccept && onAccept();
+  const onAcceptPrivacy = async () => {
+    setIsEnableSubmitPrivacy(false);
+    if(cryptoTC) {
+      const isAccepted = await acceptApplication(cryptoTC.templateId);
+      if(isAccepted) {
+        onAccept && onAccept();
+      }
+    }
   }
 
   const renderLoadingView = () => <View style={styles.loadingView}>
@@ -90,8 +102,8 @@ const CardTermAndCondition = ({
           {isLoadingCryptoTC ? renderLoadingView() : <Text>{cryptoTC?.content}</Text>}
           <View style={styles.paddingBottom} />
         </ScrollView>
-        {selectedIndex === 0 ? <Button disableColor='#ECECEC' disabled={!isEnableSubmitTC} label={"Accept and proceed to Privacy Notice"} onPress={onAcceptTC} /> :
-        <Button disableColor='#ECECEC' disabled={!isEnableSubmitPrivacy} label={"Accept and continue"} onPress={onAcceptPrivacy} />}
+        {selectedIndex === 0 ? <Button isLoading={isLoadingAcceptApplication} disableColor='#ECECEC' disabled={!isEnableSubmitTC} label={"Accept and proceed to Privacy Notice"} onPress={onAcceptTC} /> :
+        <Button isLoading={isLoadingAcceptApplication} disableColor='#ECECEC' disabled={!isEnableSubmitPrivacy} label={"Accept and continue"} onPress={onAcceptPrivacy} />}
         
       </View>
     </View>

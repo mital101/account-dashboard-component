@@ -1,5 +1,5 @@
 import { ActiveCardRequestProps } from './types';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
 
   Text,
@@ -9,29 +9,75 @@ import useMergeStyles from './styles';
 import LoadingSpinner from '../../loading-spinner';
 import { Button } from 'react-native-theme-component';
 import { InfoIcon, OncompletedIcon } from '../../../assets/images';
+import { CustomerInvokeContext, CustomerInvokeService } from 'customer-invoke-component';
+import { WalletService } from '@banking-component/wallet-component/src/services/wallet-service';
+
+const onboardingServices = CustomerInvokeService.instance();
+const walletServices = WalletService.instance();
 
 const ActiveCardRequestComponent = ({
   style,
+  onFailed,
   onNavigateToMyCard,
   onBackToDashboard
 }: ActiveCardRequestProps) => {
   const styles = useMergeStyles(style);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const { submitApplication, vcApplicationDetails } = useContext(CustomerInvokeContext);
+  
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSuccess(false);
-    }, 2000);
+    submitAndWaitForStatus();
   }, []);
 
   const onRetry = () => {
+    submitAndWaitForStatus()
+  }
+
+  const submitAndWaitForStatus = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSuccess(true);
-    }, 2000);
+    await submitApplication();
+    if(vcApplicationDetails) { 
+      console.log('1');
+      let timeOutCountDown = 30;
+      const getApplicationStatusInterval = setInterval(async () => {
+        timeOutCountDown--;
+        const respone = await onboardingServices.getVCApplicationStatus(vcApplicationDetails?.applicationId);
+        const euronetStatus = respone.data.applicationStatuses.find((application: any) =>  application.statusName === 'EURONET_ACCOUNT')?.statusValue;
+        const dataHubStatus = respone.data.applicationStatuses.find((application: any) =>  application.statusName === 'DATA_HUB_ACCOUNT')?.statusValue;
+        if(respone.data.status === 'Completed' && (euronetStatus !== 'Pending' || dataHubStatus !== 'Pending')) {
+          clearInterval(getApplicationStatusInterval);
+          console.log('12');
+          if(euronetStatus === 'Failed' || dataHubStatus === 'Failed') {
+            console.log('123');
+            setIsLoading(false);
+            onFailed();
+          } else {
+            console.log('124');
+            timeOutCountDown = 15;
+            const getWalletInfoInterval = setInterval(async() => {
+              timeOutCountDown--;
+              const respone = await walletServices.getWalletsByWalletType('CARD_WALLET');
+              console.log('respone get info', respone.data);
+              if(respone.data.length > 0) {
+                clearInterval(getWalletInfoInterval);
+                setIsSuccess(true);
+                setIsLoading(false);
+              } else if(timeOutCountDown <= 0) {
+                clearInterval(getWalletInfoInterval);
+                setIsSuccess(false);
+                setIsLoading(false);
+              }
+            }, 1000);
+          }
+        } else if(respone.data.status === 'Failed' || timeOutCountDown <= 0){
+          clearInterval(getApplicationStatusInterval);
+          setIsSuccess(false);
+          setIsLoading(false);
+        }
+      }, 1000);
+    }
   }
 
   if(isLoading) {

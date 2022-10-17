@@ -21,6 +21,42 @@ export interface Wallet {
   isAggregated?: boolean;
 }
 
+export interface CardWalletSensitiveData {
+  cvv: string,
+  expiry: string,
+  pan: string
+}
+
+export interface CardWallet {
+  walletId: string,
+  userId?: string,
+  walletName?: string,
+  currentBalance?: number,
+  availableBalance?: number,
+  minimumBalance?: number,
+  bankAccount?: {
+      bankCode?: string,
+      bankName?: string,
+      accountNumber?: string,
+      accountType?: string,
+      accountHolderName?: string,
+      productId?: string,
+      internalProductCategory?: string,
+      accountId?: string,
+      id?: string
+  },
+  currencyCode?: string,
+  status?: string,
+  type?: string,
+  isDefaultWallet?: boolean,
+  expiredAt?: string,
+  createdAt?: string,
+  cardData?: {
+      cardProxyNumber?: string,
+      cardLastFourDigitNumber?: string
+  }
+}
+
 export interface FinancialProfileWalletSummary {
   walletId: string;
   currentBalance?: number;
@@ -243,6 +279,7 @@ export interface ConsentData {
 }
 
 export interface CryptoTCData {
+  templateId: string;
   documentFormat: string;
   version: string;
   summaryContent: string;

@@ -1,9 +1,27 @@
-import { StyleProp, TextStyle, ViewStyle } from "react-native";
+import { TransactionLimit } from "../../../types";
+import { ImageStyle, StyleProp, TextStyle, ViewStyle } from "react-native";
 
 export type MyCardComponentProps = {
     style?: MyCardComponentStyles;
-    props?: {
-      isShowWalkThrough?: boolean;
+    props: {
+      isShowWalkThrough: boolean;
+      isShowSensitiveData: boolean;
+      isInProgressStatus: boolean;
+      transactionLimitValue?: number;
+      isVCActive: boolean;
+      onToggleShowingSensitiveData: () => void;
+      onToggleActiveCard: () => void;
+      onUpdateTransactionLimits: () => void;
+      onUpdateTransactionChannel: () => void;
+      onReportCard: () => void;
+      onSuccessUpdatedStatus?: () => void;
+      onFailedUpdatedStatus?: () => void;
+      onSuccessUpdateTransactionLimit?: (transaction: TransactionLimit) => void;
+      onFailedUpdateTransactionLimit?: () => void;
+      onSuccessUpdateTransactionChannel?: (isEnable: boolean) => void;
+      onFailedUpdateTransactionChannel?: () => void;
+      onSuccessReportCard?: () => void;
+      onFailedReportCard?: () => void;
     }
   };
   
@@ -33,5 +51,13 @@ export type MyCardComponentProps = {
     marginLeft?: StyleProp<ViewStyle>;
     column?: StyleProp<ViewStyle>;
     skipView?: StyleProp<ViewStyle>;
+    noteWrapper?: StyleProp<ViewStyle>;
+    noteDescription?: StyleProp<TextStyle>;
+    note?: StyleProp<TextStyle>;
+    cardProgressContainer?: StyleProp<ViewStyle>;
+    cardProgressTitle?: StyleProp<TextStyle>;
+    cardProgressSubTitle?: StyleProp<TextStyle>;
+    imageUD?: StyleProp<ViewStyle>;
+    image?: StyleProp<ImageStyle>;
   };
   

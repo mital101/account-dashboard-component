@@ -2,6 +2,7 @@ import React, { ReactNode, useContext, useState } from "react";
 import {
   View,
   Text,
+  Image,
   StyleProp,
   ImageStyle,
   TextStyle,
@@ -11,12 +12,11 @@ import {
 import { ArrowRightIcon, images } from "../../../assets/images";
 import {
   ThemeContext,
-  Image,
   useCurrencyFormat,
   Button
 } from "react-native-theme-component";
 import useMergeStyles from "./styles";
-import { Wallet } from "../../../model";
+import { CardWallet, Wallet } from "../../../model";
 import WalletDetailsModal from "./components/wallet-details-modal";
 
 export type WalletItemComponentProps = {
@@ -24,11 +24,13 @@ export type WalletItemComponentProps = {
   onAddMoney: () => void;
   onSendMoney: () => void;
   onSelectMyCard?: () => void;
+  onNavigateMyCard?: () => void;
   phoneNumber: string;
   arrowRightIcon?: ReactNode;
   isWithMask?: boolean;
   style?: WalletItemComponentStyle;
   isShowVCCard?: boolean;
+  vcCardInfo?: CardWallet;
 };
 
 export type WalletItemComponentStyle = {
@@ -45,6 +47,7 @@ export type WalletItemComponentStyle = {
   myCardRow?: StyleProp<ViewStyle>;
   myCardTitle?: StyleProp<TextStyle>;
   learnMoreLabel?: StyleProp<TextStyle>;
+  lastFourDigitLabel? : StyleProp<TextStyle>;
 };
 
 const WalletItemComponent = (props: WalletItemComponentProps) => {
@@ -57,7 +60,9 @@ const WalletItemComponent = (props: WalletItemComponentProps) => {
     arrowRightIcon,
     phoneNumber,
     isWithMask,
-    isShowVCCard
+    isShowVCCard,
+    vcCardInfo,
+    onNavigateMyCard
   } = props;
   const { i18n } = useContext(ThemeContext);
   const [isShowDetail, setShowDetail] = useState(false);
@@ -77,6 +82,28 @@ const WalletItemComponent = (props: WalletItemComponentProps) => {
       ).join("")}${visiblePart}`;
     }
   };
+
+  const renderVC = () => {
+    return vcCardInfo ? <View style={styles.myCardContainer}>
+      <TouchableOpacity style={styles.myCardBtn} onPress={onNavigateMyCard}>
+        <View style={styles.myCardRow}>
+          <Text style={styles.myCardTitle}>My Card</Text>
+          <Text style={styles.lastFourDigitLabel}>{`*${vcCardInfo.cardData?.cardLastFourDigitNumber}`}</Text>
+        </View>
+        <Image source={images.vcCardPreview}  />
+      </TouchableOpacity>
+    </View> : <View style={styles.myCardContainer}>
+    <TouchableOpacity style={styles.myCardBtn} onPress={onSelectMyCard}>
+        <Text style={styles.myCardTitle}>My Card</Text>
+        <View style={styles.myCardRow}>
+          <Text style={styles.learnMoreLabel}>Learn more</Text>
+          <ArrowRightIcon width={10} height={10} color={'#FF9800'} />
+        </View>
+    </TouchableOpacity>
+  </View>
+  }
+
+
 
   return (
     <>
@@ -132,15 +159,7 @@ const WalletItemComponent = (props: WalletItemComponentProps) => {
           </View>
         </View>
       </View>
-      {isShowVCCard ? <View style={styles.myCardContainer}>
-        <TouchableOpacity style={styles.myCardBtn} onPress={onSelectMyCard}>
-            <Text style={styles.myCardTitle}>My Card</Text>
-            <View style={styles.myCardRow}>
-              <Text style={styles.learnMoreLabel}>Learn more</Text>
-              <ArrowRightIcon width={10} height={10} color={'#FF9800'} />
-            </View>
-        </TouchableOpacity>
-      </View> : <View />}
+      {isShowVCCard && renderVC()}
       <WalletDetailsModal
         isVisible={isShowDetail}
         onClose={() => {

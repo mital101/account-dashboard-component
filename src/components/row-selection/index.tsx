@@ -17,8 +17,10 @@ export type RowSelectionProps = {
   props: {
     title: string;
     subtitle?: string;
+    value?: string;
     onPress?: () => void;
     rightIcon?: ReactNode;
+    disabled?: boolean;
   };
   style?: RowSelectionStyle;
 };
@@ -27,31 +29,36 @@ export type RowSelectionStyle = {
   container?: StyleProp<ViewStyle>;
   verticalHeight?: StyleProp<ViewStyle>;
   title?: StyleProp<TextStyle>;
+  subtitle?: StyleProp<TextStyle>;
   value?: StyleProp<TextStyle>;
+  row?: StyleProp<ViewStyle>;
   rowBetween?: StyleProp<ViewStyle>;
 };
 
 const RowSelection = ({ props, style }: RowSelectionProps) => {
-  const { title, subtitle, onPress, rightIcon } = props || {};
-  const styles = useMergeStyles(style);
+  const { title, subtitle, onPress, rightIcon, disabled = false, value } = props || {};
+  const styles = useMergeStyles(disabled, style);
 
   const renderContent = () => <View style={styles.rowBetween}>
   <View>
    <Text style={styles.title}>{title}</Text>
    <View style={styles.verticalHeight} />
-   <Text style={styles.value}>{subtitle}</Text>
+   <View style={styles.row}>
+    <Text style={styles.subtitle}>{subtitle}</Text>
+    <Text style={[styles.subtitle, styles.value]}>{value}</Text>
+   </View>
   </View>
-  {rightIcon ? <>{rightIcon}</> : <ArrowRightIcon width={12} height={15} color={'#020000'} />}
+  {rightIcon ? <>{rightIcon}</> : <ArrowRightIcon width={12} height={15} color={disabled ? '#CCCCCC' : '#020000'} />}
 </View>
 
-  return onPress ? (
+  return onPress && !disabled ? (
     <TouchableOpacity style={styles.container} onPress={onPress || undefined}>
       {renderContent()}
     </TouchableOpacity>
   ) : <View style={styles.container}>{renderContent()}</View>;
 };
 
-const useMergeStyles = (style?: RowSelectionStyle): RowSelectionStyle => {
+const useMergeStyles = (isDisabled: boolean, style?: RowSelectionStyle): RowSelectionStyle => {
   const { fonts } = useContext(ThemeContext);
 
   const defaultStyles = StyleSheet.create({
@@ -62,18 +69,25 @@ const useMergeStyles = (style?: RowSelectionStyle): RowSelectionStyle => {
       borderColor: '#ECECEC',
       paddingVertical: 12,
       paddingHorizontal: 20,
-      backgroundColor: '#FFFFFF'
+      backgroundColor: isDisabled ? '#ECECEC' : '#FFFFFF'
     },
     title: {
-      color: '#020000',
+      color: isDisabled ? '#CCCCCC' : '#020000',
       fontSize: 12,
       fontFamily: fonts.medium,
       lineHeight: 17,
+    
     },
-    value: {
-      color: '#676666',
+    subtitle: {
+      color: isDisabled ? '#CCCCCC' : '#676666',
       fontSize: 10,
       fontFamily: fonts.regular,
+    },
+    value: {
+      fontFamily: fonts.medium,
+    },
+    row: {
+      flexDirection: 'row'
     },
     rowBetween: {
       flexDirection: 'row',

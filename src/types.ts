@@ -317,3 +317,25 @@ export type OnboardingItem = {
   description?: string;
   imageComponent: ReactNode;
 };
+
+
+export type TransactionLimit = {
+  limitUnit: string;
+  transactionType: string,
+  frequence: string,
+  cardProxyNumber: string,
+  limitValue: number,
+  remainingLimitValue: number
+}
+
+export type TransactionChannel = {
+  name: string,
+  code: string,
+  enabled: boolean
+}
+
+export type CardReport = {
+  id: string,
+  reason: string,
+  reasonCode: string
+}

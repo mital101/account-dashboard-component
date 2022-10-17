@@ -20,7 +20,7 @@ import {
 import Carousel from "react-native-snap-carousel";
 import { ThemeContext } from "react-native-theme-component";
 import { WalletContext } from "../../context/wallet-context";
-import { Transaction, Wallet,WalletTypeList } from "../../model";
+import { CardWallet, Transaction, Wallet,WalletTypeList } from "../../model";
 import EmptyWalletComponent from "../no-wallet-component";
 import useMergeStyles from "./styles";
 import TransactionCardComponent, {
@@ -56,6 +56,7 @@ export type WalletCardComponentProps = {
   onSelectActivateCard?: () => void;
   onSelectLearnMore?: () => void;
   isShowVCCard?: boolean;
+  onNavigateMyCard?: () => void;
 };
 
 export type WalletCardComponentStyles = {
@@ -83,7 +84,8 @@ const WalletCardComponent = ({
   walletList,
   onSelectActivateCard,
   onSelectLearnMore,
-  isShowVCCard
+  isShowVCCard,
+  onNavigateMyCard
 }: WalletCardComponentProps) => {
   const { colors, i18n } = useContext(ThemeContext);
   const styles: WalletCardComponentStyles = useMergeStyles(style);
@@ -91,7 +93,8 @@ const WalletCardComponent = ({
     transactions,
     fetchTransactions,
     wallets,
-    isLoadingWallets
+    isLoadingWallets,
+    cardWallet
   } = useContext(WalletContext);
 
   // state
@@ -108,6 +111,8 @@ const WalletCardComponent = ({
   const [_initIndex, setInitIndex] = useState<number | undefined>(undefined);
   const _carouselWidth = carouselWidth ?? width;
   const _carouselItemWidth = carouselItemWidth ?? width - 32;
+
+  console.log('render wallet card')
 
   useEffect(() => {
     if (!_initialWallet && wallets.length > 0) {
@@ -148,9 +153,6 @@ const WalletCardComponent = ({
     onSelectLearnMore && onSelectLearnMore();
   };
 
-
-  console.log('wallets', wallets);
-
   useEffect(() => {
     if (!isEmpty(wallets)) {
       let focusWallet = wallets[currentIndex];
@@ -163,6 +165,8 @@ const WalletCardComponent = ({
       setCurrentWallet(focusWallet);
     }
   }, [currentIndex, wallets]);
+
+  console.log('cardWallets', cardWallet);
 
   if (isEmpty(wallets)) {
     console.log('isEmpty');
@@ -210,6 +214,8 @@ const WalletCardComponent = ({
               arrowRightIcon={false}
               isWithMask={true}
               isShowVCCard={isShowVCCard}
+              vcCardInfo={cardWallet}
+              onNavigateMyCard={onNavigateMyCard}
             />
           </View>
           <View style={styles.containerStyleMessage}>
@@ -268,12 +274,14 @@ const WalletCardComponent = ({
                           return (
                             <WalletItemComponent
                               wallet={item}
-                              isShowVCCard={isShowVCCard}
                               onSelectMyCard={() => setIsShowMyCardAlert(true)}
+                              onNavigateMyCard={onNavigateMyCard}
                               onAddMoney={() => onAddMoney(item)}
                               onSendMoney={() => onSendMoney(item)}
                               phoneNumber={phoneNumber}
+                              isShowVCCard={isShowVCCard}
                               style={styles.walletItemComponentStyle}
+                              vcCardInfo={cardWallet}
                             />
                           );
                         }

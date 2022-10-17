@@ -122,6 +122,48 @@ const useMergeStyles = (
       fontWeight: '700',
       fontSize: 14,
     },
+    noteWrapper: {
+      backgroundColor: '#DDD9E4',
+      padding: 15,
+      borderRadius: 8,
+      marginBottom: 30,
+      alignItems: 'center'
+    },
+    note: {
+      fontSize: 10,
+      color: '#020000',
+      fontFamily: fonts.semiBold
+    },
+    noteDescription: {
+      fontSize: 10,
+      color: '#3E2D68'
+    },
+    cardProgressContainer: {
+      padding: 20,
+      backgroundColor: '#FFFFFF',
+      borderRadius: 8,
+      marginVertical: 20
+    },
+    cardProgressTitle: {
+      color: '#020000',
+      fontSize: 16,
+      fontFamily: fonts.medium
+    },
+    cardProgressSubTitle: {
+      color: '#676666',
+      fontSize: 12,
+      fontFamily: fonts.regular,
+      marginTop: 20,
+      marginBottom: 15
+    },
+    imageUD: {
+      width: 75,
+      height: 82
+    },
+    image: {
+      width: '100%',
+      height: '100%'
+    }
   });
 
   return defaultsDeep(style, defaultStyles);

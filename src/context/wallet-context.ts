@@ -16,9 +16,10 @@ import {
   Currency,
   WalletLimit,
   FinancialProfile,
+  CardWallet,
 } from '../model';
 import _, { chain, groupBy, isEmpty, orderBy } from 'lodash';
-import { FilterTransaction, TransferType } from '../types';
+import { CardReport, FilterTransaction, TransactionChannel, TransactionLimit, TransferType } from '../types';
 import { maxLengthExchangeRateHistory } from '../constants/common';
 
 const walletService = WalletService.instance();
@@ -117,6 +118,46 @@ export interface WalletContextData {
   isLoadingWalletLimits: boolean;
   walletLimits?: WalletLimit[];
   financialProfile?: FinancialProfile;
+  cardWallet?: CardWallet;
+  isLoadingCardWallet?: boolean;
+  getCardWallet: () => void;
+  generateOTPForCardDetails: () => void;
+  verifyOTPForCardDetails: (otpNumber: string, otpId: string) => Promise<boolean>;
+  otpId?: string;
+  isLoadingGenerateOTP: boolean;
+  errorVerifyOTPCard?: Error;
+  isLoadingVerifyOTP?: boolean;
+  oneTimeToken?: string;
+  generateOTPForUpdateCardStatus: () => void;
+  verifyOTPForUpdateCardStatus: (otpNumber: string, otpId: string) => Promise<boolean>;
+  cardWalletStatus?: string;
+  updateCardStatus: (status: string) => void;
+
+  getTransactionLimit: () => void;
+  generateOTPForUpdateTransactionLimit: () => void;
+  verifyOTPForUpdateTransactionLimit: (otpNumber: string, otpId: string) => Promise<boolean>;
+  isLoadingGetTransactionLimit: boolean;
+  transactionLimits: TransactionLimit[];
+  transactionLimitsOverall?: TransactionLimit;
+  setTransactionLimitsOverall?: (transactionInfo: TransactionLimit) => void;
+  
+  transactionLimitValue?: number;
+  updateTransactionLimitValue?: (value: number) => void;
+
+  getTransactionChannels: () => void;
+  generateOTPForUpdateTransactionChannel: () => void;
+  verifyOTPForUpdateTransactionChannel: (otpNumber: string, otpId: string) => Promise<boolean>;
+  isLoadingGetTransactionChannel: boolean;
+  initIsEnableTransactionChannel: boolean;
+  isEnableTransactionChannel: boolean;
+  setIsEnableTransactionChannel: (isEnable: boolean) => void;
+  setInitIsEnableTransactionChannel: (isEnable: boolean) => void;
+
+  //
+  generateOTPForCardReport: () => void;
+  verifyOTPForCardReport: (otpNumber: string, otpId: string) => Promise<boolean>;
+  selectedReportOption?: CardReport;
+  setSelectedReportOption: (option?: CardReport) => void,
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -187,6 +228,43 @@ export const walletDefaultValue: WalletContextData = {
   isLoadingWalletLimits: false,
   walletLimits: undefined,
   financialProfile: undefined,
+  cardWallet: undefined,
+  isLoadingCardWallet: false,
+  getCardWallet: () => undefined,
+  generateOTPForCardDetails: () => undefined,
+  otpId: undefined,
+  isLoadingGenerateOTP: false,
+  errorVerifyOTPCard: undefined,
+  verifyOTPForCardDetails: async () => false,
+  isLoadingVerifyOTP: false,
+  oneTimeToken: undefined,
+  generateOTPForUpdateCardStatus: () => undefined,
+  verifyOTPForUpdateCardStatus: async () => false,
+  updateCardStatus: () => undefined,
+
+  //
+  getTransactionLimit: () => undefined,
+  isLoadingGetTransactionLimit: false,
+  transactionLimits: [],
+  generateOTPForUpdateTransactionLimit: () => undefined,
+  verifyOTPForUpdateTransactionLimit: async () => false,
+  transactionLimitValue: undefined,
+
+  //
+  getTransactionChannels: () => undefined,
+  generateOTPForUpdateTransactionChannel: () => undefined,
+  verifyOTPForUpdateTransactionChannel: async () => false,
+  isLoadingGetTransactionChannel: false,
+  isEnableTransactionChannel: false,
+  initIsEnableTransactionChannel: false,
+  setIsEnableTransactionChannel: () => undefined,
+  setInitIsEnableTransactionChannel: () => undefined,
+
+  //
+  generateOTPForCardReport: () => undefined,
+  verifyOTPForCardReport: async () => false,
+  selectedReportOption: undefined,
+  setSelectedReportOption: () => undefined,
 };
 
 export const WalletContext =
@@ -259,6 +337,26 @@ export function useWalletContextValue(): WalletContextData {
     useState<boolean>(false);
 
   const [_walletLimits, setWalletLimits] = useState<WalletLimit[]>([]);
+  const [_cardWallet, setCardWallets] = useState<CardWallet>();
+  const [_isLoadingCardWallet, setIsLoadingCardWallet] = useState<boolean>();
+  const [_isLoadingGenerateOTP, setIsLoadingGenerateOTP] = useState<boolean>(false);
+  const [_errorVerifyOTPCard, setErrorVerifyOTPCard] = useState<Error>();
+  const [_otpId, setOtpId] = useState<string>();
+  const [_isLoadingVerifyOTP, setIsLoadingVerifyOTP] = useState<boolean>();
+  const [_oneTimeToken, setOneTimeToken] = useState<string>();
+  const [_cardWalletStatus, setCardWalletStatus] = useState<string>();
+
+  const [_transactionLimits, setTransactionLimits] = useState<TransactionLimit[]>([]);
+  const [_transactionLimitsOverall, setTransactionLimitsOverall] = useState<TransactionLimit>();
+  const [_isLoadingTransactionLimits, setIsLoadingTransactionLimits] = useState<boolean>(false);
+
+  const [_transactionLimitValue, setTransactionLimitValue] = useState<number>(0);
+
+  const [_isLoadingGetTransactionChannel, setIsLoadingGetTransactionChannel] = useState<boolean>(false);
+  const [_isEnableTransactionChannel, setIsEnableTransactionChannel] = useState<boolean>(false);
+  const [_initIsEnableTransactionChannel, setInitIsEnableTransactionChannel] = useState<boolean>(false);
+  const [_selectedReportOption, setSelectedReportOption] = useState<CardReport>();
+  
 
   const getWallets = useCallback(async () => {
     try {
@@ -299,12 +397,17 @@ export function useWalletContextValue(): WalletContextData {
       const cryptoWallet: Wallet | undefined = walletsOrdered.find(
         (w) => w.bankAccount.bankCode === 'PDAX'
       );
+      const cardWallet: CardWallet | undefined = walletsOrdered.find(
+        (w) => w.type === 'CARD_WALLET'
+      );
       if (unionWallet) {
         getWalletLimits(unionWallet?.walletId);
       }
       setWallets(walletsOrdered);
       setUnionWallets(unionWallet);
       setCryptoWallets(cryptoWallet);
+      setCardWallets(cardWallet);
+      setCardWalletStatus(cardWallet?.status);
       setSummary(resp.summary);
     }
   };
@@ -878,6 +981,252 @@ export function useWalletContextValue(): WalletContextData {
     setWalletLimits(result.data);
   }, []);
 
+  const getCardWallet = useCallback(async () => {
+    setIsLoadingCardWallet(true);
+    const result = await walletService.getWalletsByWalletType('CARD_WALLET');
+    if(result.data.length > 0) {
+      setCardWallets(result.data[0]);
+    }
+    setIsLoadingCardWallet(false);
+  }, []);
+
+  const generateOTPForCardDetails = useCallback(async () => {
+    console.log('generateOTPForCardDetails -> _cardWallet', _cardWallet);
+    setIsLoadingGenerateOTP(true);
+    setOneTimeToken(undefined);
+    setErrorVerifyOTPCard(undefined);
+    setIsLoadingVerifyOTP(false);
+    if(_cardWallet) {
+      try {
+        const respone = await walletService.generateOTPForCardDetails(_cardWallet.walletId);
+        console.log(respone);
+        if(respone.data) {
+          console.log('setOtpId', respone.data.id)
+          setOtpId(respone.data.id);
+        }
+      } catch (error: any) {
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error)
+      }
+    }
+    setIsLoadingGenerateOTP(false);
+  }, [_cardWallet]);
+
+  const verifyOTPForCardDetails = useCallback(async (otpNumber: string, otpId: string) => {
+    console.log('verifyOTPForCardDetails -> otpNumber', otpNumber, otpId);
+    setIsLoadingVerifyOTP(true);
+    setErrorVerifyOTPCard(undefined);
+    let isSuccess = false;
+    try {
+      const respone = await walletService.verifyOTPForCardDetails(otpNumber, otpId);
+      setOneTimeToken(respone.data?.oneTimeToken);
+      isSuccess = true;
+    } catch (error: any) {
+      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
+      setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
+      setIsLoadingVerifyOTP(false);
+    }
+    return isSuccess;
+    ;
+  }, []);
+
+  const generateOTPForUpdateCardStatus = useCallback(async () => {
+    console.log('generateOTPForUpdateCardStatus -> _cardWallet', _cardWallet);
+    setIsLoadingGenerateOTP(true);
+    setOneTimeToken(undefined);
+    setErrorVerifyOTPCard(undefined);
+    setIsLoadingVerifyOTP(false);
+    if(_cardWallet && _cardWalletStatus) {
+      try {
+        const respone = await walletService.generateOTPForUpdateCardStatus(_cardWalletStatus, _cardWallet.walletId);
+        console.log(respone);
+        if(respone.data) {
+          console.log('setOtpId', respone.data.id)
+          setOtpId(respone.data.id);
+        }
+      } catch (error: any) {
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error)
+      }
+    }
+    setIsLoadingGenerateOTP(false);
+  }, [_cardWallet, _cardWalletStatus]);
+
+  const verifyOTPForUpdateCardStatus = useCallback(async (otpNumber: string, otpId: string) => {
+    console.log('verifyOTPForUpdateCardStatus -> otpNumber', otpNumber, otpId);
+    setIsLoadingVerifyOTP(true);
+    setErrorVerifyOTPCard(undefined);
+    let isSuccess = false;
+    try {
+      if(_cardWalletStatus) {
+        const respone = await walletService.verifyOTPForUpdateCardStatus(_cardWalletStatus, otpNumber, otpId);
+        setOneTimeToken(respone.data?.oneTimeToken);
+        isSuccess = true;
+      }
+    } catch (error: any) {
+      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
+      setIsLoadingVerifyOTP(false);
+      setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
+    }
+    return isSuccess;
+    ;
+  }, [_cardWalletStatus]);
+
+  const getTransactionLimit = useCallback(async () => {
+    setIsLoadingTransactionLimits(true);
+    try {
+      if(_cardWallet?.walletId) {
+        const response = await walletService.getTransactionLimitByProxyNumber(_cardWallet.walletId);
+        setTransactionLimits(response.data);
+        if(response.data.length > 0) {
+          console.log('getTransactionLimit -> limit', response.data);
+          const overallDailyLimit = response.data.filter((l: TransactionLimit) => l.transactionType === 'AGGR_OVERALL');
+          if(overallDailyLimit?.length > 0) {
+            setTransactionLimitsOverall(overallDailyLimit[0]);
+            setTransactionLimitValue(overallDailyLimit[0].limitValue);
+          }
+        }
+      }
+    } catch (error: any) {
+      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
+      setIsLoadingTransactionLimits(false);
+    }
+    setIsLoadingTransactionLimits(false);
+  }, [_cardWallet]);
+
+
+  const generateOTPForUpdateTransactionLimit = useCallback(async () => {
+    console.log('generateOTPForUpdateTransactionLimit -> _cardWallet', _cardWallet);
+    setIsLoadingGenerateOTP(true);
+    setOneTimeToken(undefined);
+    setErrorVerifyOTPCard(undefined);
+    setIsLoadingVerifyOTP(false);
+    if(_cardWallet) {
+      try {
+        const respone = await walletService.generateOTP("card-limit", _cardWallet.walletId);
+        console.log(respone);
+        if(respone.data) {
+          console.log('setOtpId', respone.data.id)
+          setOtpId(respone.data.id);
+        }
+      } catch (error: any) {
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error)
+      }
+    }
+    setIsLoadingGenerateOTP(false);
+  }, [_cardWallet]);
+
+  const verifyOTPForUpdateTransactionLimit = useCallback(async (otpNumber: string, otpId: string) => {
+    console.log('verifyOTPForUpdateTragenerateOTPForUpdateTransactionLimit -> otpNumber', otpNumber, otpId);
+    setIsLoadingVerifyOTP(true);
+    setErrorVerifyOTPCard(undefined);
+    let isSuccess = false;
+    try {
+        const respone = await walletService.verifyOTP("card-limit", otpNumber, otpId);
+        setOneTimeToken(respone.data?.oneTimeToken);
+        isSuccess = true;
+    } catch (error: any) {
+      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
+      setIsLoadingVerifyOTP(false);
+      setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
+    }
+    return isSuccess;
+    ;
+  }, []);
+
+
+  const getTransactionChannels = useCallback(async () => {
+    setIsLoadingGetTransactionChannel(true);
+    try {
+      if(_cardWallet?.walletId) {
+        const response = await walletService.getTransactionChannels(_cardWallet.walletId);
+        if(response.data?.channels?.length > 0) {
+          console.log('getTransactionChannels -> limit', response.data);
+          const isEnable = response.data.channels.filter((c: TransactionChannel) => c.code === 'ECOMDOMESTIC' || c.code === 'ECOMINTERNATIONAL').some((c: TransactionChannel) => c.enabled)
+          console.log('getTransactionChannels -> isEnable', isEnable);
+          setIsEnableTransactionChannel(isEnable);
+          setInitIsEnableTransactionChannel(isEnable);
+        }
+      }
+    } catch (error: any) {
+      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
+      setIsLoadingGetTransactionChannel(false);
+    }
+    setIsLoadingGetTransactionChannel(false);
+  }, [_cardWallet]);
+
+
+  const generateOTPForUpdateTransactionChannel = useCallback(async () => {
+    console.log('generateOTPForUpdateTransactionLimit -> _cardWallet', _cardWallet);
+    setIsLoadingGenerateOTP(true);
+    setOneTimeToken(undefined);
+    setErrorVerifyOTPCard(undefined);
+    setIsLoadingVerifyOTP(false);
+    if(_cardWallet) {
+      try {
+        const respone = await walletService.generateOTP('put-channel-data', _cardWallet.walletId);
+        if(respone.data) {
+          setOtpId(respone.data.id);
+        }
+      } catch (error: any) {
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error)
+      }
+    }
+    setIsLoadingGenerateOTP(false);
+  }, [_cardWallet]);
+
+  const verifyOTPForUpdateTransactionChannel = useCallback(async (otpNumber: string, otpId: string) => {
+    setIsLoadingVerifyOTP(true);
+    setErrorVerifyOTPCard(undefined);
+    let isSuccess = false;
+    try {
+      const respone = await walletService.verifyOTP("put-channel-data", otpNumber, otpId);
+      setOneTimeToken(respone.data?.oneTimeToken);
+      isSuccess = true;
+    } catch (error: any) {
+      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
+      setIsLoadingVerifyOTP(false);
+      setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
+    }
+    return isSuccess;
+    ;
+  }, []);
+
+
+  const generateOTPForCardReport = useCallback(async () => {
+    console.log('generateOTPForCardReport -> _cardWallet', _cardWallet);
+    setIsLoadingGenerateOTP(true);
+    setOneTimeToken(undefined);
+    setErrorVerifyOTPCard(undefined);
+    setIsLoadingVerifyOTP(false);
+    if(_cardWallet) {
+      try {
+        const respone = await walletService.generateOTP('block-card', _cardWallet.walletId);
+        if(respone.data) {
+          setOtpId(respone.data.id);
+        }
+      } catch (error: any) {
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error)
+      }
+    }
+    setIsLoadingGenerateOTP(false);
+  }, [_cardWallet]);
+
+  const verifyOTPForCardReport = useCallback(async (otpNumber: string, otpId: string) => {
+    setIsLoadingVerifyOTP(true);
+    setErrorVerifyOTPCard(undefined);
+    let isSuccess = false;
+    try {
+      const respone = await walletService.verifyOTP("block-card", otpNumber, otpId);
+      setOneTimeToken(respone.data?.oneTimeToken);
+      isSuccess = true;
+    } catch (error: any) {
+      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
+      setIsLoadingVerifyOTP(false);
+      setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
+    }
+    return isSuccess;
+    ;
+  }, []);
+
   return useMemo(
     () => ({
       wallets: _wallets,
@@ -955,6 +1304,41 @@ export function useWalletContextValue(): WalletContextData {
       getWalletLimits,
       isLoadingWalletLimits: _isLoadingWalletLimits,
       walletLimits: _walletLimits,
+      cardWallet: _cardWallet,
+      isLoadingCardWallet: _isLoadingCardWallet,
+      getCardWallet,
+      generateOTPForCardDetails,
+      isLoadingGenerateOTP: _isLoadingGenerateOTP,
+      errorVerifyOTPCard: _errorVerifyOTPCard,
+      otpId: _otpId,
+      verifyOTPForCardDetails,
+      isLoadingVerifyOTP: _isLoadingVerifyOTP,
+      oneTimeToken: _oneTimeToken,
+      generateOTPForUpdateCardStatus,
+      verifyOTPForUpdateCardStatus,
+      updateCardStatus: setCardWalletStatus,
+      cardWalletStatus: _cardWalletStatus,
+      transactionLimits: _transactionLimits,
+      isLoadingGetTransactionLimit: _isLoadingTransactionLimits,
+      getTransactionLimit,
+      transactionLimitsOverall: _transactionLimitsOverall,
+      generateOTPForUpdateTransactionLimit,
+      verifyOTPForUpdateTransactionLimit,
+      transactionLimitValue: _transactionLimitValue,
+      updateTransactionLimitValue: setTransactionLimitValue,
+      getTransactionChannels,
+      generateOTPForUpdateTransactionChannel,
+      verifyOTPForUpdateTransactionChannel,
+      isEnableTransactionChannel: _isEnableTransactionChannel,
+      isLoadingGetTransactionChannel: _isLoadingGetTransactionChannel,
+      setTransactionLimitsOverall,
+      setIsEnableTransactionChannel,
+      initIsEnableTransactionChannel: _initIsEnableTransactionChannel,
+      setInitIsEnableTransactionChannel,
+      generateOTPForCardReport,
+      verifyOTPForCardReport,
+      selectedReportOption: _selectedReportOption,
+      setSelectedReportOption
     }),
     [
       _isLinkedSuccessfully,
@@ -999,6 +1383,22 @@ export function useWalletContextValue(): WalletContextData {
       _cryptoTransactionsPaging,
       _isLoadingWalletLimits,
       _walletLimits,
+      _cardWallet,
+      _isLoadingCardWallet,
+      _isLoadingGenerateOTP,
+      _otpId,
+      _isLoadingVerifyOTP,
+      _errorVerifyOTPCard,
+      _oneTimeToken,
+      _cardWalletStatus,
+      _transactionLimits,
+      _isLoadingTransactionLimits,
+      _transactionLimitValue,
+      _isEnableTransactionChannel,
+      _transactionLimitsOverall,
+      _isLoadingGetTransactionChannel,
+      _initIsEnableTransactionChannel,
+      _selectedReportOption
     ]
   );
 }

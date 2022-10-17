@@ -29,7 +29,11 @@ export { default as CryptoAccountComponent } from './src/components/crypto-compo
 export { default as CardTermAndConditionsComponent } from './src/components/card-components/card-term-and-conditions';
 export { default as ActiveCardRequestComponent } from './src/components/card-components/card-active-card-request';
 export { default as MyCardComponent } from './src/components/card-components/my-card';
-
+export { default as CardVerifyOTPComponent } from './src/components/card-components/card-verify-otp';
+export { default as MessageComponent } from './src/components/message-component';
+export { default as CardUpdateTransactionLimitsComponent } from './src/components/card-components/card-transaction-limits';
+export { default as CardUpdateTransactionChannelComponent } from './src/components/card-components/card-update-transaction-channel';
+export { default as ReportCardComponent } from './src/components/card-components/report-card';
 
 export * from './src/assets/images';
 export * from './src/types';

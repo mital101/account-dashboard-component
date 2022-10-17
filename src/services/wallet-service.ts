@@ -1,4 +1,4 @@
-import { FilterTransaction } from '../types';
+import { FilterTransaction, TransactionLimit } from '../types';
 import qs from 'qs';
 
 type WalletClient = {
@@ -9,6 +9,9 @@ type WalletClient = {
   countryInformationClient: any;
   paymentClient: any;
   limitClient: any;
+  paymentQuoteClient: any;
+  paymentOrderClient: any;
+  notificationClient: any;
 };
 
 export class WalletService {
@@ -23,6 +26,7 @@ export class WalletService {
   private _limitClient?: any;
   private _paymentQuoteClient?: any;
   private _paymentOrderClient?: any;
+  private _notificationClient?: any;
 
   constructor() {
     if (WalletService._instance) {
@@ -47,6 +51,7 @@ export class WalletService {
     this._limitClient = clients.limitClient;
     this._paymentQuoteClient = clients.paymentQuoteClient;
     this._paymentOrderClient = clients.paymentOrderClient;
+    this._notificationClient = clients.notificationClient;
   };
 
   getWallets = async () => {
@@ -527,6 +532,19 @@ export class WalletService {
     }
   };
 
+  getWalletsByWalletType = async (type: string) => {
+    if (this._walletClient) {
+      const response = await this._walletClient.get('wallets', {
+        params: {
+          type: type,
+        },
+      });
+      return response.data;
+    } else {
+      throw new Error('Wallet Client is not registered');
+    }
+  };
+
   getCryptoTransactions = async (
     pageNumber: number,
     pageSize: number,
@@ -647,6 +665,283 @@ export class WalletService {
       }
     } else {
       throw new Error('Payment quotes client service is not registered');
+    }
+  };
+
+  generateOTPForCardDetails = async (
+    refId: string,
+  ) => {
+    console.log('service -> generateOTPForCardDetails -> refId', refId, this._notificationClient);
+    if (this._notificationClient) {
+      try {
+        const response = await this._notificationClient.post('/pci-data/otps', {
+          "flowId": 'pci-data',
+          "referenceId": refId
+        });
+        console.log('service -> generateOTPForCardDetails -> respone.data', response.data);
+        return response.data;
+      } catch (error) {
+        console.log('error2', error);
+        throw error;
+      }
+    } else {
+      throw new Error('Notification client service is not registered');
+    }
+  };
+
+  verifyOTPForCardDetails = async (
+    otp: string,
+    otpId: string,
+  ) => {
+    console.log('service -> verify otp -> otpId', otpId, otp);
+    if (this._notificationClient) {
+      try {
+        const response = await this._notificationClient.put(`/otps/${otpId}`, {
+          flowId: 'pci-data',
+          "otp": otp
+        });
+        console.log('service -> verify otp -> response.data', response.data);
+        return response.data;
+      } catch (error) {
+        console.log('error2', error);
+        throw error;
+      }
+    } else {
+      throw new Error('Notification client service is not registered');
+    }
+  };
+
+  getVCSensitiveData = async (
+    walletId: string,
+    OTT: string,
+  ) => {
+    console.log('getVCSensitiveData -> param', walletId, OTT);
+    if (this._walletClient) {
+      try {
+        const response = await this._walletClient.get(`/wallets/${walletId}/sensitive-data?oneTimeToken=${OTT}`);
+        console.log('getVCSensitiveData -> response.data', response.data);
+        return response.data;
+      } catch (error) {
+        console.log('error2', error);
+        throw error;
+      }
+    } else {
+      throw new Error('Notification client service is not registered');
+    }
+  };
+
+  generateOTPForUpdateCardStatus = async (
+    currentStatus: string,
+    refId: string,
+  ) => {
+    console.log('service -> generateOTPForCardDetails -> refId', refId, this._notificationClient);
+    if (this._notificationClient) {
+      try {
+        const response = await this._notificationClient.post('otps', {
+          "flowId": currentStatus === 'ACTIVE' ? 'lock-card' : 'unlock-card',
+          "referenceId": refId
+        });
+        console.log('service -> generateOTPForCardDetails -> respone.data', response.data);
+        return response.data;
+      } catch (error) {
+        console.log('error2', error);
+        throw error;
+      }
+    } else {
+      throw new Error('Notification client service is not registered');
+    }
+  };
+
+  verifyOTPForUpdateCardStatus = async (
+    currentStatus: string,
+    otp: string,
+    otpId: string,
+  ) => {
+    console.log('service -> verify otp -> otpId', otpId, otp);
+    if (this._notificationClient) {
+      try {
+        const response = await this._notificationClient.put(`otps/${otpId}`, {
+          "flowId": currentStatus === 'ACTIVE' ? 'lock-card' : 'unlock-card',
+          "otp": otp
+        });
+        console.log('service -> verify otp -> response.data', response.data);
+        return response.data;
+      } catch (error) {
+        console.log('error2', error);
+        throw error;
+      }
+    } else {
+      throw new Error('Notification client service is not registered');
+    }
+  };
+
+  updateCardStatus = async (
+    status: string,
+    walletId: string,
+    ott: string,
+    reason?: string,
+    reasonCode?: string,
+  ) => {
+    if (this._walletClient) {
+      console.log('service -> updateCardStatus', walletId, reason, reasonCode);
+      try {
+        const response = await this._walletClient.post(`/wallets/${walletId}/status?oneTimeToken=${ott}`, {
+          status,
+          reason,
+          reasonCode,
+        });
+        console.log('service -> updateCardStatus -> response.data', response.data);
+        return response.data;
+      } catch (error) {
+        console.log('error2', error);
+        throw error;
+      }
+    } else {
+      throw new Error('Wallet client service is not registered');
+    }
+  };
+
+  getTransactionLimitByProxyNumber = async (walletId: string) => {  
+    if (this._limitClient) {
+      console.log('service -> getTransactionLimitByProxyNumber', walletId);
+      try {
+        const response = await this._limitClient.get(`limits`, {
+          params: { 
+            walletId,
+            serviceProvider: "EURONET"
+          }
+        });
+        console.log('service -> getTransactionLimitByProxyNumber -> response.data', response.data);
+        return response.data;
+      } catch (error) {
+        console.log('error2', error);
+        throw error;
+      }
+    } else {
+      throw new Error('Limits client service is not registered');
+    }
+  };
+
+
+  updateCardTransactionDailyLimit = async (walletId: string, limit: number, consentToken: string) => {  
+    if (this._limitClient) {
+      console.log('service -> updateTransactionLimit', walletId, limit, consentToken);
+      try {
+        const response = await this._limitClient.put(`limit-settings`, {
+          consentToken,
+          walletId,
+          limitSettings : [
+            {
+                limitName: "Daily online transaction max amount",
+                serviceProvider : "EURONET",
+                limitUnit: "PHP",            
+                frequence: "Daily",            
+                limitValue: limit,
+                limitSettingFactors : [
+                    {
+              attributeName: "transactionType",
+              attributeFixedValues: "AGGR_OVERALL"
+            }
+                ]
+            }
+        ]
+        });
+        console.log('service -> updateTransactionLimit -> response.data', response.data);
+        return response.data;
+      } catch (error) {
+        console.log('error2', error);
+        throw error;
+      }
+    } else {
+      throw new Error('Wallet client service is not registered');
+    }
+  };
+
+
+  generateOTP = async (
+    flowId: string,
+    referenceId: string
+  ) => {
+    if (this._notificationClient) {
+      try {
+        const response = await this._notificationClient.post('otps', {
+          flowId,
+          referenceId
+        });
+        console.log('service -> generateOTPForCardDetails -> respone.data', response.data);
+        return response.data;
+      } catch (error) {
+        console.log('error2', error);
+        throw error;
+      }
+    } else {
+      throw new Error('Notification client service is not registered');
+    }
+  };
+
+  verifyOTP = async (
+    flowId: string,
+    otp: string,
+    otpId: string,
+  ) => {
+    console.log('service -> verify otp -> otpId', otpId, otp);
+    if (this._notificationClient) {
+      try {
+        const response = await this._notificationClient.put(`otps/${otpId}`, {
+          flowId,
+          otp
+        });
+        console.log('service -> verify otp -> response.data', response.data);
+        return response.data;
+      } catch (error) {
+        console.log('error2', error);
+        throw error;
+      }
+    } else {
+      throw new Error('Notification client service is not registered');
+    }
+  };
+
+  getTransactionChannels = async (walletId: string) => {  
+    if (this._walletClient) {
+      console.log('service -> getTransactionLimitByProxyNumber', walletId);
+      try {
+        const response = await this._walletClient.get(`wallets/${walletId}/transaction-channels`);
+        console.log('service -> getTransactionChannels -> response.data', response.data);
+        return response.data;
+      } catch (error) {
+        console.log('error2', error);
+        throw error;
+      }
+    } else {
+      throw new Error('Wallets client service is not registered');
+    }
+  };
+
+  updateTransactionChannels = async (walletId: string, ott: string, isEnable: boolean) => {  
+    if (this._walletClient) {
+      console.log('service -> getTransactionLimitByProxyNumber', walletId);
+      try {
+        const response = await this._walletClient.put(`wallets/${walletId}/transaction-channels?oneTimeToken=${ott}`, {
+          "transaction-channels": [
+            {
+                "code": "ECOMDOMESTIC",
+                "enabled": isEnable
+            },
+            {
+                "code": "ECOMINTERNATIONAL",
+                "enabled": isEnable
+            }
+        ]
+        });
+        console.log('service -> getTransactionChannels -> response.data', response.data);
+        return response.data;
+      } catch (error) {
+        console.log('error2', error);
+        throw error;
+      }
+    } else {
+      throw new Error('Wallets client service is not registered');
     }
   };
 }
