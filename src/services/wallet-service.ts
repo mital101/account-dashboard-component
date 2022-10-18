@@ -11,7 +11,7 @@ type WalletClient = {
   limitClient: any;
   paymentQuoteClient: any;
   paymentOrderClient: any;
-  notificationClient: any;
+  mfaClient: any;
 };
 
 export class WalletService {
@@ -26,7 +26,7 @@ export class WalletService {
   private _limitClient?: any;
   private _paymentQuoteClient?: any;
   private _paymentOrderClient?: any;
-  private _notificationClient?: any;
+  private _mfaClient?: any;
 
   constructor() {
     if (WalletService._instance) {
@@ -51,7 +51,7 @@ export class WalletService {
     this._limitClient = clients.limitClient;
     this._paymentQuoteClient = clients.paymentQuoteClient;
     this._paymentOrderClient = clients.paymentOrderClient;
-    this._notificationClient = clients.notificationClient;
+    this._mfaClient = clients.mfaClient;
   };
 
   getWallets = async () => {
@@ -668,49 +668,6 @@ export class WalletService {
     }
   };
 
-  generateOTPForCardDetails = async (
-    refId: string,
-  ) => {
-    console.log('service -> generateOTPForCardDetails -> refId', refId, this._notificationClient);
-    if (this._notificationClient) {
-      try {
-        const response = await this._notificationClient.post('/pci-data/otps', {
-          "flowId": 'pci-data',
-          "referenceId": refId
-        });
-        console.log('service -> generateOTPForCardDetails -> respone.data', response.data);
-        return response.data;
-      } catch (error) {
-        console.log('error2', error);
-        throw error;
-      }
-    } else {
-      throw new Error('Notification client service is not registered');
-    }
-  };
-
-  verifyOTPForCardDetails = async (
-    otp: string,
-    otpId: string,
-  ) => {
-    console.log('service -> verify otp -> otpId', otpId, otp);
-    if (this._notificationClient) {
-      try {
-        const response = await this._notificationClient.put(`/otps/${otpId}`, {
-          flowId: 'pci-data',
-          "otp": otp
-        });
-        console.log('service -> verify otp -> response.data', response.data);
-        return response.data;
-      } catch (error) {
-        console.log('error2', error);
-        throw error;
-      }
-    } else {
-      throw new Error('Notification client service is not registered');
-    }
-  };
-
   getVCSensitiveData = async (
     walletId: string,
     OTT: string,
@@ -726,52 +683,7 @@ export class WalletService {
         throw error;
       }
     } else {
-      throw new Error('Notification client service is not registered');
-    }
-  };
-
-  generateOTPForUpdateCardStatus = async (
-    currentStatus: string,
-    refId: string,
-  ) => {
-    console.log('service -> generateOTPForCardDetails -> refId', refId, this._notificationClient);
-    if (this._notificationClient) {
-      try {
-        const response = await this._notificationClient.post('otps', {
-          "flowId": currentStatus === 'ACTIVE' ? 'lock-card' : 'unlock-card',
-          "referenceId": refId
-        });
-        console.log('service -> generateOTPForCardDetails -> respone.data', response.data);
-        return response.data;
-      } catch (error) {
-        console.log('error2', error);
-        throw error;
-      }
-    } else {
-      throw new Error('Notification client service is not registered');
-    }
-  };
-
-  verifyOTPForUpdateCardStatus = async (
-    currentStatus: string,
-    otp: string,
-    otpId: string,
-  ) => {
-    console.log('service -> verify otp -> otpId', otpId, otp);
-    if (this._notificationClient) {
-      try {
-        const response = await this._notificationClient.put(`otps/${otpId}`, {
-          "flowId": currentStatus === 'ACTIVE' ? 'lock-card' : 'unlock-card',
-          "otp": otp
-        });
-        console.log('service -> verify otp -> response.data', response.data);
-        return response.data;
-      } catch (error) {
-        console.log('error2', error);
-        throw error;
-      }
-    } else {
-      throw new Error('Notification client service is not registered');
+      throw new Error('Wallet client service is not registered');
     }
   };
 
@@ -862,9 +774,9 @@ export class WalletService {
     flowId: string,
     referenceId: string
   ) => {
-    if (this._notificationClient) {
+    if (this._mfaClient) {
       try {
-        const response = await this._notificationClient.post('otps', {
+        const response = await this._mfaClient.post('otps', {
           flowId,
           referenceId
         });
@@ -875,7 +787,7 @@ export class WalletService {
         throw error;
       }
     } else {
-      throw new Error('Notification client service is not registered');
+      throw new Error('MFA client service is not registered');
     }
   };
 
@@ -885,9 +797,9 @@ export class WalletService {
     otpId: string,
   ) => {
     console.log('service -> verify otp -> otpId', otpId, otp);
-    if (this._notificationClient) {
+    if (this._mfaClient) {
       try {
-        const response = await this._notificationClient.put(`otps/${otpId}`, {
+        const response = await this._mfaClient.put(`otps/${otpId}`, {
           flowId,
           otp
         });
@@ -898,7 +810,7 @@ export class WalletService {
         throw error;
       }
     } else {
-      throw new Error('Notification client service is not registered');
+      throw new Error('MFA client service is not registered');
     }
   };
 

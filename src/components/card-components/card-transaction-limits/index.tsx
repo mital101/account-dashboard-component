@@ -11,14 +11,13 @@ const CardUpdateTransactionLimitsComponent = ({
   style,
 }: CardUpdateTransactionLimitsComponentProps) => {
   const styles = useMergeStyles(style);
-  const maximumLimit = 250000;
-  const { isLoadingGetTransactionLimit, transactionLimitsOverall } = useContext(WalletContext);
+  const { isLoadingGetTransactionLimit, transactionLimitsOverall, transactionLimitValueMin, transactionLimitValueMax } = useContext(WalletContext);
   const { onCancelUpdateTransactionLimits, onDismissAlert, isShowConfirmALert, onConfirm } = props;
   const [stepLength, setStepLength] = useState<number>();
   const [isUpdated, setIsUpdated] = useState<boolean>(false);
-  const [amount, setAmount] = useState<number>(transactionLimitsOverall?.limitValue ? transactionLimitsOverall?.limitValue : 0);
+  const [amount, setAmount] = useState<number>(transactionLimitsOverall?.limitValue ? transactionLimitsOverall?.limitValue : transactionLimitValueMin);
   const position = useRef(new Animated.ValueXY()).current;
-  const positionCurrent = useRef<number>(transactionLimitsOverall?.limitValue ? maximumLimit / transactionLimitsOverall?.limitValue : 0 );
+  const positionCurrent = useRef<number>(transactionLimitsOverall?.limitValue ? transactionLimitValueMax / transactionLimitsOverall?.limitValue : transactionLimitValueMin );
   const panResponder = React.useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: (evt, gestureState) => true,
     onPanResponderMove: (evt, gestureState) => {
@@ -27,7 +26,7 @@ const CardUpdateTransactionLimitsComponent = ({
         if(step >= 0 && step <= 10 && step !== positionCurrent.current) {
           position.setValue({x: step  * stepLength - 10, y: gestureState.dy});
           positionCurrent.current = step;
-          setAmount(Math.round(maximumLimit * (step / 10)));
+          setAmount(Math.round(transactionLimitValueMax * (step / 10)));
           setIsUpdated(true);
         }
       }
@@ -39,7 +38,7 @@ const CardUpdateTransactionLimitsComponent = ({
   useEffect(() => {
     if(transactionLimitsOverall && stepLength) {
       setAmount(transactionLimitsOverall.limitValue);
-      const xPosition = (transactionLimitsOverall.limitValue / maximumLimit * 10) * stepLength - 10;
+      const xPosition = (transactionLimitsOverall.limitValue / transactionLimitValueMax * 10) * stepLength - 10;
       console.log('x - value', xPosition);
       position.setValue({x: xPosition, y: 0});
     }
@@ -69,14 +68,14 @@ const CardUpdateTransactionLimitsComponent = ({
               <Animated.View style={[styles.processRow, {width: position.x}]}/>
               <Animated.View {...panResponder.panHandlers}
               style={[styles.circleAmount, {left: position.x}]}/>
-              <Animated.View style={[styles.viewAmountNumber, { left: position.x, transform: [{ translateX: amount === maximumLimit ? -65 : -`${amount}`.length * 5.5 }] }]} >
+              <Animated.View style={[styles.viewAmountNumber, { left: position.x, transform: [{ translateX: amount === transactionLimitValueMax ? -65 : -`${amount}`.length * 5.5 }] }]} >
                 <Text style={[styles.amountNumber, {color: '#FFFFFF'}]}>{`${amountFormatted}`}</Text>
               </Animated.View>
             </View>
             <View style={styles.amountLineSection}>
               <View style={{position: 'absolute', left: 0}}>
                 <View style={styles.bigLineColumnAmount}/>
-                <Text style={styles.amountNumber}>0</Text>
+                <Text style={styles.amountNumber}>{transactionLimitValueMin}</Text>
               </View>
               <View style={[styles.lineAmount, {left: stepLength}]} />
               <View style={[styles.lineAmount, {left: stepLength * 2}]} />

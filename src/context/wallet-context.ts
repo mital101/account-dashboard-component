@@ -141,7 +141,9 @@ export interface WalletContextData {
   transactionLimitsOverall?: TransactionLimit;
   setTransactionLimitsOverall?: (transactionInfo: TransactionLimit) => void;
   
-  transactionLimitValue?: number;
+  transactionLimitValue: number;
+  transactionLimitValueMin: number;
+  transactionLimitValueMax: number;
   updateTransactionLimitValue?: (value: number) => void;
 
   getTransactionChannels: () => void;
@@ -248,7 +250,9 @@ export const walletDefaultValue: WalletContextData = {
   transactionLimits: [],
   generateOTPForUpdateTransactionLimit: () => undefined,
   verifyOTPForUpdateTransactionLimit: async () => false,
-  transactionLimitValue: undefined,
+  transactionLimitValue: 0,
+  transactionLimitValueMin: 0,
+  transactionLimitValueMax: 250000,
 
   //
   getTransactionChannels: () => undefined,
@@ -351,6 +355,8 @@ export function useWalletContextValue(): WalletContextData {
   const [_isLoadingTransactionLimits, setIsLoadingTransactionLimits] = useState<boolean>(false);
 
   const [_transactionLimitValue, setTransactionLimitValue] = useState<number>(0);
+  const [_transactionMaxLimitValue, setTransactionMaxLimitValue] = useState<number>(0);
+  const [_transactionMinLimitValue, setTransactionMinLimitValue] = useState<number>(0);
 
   const [_isLoadingGetTransactionChannel, setIsLoadingGetTransactionChannel] = useState<boolean>(false);
   const [_isEnableTransactionChannel, setIsEnableTransactionChannel] = useState<boolean>(false);
@@ -998,7 +1004,7 @@ export function useWalletContextValue(): WalletContextData {
     setIsLoadingVerifyOTP(false);
     if(_cardWallet) {
       try {
-        const respone = await walletService.generateOTPForCardDetails(_cardWallet.walletId);
+        const respone = await walletService.generateOTP('pci-data', _cardWallet.walletId);
         console.log(respone);
         if(respone.data) {
           console.log('setOtpId', respone.data.id)
@@ -1017,7 +1023,7 @@ export function useWalletContextValue(): WalletContextData {
     setErrorVerifyOTPCard(undefined);
     let isSuccess = false;
     try {
-      const respone = await walletService.verifyOTPForCardDetails(otpNumber, otpId);
+      const respone = await walletService.verifyOTP('pci-data', otpNumber, otpId);
       setOneTimeToken(respone.data?.oneTimeToken);
       isSuccess = true;
     } catch (error: any) {
@@ -1037,7 +1043,7 @@ export function useWalletContextValue(): WalletContextData {
     setIsLoadingVerifyOTP(false);
     if(_cardWallet && _cardWalletStatus) {
       try {
-        const respone = await walletService.generateOTPForUpdateCardStatus(_cardWalletStatus, _cardWallet.walletId);
+        const respone = await walletService.generateOTP(_cardWalletStatus == 'ACTIVE' ? 'lock-card' : 'unlock-card', _cardWallet.walletId);
         console.log(respone);
         if(respone.data) {
           console.log('setOtpId', respone.data.id)
@@ -1057,7 +1063,7 @@ export function useWalletContextValue(): WalletContextData {
     let isSuccess = false;
     try {
       if(_cardWalletStatus) {
-        const respone = await walletService.verifyOTPForUpdateCardStatus(_cardWalletStatus, otpNumber, otpId);
+        const respone = await walletService.verifyOTP(_cardWalletStatus == 'ACTIVE' ? 'lock-card' : 'unlock-card', otpNumber, otpId);
         setOneTimeToken(respone.data?.oneTimeToken);
         isSuccess = true;
       }
@@ -1078,10 +1084,18 @@ export function useWalletContextValue(): WalletContextData {
         setTransactionLimits(response.data);
         if(response.data.length > 0) {
           console.log('getTransactionLimit -> limit', response.data);
-          const overallDailyLimit = response.data.filter((l: TransactionLimit) => l.transactionType === 'AGGR_OVERALL');
+          const overallDailyLimit = response.data.filter((l: TransactionLimit) => l.transactionType === 'AGGR_OVERALL' && l.frequence === 'Daily');
+          const overallDailyLimitMin = response.data.filter((l: TransactionLimit) => l.transactionType === 'AGGR_OVERALL' && l.frequence === 'MinPerTransaction');
+          const overallDailyLimitMax = response.data.filter((l: TransactionLimit) => l.transactionType === 'AGGR_OVERALL' && l.frequence === 'MaxPerTransaction');
           if(overallDailyLimit?.length > 0) {
             setTransactionLimitsOverall(overallDailyLimit[0]);
             setTransactionLimitValue(overallDailyLimit[0].limitValue);
+          }
+          if(overallDailyLimitMin?.length > 0) {
+            setTransactionMinLimitValue(overallDailyLimitMin[0].limitValue);
+          }
+          if(overallDailyLimitMax?.length > 0) {
+            setTransactionMaxLimitValue(overallDailyLimitMax[0].limitValue);
           }
         }
       }
@@ -1338,7 +1352,9 @@ export function useWalletContextValue(): WalletContextData {
       generateOTPForCardReport,
       verifyOTPForCardReport,
       selectedReportOption: _selectedReportOption,
-      setSelectedReportOption
+      setSelectedReportOption,
+      transactionLimitValueMin: _transactionMinLimitValue,
+      transactionLimitValueMax: _transactionMaxLimitValue
     }),
     [
       _isLinkedSuccessfully,
@@ -1398,7 +1414,9 @@ export function useWalletContextValue(): WalletContextData {
       _transactionLimitsOverall,
       _isLoadingGetTransactionChannel,
       _initIsEnableTransactionChannel,
-      _selectedReportOption
+      _selectedReportOption,
+      _transactionMinLimitValue,
+      _transactionMaxLimitValue
     ]
   );
 }
