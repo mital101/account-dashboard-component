@@ -22,6 +22,7 @@ export type MyCardComponentProps = {
       onFailedUpdateTransactionChannel?: () => void;
       onSuccessReportCard?: () => void;
       onFailedReportCard?: () => void;
+      onSelectPhysicalCard?: () => void;
     }
   };
   
@@ -59,5 +60,12 @@ export type MyCardComponentProps = {
     cardProgressSubTitle?: StyleProp<TextStyle>;
     imageUD?: StyleProp<ViewStyle>;
     image?: StyleProp<ImageStyle>;
+    pcCardContentView?: StyleProp<ViewStyle>;
+    pcCardContentImageView?: StyleProp<ViewStyle>;
+    pcCardContentWrapper?: StyleProp<ViewStyle>;
+    imagePC?: StyleProp<ViewStyle>;
+    getACardBtn?: StyleProp<ViewStyle>;
+    pcCardTitle?: StyleProp<TextStyle>;
+    pcCardSubTitle?: StyleProp<TextStyle>;
   };
   

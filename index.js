@@ -33,7 +33,10 @@ export { default as CardVerifyOTPComponent } from './src/components/card-compone
 export { default as MessageComponent } from './src/components/message-component';
 export { default as CardUpdateTransactionLimitsComponent } from './src/components/card-components/card-transaction-limits';
 export { default as CardUpdateTransactionChannelComponent } from './src/components/card-components/card-update-transaction-channel';
-export { default as ReportCardComponent } from './src/components/card-components/report-card';
+export { default as PhysicalCardConfirmComponent } from './src/components/card-components/physical-card-onboarding';
+export { default as ReviewCheckoutDetailsComponent } from './src/components/card-components/review-checkout-details';
+export { default as UpdateDeliveryAddressComponent } from './src/components/card-components/update-delivery-address';
+export { default as PhysicalCardTransactionStatusComponent } from './src/components/card-components/physical-card-transaction-status';
 
 export * from './src/assets/images';
 export * from './src/types';

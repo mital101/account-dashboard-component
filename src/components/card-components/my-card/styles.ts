@@ -162,7 +162,42 @@ const useMergeStyles = (
     },
     image: {
       width: '100%',
-      height: '100%'
+      height: '100%',
+      borderRadius: 8,
+    },
+    imagePC: {
+      height: 140,
+      width: '100%',
+      borderRadius: 8,
+      marginBottom: 20
+    },
+    pcCardContentView: {
+      position: 'absolute',
+      flexDirection: 'row',
+      width: '100%',
+      height: '100%',
+    },
+    pcCardContentImageView: {
+      flex: 1.5,
+    },
+    pcCardContentWrapper: {
+      flex: 2,
+      paddingVertical: 15
+    },
+    pcCardTitle: {
+      color: '#F1F6FC',
+      fontSize: 16,
+      fontFamily: fonts.medium,
+      marginBottom: 10
+    },
+    pcCardSubTitle: {
+      color: '#F1F6FC',
+      fontSize: 10,
+      fontFamily: fonts.regular,
+      marginBottom: 15
+    },
+    getACardBtn: {
+      backgroundColor: 'red', width: 120, borderRadius: 20
     }
   });
 

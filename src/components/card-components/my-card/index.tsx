@@ -43,7 +43,8 @@ const MyCardComponent = ({
     onSuccessUpdateTransactionChannel,
     onFailedUpdateTransactionChannel,
     onSuccessReportCard,
-    onFailedReportCard
+    onFailedReportCard,
+    onSelectPhysicalCard
   } = props;
   const [toolTipCardVisible, setToolTipCardVisible] = useState<boolean>(isShowWalkThrough);
   const [toolTipOptionsVisible, setToolTipOptionsVisible] = useState<boolean>(false);
@@ -247,6 +248,10 @@ const MyCardComponent = ({
     onToggleShowingSensitiveData();
   }
 
+  const onSelectPhysicalCardHandler = () => {
+    onSelectPhysicalCard && onSelectPhysicalCard();
+  }
+
   console.log('render my card',transactionLimitValue);
 
   return (
@@ -341,6 +346,20 @@ const MyCardComponent = ({
             </View>
           </View>
         </Tooltip>}
+
+        <View style={styles.imagePC}>
+          <Image source={images.pcCardPreview} style={styles.image} resizeMode={'cover'} />
+          <View style={styles.pcCardContentView}>
+            <View style={styles.pcCardContentImageView}/>
+            <View style={styles.pcCardContentWrapper}>
+              <Text style={styles.pcCardTitle}>Your card on the go</Text>
+              <Text style={styles.pcCardSubTitle}>Get your UD Bank Physical Card, now!</Text>
+              <Button onPress={onSelectPhysicalCardHandler} label='Get a card' style={{
+                primaryContainerStyle: styles.getACardBtn,
+              }}/>
+            </View>
+          </View>
+        </View>
         {isShowSensitiveData && <View style={[styles.row, styles.noteWrapper]}>
           <Text style={styles.note}>NOTE: </Text>
           <Text style={styles.noteDescription}>For your security, please keep your details private.</Text>

@@ -7,6 +7,8 @@ export const images = {
   udVCCard: require("./ud-vc-card.png"),
   udVCCardDisable: require("./ud-vc-card-disable.png"),
   vcCardPreview: require("./vc-card-preview.png"),
+  pcCardPreview: require("./pc-card-preview.png"),
+  pcCardPreview2: require("./pc-card-preview-2.png"),
 };
 
 export * from "./checked.icon";
@@ -99,3 +101,4 @@ export * from "./crypto-card-2.icon";
 export * from "./crypto-card-3.icon";
 export * from "./question-mark.icon";
 
+export * from "./edit-pencil.icon";
