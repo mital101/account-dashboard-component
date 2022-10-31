@@ -22,7 +22,8 @@ import {
 import { ArrowRightIcon, InformationIcon } from '../../../assets/images';
 import { WalletService } from '../../../services/wallet-service';
 import { WalletContext } from '../../../context/wallet-context';
-
+import { AuthContext } from 'react-native-auth-component';
+import _ from 'lodash';
 const randomCryptoImgUrl =
   'https://cdn.pixabay.com/photo/2017/03/12/02/57/bitcoin-2136339_960_720.png';
 
@@ -105,9 +106,21 @@ const CryptoTransferInComponent = ({
   const [selectedCrypto, setSelectedCrypto] = React.useState<string>();
   const [isLoadingValidation, setIsLoadingValidation] =
     useState<boolean>(false);
-  const { walletLimits, setAmountCryptoIn, unionWallet, cryptoWallet, currentTransfer } =
-    useContext(WalletContext);
-  const isTransferIn = currentTransfer === 'moneyin'; 
+  const {
+    walletLimits,
+    setAmountCryptoIn,
+    unionWallet,
+    cryptoWallet,
+    currentTransfer,
+    getFinancialProfile,
+    financialProfile,
+    listCurrency
+  } = useContext(WalletContext);
+  const { profile } = useContext(AuthContext);
+
+  const isTransferIn = currentTransfer === 'moneyin';
+
+
   const currentAvailableBalance = useCurrencyFormat(
     (isTransferIn ? unionWallet?.availableBalance : cryptoWallet?.availableBalance) || 0,
     'PHP'
@@ -116,10 +129,10 @@ const CryptoTransferInComponent = ({
     transferValue > 0 ? useCurrencyFormat(transferValue, '', '') : '';
 
   const dailyLimit = walletLimits ? walletLimits.find(l => l.frequence === 'Daily') : null;
-  const limitValueFormated = dailyLimit ? useCurrencyFormat(dailyLimit.limitValue, 'PHP') : 0; 
-  const limitRemainingValueFormated = dailyLimit ? useCurrencyFormat(dailyLimit.remainingLimitValue, 'PHP') : 0; 
+  const limitValueFormated = dailyLimit ? useCurrencyFormat(dailyLimit.limitValue, 'PHP') : 0;
+  const limitRemainingValueFormated = dailyLimit ? useCurrencyFormat(dailyLimit.remainingLimitValue, 'PHP') : 0;
   const percentRemainning = dailyLimit ? (1 - (dailyLimit.remainingLimitValue / dailyLimit.limitValue)) * 100 : 0;
-  
+
   const styles = useMergeStyles(style);
 
   const minimumError = transferValueFormated.length > 0 && transferValue < 200;
@@ -130,7 +143,7 @@ const CryptoTransferInComponent = ({
   const isOverDailyLimitError = dailyLimit ? transferValue > dailyLimit?.remainingLimitValue : false;
   const isReachDailyLimitError = dailyLimit ? dailyLimit?.remainingLimitValue === 0 : false;
   const isInputValid = !minimumError && !maximumError && !higherCurrentBalanceError && !isOverDailyLimitError && !isReachDailyLimitError;
- 
+
   const isValidToSubmit =
     selectedTabIndex === 0
       ? transferValue > 0 && isInputValid
@@ -139,6 +152,29 @@ const CryptoTransferInComponent = ({
   useEffect(() => {
     setVisibleCurrentBalance && setVisibleCurrentBalance(selectedTabIndex === 0)
   }, [selectedTabIndex]);
+
+  useEffect(() => {
+      getUserFinancialProfile();
+  }, []);
+
+  useEffect(() => {
+    if (financialProfile) {
+      // console.log('financialProfile ',financialProfile);
+      // console.log('listCurrency ',listCurrency);
+
+      // let filteredCryptoBalance = financialProfile.walletSummaries.find((item) => item.currency === defaultData.item.code);
+      //
+      // setCryptoWalletCurrentBalance(filteredCryptoBalance?.currentBalance)
+    }
+  },[financialProfile]);
+
+  const getUserFinancialProfile =()=>{
+    if (profile.userId) {
+      getFinancialProfile(profile.userId, 'PDAX');
+    }
+  }
+
+
 
   const renderTabbar = (title: string, indexTabbar: number) => (
     <TouchableOpacity
@@ -190,8 +226,8 @@ const CryptoTransferInComponent = ({
                     ? `The minimum amount that you’re allowed to transfer-in is ₱200.0`
                     : higherCurrentBalanceError
                     ? 'You have insufficient balance in your Pitaka.'
-                    : 
-                    isReachDailyLimitError ? 'You have reached your daily limit of P100,000.00. Please wait for the following day to transact again.' 
+                    :
+                    isReachDailyLimitError ? 'You have reached your daily limit of P100,000.00. Please wait for the following day to transact again.'
                     : 'Invalid amount'}
                 </Text>
               </View>
@@ -234,28 +270,80 @@ const CryptoTransferInComponent = ({
     );
   };
 
-  const transferToRadioButtonItem = (data: CryptoItem[]): RadioButtonItem[] => {
-    return data.map((item) => ({
-      title: item.shortName,
-      subTitle: item.fullName,
-      imageUrl: item.imageUrl,
-      rightTitle: item.currentValue,
-      rightSubTitle: item.rate,
-      value: item.id,
-    }));
+  const transferOutToRadioButtonItem = (data: CryptoItem[]): RadioButtonItem[] => {
+    if (data.walletSummaries && data.walletSummaries.length>1) {
+
+      let filteredCryptoList = [];
+      data.walletSummaries.map((item,key) => {
+        let filteredCrypto =  listCurrency.find((currencyItem) => currencyItem.code === item.currency)
+        if (filteredCrypto) {
+          filteredCryptoList.push(
+            {
+              title: filteredCrypto.code,
+              subTitle: filteredCrypto.name,
+              imageUrl: filteredCrypto.logo,
+              rightTitle: item.availableBalance,
+              rightSubTitle: `≈ ₱${item.availableBalanceInBaseCurrency}`,
+              value: key+1,
+            }
+          )
+        }
+      });
+      return filteredCryptoList;
+    }
+
   };
 
-  const renderCryptoContent = () => (
-    <RadioButtonGroup
-      data={transferToRadioButtonItem(cryptoDummyData)}
-      onSelect={setSelectedCrypto}
-      selectedValue={selectedCrypto}
-    />
-  );
+  const transferInToRadioButtonItem = (data: CryptoItem[]): RadioButtonItem[] => {
+    if (data.walletSummaries && data.walletSummaries.length>1) {
+
+      let filteredCryptoList = [];
+      listCurrency.map((item,key) => {
+        let filteredCrypto =  data.walletSummaries.find((currencyItem) => currencyItem.currency === item.code)
+        if (filteredCrypto) {
+          filteredCryptoList.push(
+            {
+              title: item.code,
+              subTitle: item.name,
+              imageUrl: item.logo,
+              rightTitle: filteredCrypto.availableBalance,
+              rightSubTitle: `≈ ₱${filteredCrypto.availableBalanceInBaseCurrency}`,
+              value: key+1,
+            }
+          )
+        }else{
+          filteredCryptoList.push(
+            {
+              title: item.code,
+              subTitle: item.name,
+              imageUrl: item.logo,
+              rightTitle: `0.00`,
+              rightSubTitle: `≈ ₱ 0.00`,
+              value: key+1,
+            }
+          )
+        }
+      });
+      return _.sortBy( filteredCryptoList, 'rightTitle' ).reverse();
+    }
+
+  };
+
+  const renderCryptoContent = (isTransferIn) => {
+
+    return(
+      <RadioButtonGroup
+        data={isTransferIn?transferInToRadioButtonItem(financialProfile):transferOutToRadioButtonItem(financialProfile)}
+        onSelect={setSelectedCrypto}
+        selectedValue={selectedCrypto}
+      />
+    )
+  };
 
   const handleOnTransferPHP = async () => {
     setIsLoadingValidation(true);
     if (unionWallet && cryptoWallet) {
+
       const result = isTransferIn ? await walletService.moneyInValidation(
         transferValue,
         unionWallet?.bankAccount.accountNumber,
@@ -288,9 +376,13 @@ const CryptoTransferInComponent = ({
             {renderTabbar('Crypto', 1)}
           </View>
           <View style={styles.content}>
-            {selectedTabIndex === 0
-              ? renderPHPContent()
-              : renderCryptoContent()}
+            {selectedTabIndex === 0 && renderPHPContent()}
+            {selectedTabIndex !== 0 &&
+              financialProfile &&
+              financialProfile.walletSummaries&&
+              financialProfile.walletSummaries.length>0 &&
+              listCurrency &&
+              listCurrency.length>0 && renderCryptoContent(isTransferIn)}
           </View>
         </View>
       </ScrollView>
@@ -298,9 +390,9 @@ const CryptoTransferInComponent = ({
         <Button
           isLoading={isLoadingValidation}
           label={selectedTabIndex === 0 ? 'Transfer-in PHP' : 'Select'}
-          onPress={
-            selectedTabIndex === 0 ? handleOnTransferPHP : onSelectCrypto
-          }
+          onPress={()=>{
+            selectedTabIndex === 0 ? handleOnTransferPHP() : onSelectCrypto(isTransferIn?listCurrency[selectedCrypto-1]:financialProfile.walletSummaries[selectedCrypto-1])
+          }}
           disabled={!isValidToSubmit}
           disableColor={'#EAEAEB'}
         />

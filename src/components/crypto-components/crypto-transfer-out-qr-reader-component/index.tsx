@@ -109,11 +109,11 @@ const CryptoTransferOutQrScannerComponent = ({
     e: NativeSyntheticEvent<TextInputKeyPressEventData>
   ) => {
     if (e.nativeEvent.key !== "Backspace") {
-      console.log(
-        transferValue,
-        e.nativeEvent.key,
-        parseInt(`${transferValue}${e.nativeEvent.key}`)
-      );
+      // console.log(
+      //   transferValue,
+      //   e.nativeEvent.key,
+      //   parseInt(`${transferValue}${e.nativeEvent.key}`)
+      // );
       setTransferValue(parseInt(`${transferValue || ""}${e.nativeEvent.key}`));
     } else {
       setTransferValue(parseInt(`${transferValue || ""}`.slice(0, -1)));

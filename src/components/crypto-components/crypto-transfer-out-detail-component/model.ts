@@ -53,5 +53,5 @@ export class RecipientData {
 export const RecipientSchema = Yup.object().shape({
   firstName: Yup.string().required("required"),
   lastName: Yup.string().required("required"),
-  receivingName: Yup.number().required("required")
+  receivingName: Yup.string().required("required")
 });

@@ -2,8 +2,11 @@ import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 export type CryptoReceiveSummaryComponentProps = {
   style?: CryptoReceiveSummaryComponentStyles;
-  props?: { 
+  props: {
+    defaultData:CryptoDefaultData;
     onBackToDashboard?: () => void;
+    onGoToHelpCenter?:()=>void;
+    isWithError?:()=>void;
   };
 };
 
@@ -31,4 +34,14 @@ export type CryptoItem = {
   currentValue: string,
   fullName: string,
   rate: string
+}
+
+export type CryptoDefaultData = {
+  availableBalance:number
+  availableBalanceInBaseCurrency:number
+  baseCurrency: string;
+  currency: string;
+  currentBalance:number
+  currentBalanceInBaseCurrency:number
+  walletId: string;
 }

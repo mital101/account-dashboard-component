@@ -11,6 +11,7 @@ export type CryptoTransactionPostingComponentProps = {
     status: string;
     date: string;
     refNumber: string;
+    transactionType?: string;
   };
 };
 

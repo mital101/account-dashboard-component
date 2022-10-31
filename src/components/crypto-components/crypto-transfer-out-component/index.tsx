@@ -303,7 +303,7 @@ const CryptoTransferOutComponent = ({
           disableColor={"#EAEAEB"}
         />
       </View>
-      
+
       {isShowDropDown && (
           <View style={[styles.dropdown, { top: yDDPosition }]}>
             <View style={styles.ddItemWrapper}>

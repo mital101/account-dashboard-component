@@ -71,7 +71,6 @@ const BreakdownSummaryCard = (props: BreakdownSummaryCardProps) => {
     if (financialProfile) {
       let currencyList = []
       let othersCurrencyList = 0
-      console.log('financialProfile.walletSummaries',financialProfile.walletSummaries);
 
       financialProfile.walletSummaries.map((obj,key)=>{
         if (key < 4) {

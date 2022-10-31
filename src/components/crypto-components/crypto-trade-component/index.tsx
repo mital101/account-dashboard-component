@@ -92,6 +92,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
   const [quotesResponse, setQuotesResponse] = useState<any>();
   const [orderResponse, setOrderResponse] = useState<any>();
   const [isFailed, setIsFailed] = useState<boolean>(false);
+  const [unitPrice, setUnitPrice] = useState<any>();
   const [cryptoWalletCurrentBalance, setCryptoWalletCurrentBalance] = useState<string>('');
   const [seconds, setSeconds ] =  useState(15);
   const windowWidth = Dimensions.get('window').width;
@@ -113,10 +114,12 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
 
     if (transferValueFormated) {
       if (defaultData.type === 'Buy') {
-        let transactionExchangeRate =getAmountRawValue(transferValueFormated ,'PHP')/(getAmountRawValue(defaultData?.currentExchangeRateShowing ,'PHP'));
+        let unitExchangeRate = unitPrice ? defaultData.type === 'Buy' ? unitPrice.buy : unitPrice.sell : 0;
+        let transactionExchangeRate =getAmountRawValue(transferValueFormated ,'PHP')/unitExchangeRate;
         setCardExcangeValue(`${Math.round(transactionExchangeRate * 100)/100} ${defaultData.item.code}`)
       }else{
-        let transactionExchangeRate =getAmountRawValue(transferValueFormated ,defaultData.item.code)*(getAmountRawValue(defaultData?.currentExchangeRateShowing ,defaultData.item.code));
+        let unitExchangeRate = unitPrice ? defaultData.type === 'Buy' ? unitPrice.buy : unitPrice.sell : 0;
+        let transactionExchangeRate =getAmountRawValue(transferValueFormated ,defaultData.item.code)*unitExchangeRate;
         setCardExcangeValue(`${Math.round(transactionExchangeRate * 100)/100} PHP`)
       }
 
@@ -126,6 +129,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
 
   useEffect(() => {
     getUserFinancialProfile();
+    getDailyExchangeRate();
   }, []);
 
   useEffect(() => {
@@ -133,7 +137,6 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
       let filteredCryptoBalance = financialProfile.walletSummaries.find((item) => item.currency === defaultData.item.code);
 
       setCryptoWalletCurrentBalance(filteredCryptoBalance?.currentBalance)
-      // setCryptoBalance(financialProfile?.totalCurrentBalance-filteredPesoBalance?.currentBalanceInBaseCurrency)
     }
   },[financialProfile]);
 
@@ -157,6 +160,21 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
     }
   }
 
+  const getDailyExchangeRate = async () => {
+    if (defaultData.item.code) {
+      const result = await walletService.getDailyExchangeRate(
+        defaultData.item.code
+      );
+
+      if (result && result.data && result.data.length > 0) {
+        setUnitPrice(result.data[0].unitPrice)
+      }
+
+
+    }
+
+  }
+
   const unionWalletCurrentBalance = useCurrencyFormat(
     cryptoWallet?.availableBalance || 0,
     'PHP'
@@ -166,21 +184,29 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
 
     if (defaultData.item) {
       setIsLoadingValidation(true);
-      const responeData = await walletService.createTradeQuote(
-      defaultData.type === 'Buy'?  transferValueFormated: transferValueFormated * getAmountRawValue(defaultData?.currentExchangeRateShowing ,'PHP'),
-        defaultData.type === 'Buy'?"buy":"sell",
-        defaultData.item.code,
-        defaultData.item.name
-      );
+      let unitExchangeRate = unitPrice ? defaultData.type === 'Buy' ? unitPrice.buy : unitPrice.sell : 0;
 
-      if (responeData.data) {
-        setIsVisible(true)
-        setSeconds(15)
-        setQuotesResponse(responeData.data[0]);
-        setIsLoadingValidation(false);
-      }else{
-        setIsLoadingValidation(false);
+      try {
+        const responeData = await walletService.createTradeQuote(
+        defaultData.type === 'Buy'?  transferValueFormated: transferValueFormated * getAmountRawValue(unitExchangeRate.toString() ,'PHP'),
+          defaultData.type === 'Buy'?"buy":"sell",
+          defaultData.item.code,
+          defaultData.item.name
+        );
+
+        if (responeData.data) {
+          setIsVisible(true)
+          setSeconds(15)
+          setQuotesResponse(responeData.data[0]);
+          setIsLoadingValidation(false);
+        }else{
+          setIsLoadingValidation(false);
+        }
+      } catch (error) {
+        console.log('error  error ',error);
+
       }
+
     }
   }
 
@@ -237,7 +263,6 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
     }
 
   }
-
 
   if (isFailed) {
     return (
@@ -397,8 +422,8 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
                      style={styles.image}
                    />}
                   <View style={styles.headerBannerWrapper}>
-                    {defaultData&& defaultData.item && defaultData.currentExchangeRateShowing&& <Text style={styles.headerLabel}>
-                      {`1 ${defaultData.item.code} ≈ ${defaultData.currentExchangeRateShowing}`}
+                    {defaultData && defaultData.item && unitPrice && <Text style={styles.headerLabel}>
+                      {`1 ${defaultData.item.code} ≈ ${defaultData.type === 'Buy' ? unitPrice.buy : unitPrice.sell}`}
                     </Text>}
                     <Text style={styles.headerSubLabel}>This is only an initial estimate, price may still change.</Text>
                   </View>
@@ -505,7 +530,7 @@ const CryptoTradeComponent = (props: CryptoTradeComponentProps) => {
               <Text style={styles.itemLabelStyle}>{`Price Valid for ${seconds}s`}</Text>
             </View>
             <ProcessBar processPercent={((seconds/15)*100)} />
-           
+
 
             <Button
               onPress={() => {

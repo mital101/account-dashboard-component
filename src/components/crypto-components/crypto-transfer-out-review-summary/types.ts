@@ -3,6 +3,7 @@ import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 export type CryptoTransferOutReviewSummaryComponentProps = {
   style?: CryptoTransferOutReviewSummaryComponentStyles;
   props?: {
+    defaultData?:any,
     onGoBack?: () => void;
     onSuccess?: () => void;
   };

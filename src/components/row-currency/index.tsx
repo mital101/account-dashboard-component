@@ -62,7 +62,6 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
       maxLengthExchangeRateHistory
     );
     if (responeData.data.length > 0) {
-      // const rates = responeData.data.reverse().map((d: any) => d.exchangeRate);
       const rates = responeData.data.map((d: any) => d.exchangeRate);
       setExchangeRateHistory(rates);
     }
@@ -101,6 +100,7 @@ const RowCurrency = ({ onSelect, currency, style }: RowCurrencyProps) => {
   const max = arrayMax(exchangeRateHistory);
 
   const dataLine = exchangeRateHistory.map((n) => (n / max) * 100);
+
 
   const reducingColor = '#EB001B';
   const rasingColor = '#6CBE58';

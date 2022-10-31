@@ -19,7 +19,7 @@ const CryptoTransferOutVerifyOTPComponent = ({
   const styles = useMergeStyles(style);
   const otpRef = useRef<OTPFieldRef>();
   const countdownRef = useRef<CountDownTimerRef>();
-  const { onConfirmed } = props || {};
+  const { onConfirmed,cryptoOutPaymentId } = props || {};
   const { paymentId, initMoneyin, refreshWallets } = useContext(WalletContext);
   const [isLoadingOtpVerification, setIsLoadingOtpVerification] =
     useState<boolean>(false);
@@ -38,10 +38,14 @@ const CryptoTransferOutVerifyOTPComponent = ({
 
   const onConfirm = async () => {
     setIsLoadingOtpVerification(true);
-    const result = await walletService.moneyOutConfirmation(
-      paymentId || '',
-      value
-    );
+
+    const result = cryptoOutPaymentId ?
+      await walletService.cryptoOutConfirmation(cryptoOutPaymentId, value) :
+        await walletService.moneyOutConfirmation(
+          paymentId || '',
+          value
+        );
+        
     setIsLoadingOtpVerification(false);
     if (result.Data) {
       onConfirmed &&

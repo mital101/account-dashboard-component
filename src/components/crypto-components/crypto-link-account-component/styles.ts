@@ -112,8 +112,64 @@ const useMergeStyles = (
       marginVertical: 14,
     },
     disableButtonWrapper:{ paddingHorizontal: 15, bottom: 5,opacity:0.5 },
-    buttonWrapper:{ paddingHorizontal: 15, bottom: 5 }
-
+    buttonWrapper:{ paddingHorizontal: 15, bottom: 5 },
+    riskHeadersubTitle: {
+      fontWeight: '700',
+      fontSize: 14,
+      lineHeight: 24,
+      color: '#fff',
+      marginTop: 17,
+      paddingHorizontal: 20,
+    },
+    riskContentSubTitle: {
+      fontWeight: '700',
+      fontSize: 12,
+      lineHeight: 17,
+      color: '#ddd',
+      // paddingHorizontal: 20,
+    },
+    riskContentTitle:{
+      fontWeight: '500',
+      fontSize: 16,
+      lineHeight: 24,
+      color:'#fff',
+    },
+    radioBtncontainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 20,
+      justifyContent: 'space-between',
+    },
+    radioRowBetween:{
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      flex: 1,
+    },
+    radioRow:{
+      flexDirection: 'row'
+    },
+    radioRowInfo: {
+      height: 45,
+      justifyContent: 'space-between',
+      // marginLeft: 10,
+      paddingVertical: 2,
+      flex: 1,
+    },
+    radioMainTitle:{
+      color: '#FFF',
+      fontSize: 12,
+    },
+    selectedRadioBtn: { flex: 1, backgroundColor: '#14BDEB', borderRadius: 20 },
+    radioBtn: {
+      marginLeft: 15,
+      width: 30,
+      height: 30,
+      borderRadius: 20,
+      borderColor: '#14BDEB',
+      borderWidth: 1,
+      padding: 4,
+    },
   });
 
   return defaultsDeep(style, defaultStyles);

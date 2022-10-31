@@ -401,7 +401,7 @@ export function useWalletContextValue(): WalletContextData {
         (w) => w.bankAccount.bankCode === 'UnionDigital'
       );
       const cryptoWallet: Wallet | undefined = walletsOrdered.find(
-        (w) => w.bankAccount.bankCode === 'PDAX'
+        (w) => w.bankAccount.bankCode === 'PDAX' && w.currencyCode === 'PHP'
       );
       const cardWallet: CardWallet | undefined = walletsOrdered.find(
         (w) => w.type === 'CARD_WALLET'
@@ -906,7 +906,7 @@ export function useWalletContextValue(): WalletContextData {
       (w) => w.bankAccount.bankCode === 'UnionDigital'
     );
     const cryptoWallet: Wallet | undefined = _wallets.find(
-      (w) => w.bankAccount.bankCode === 'PDAX'
+      (w) => w.bankAccount.bankCode === 'PDAX' && w.currencyCode === 'PHP'
     );
     if (unionWallet && cryptoWallet && _amount) {
       const result = await walletService.moneyInInitital(
@@ -925,7 +925,7 @@ export function useWalletContextValue(): WalletContextData {
       (w) => w.bankAccount.bankCode === 'UnionDigital'
     );
     const cryptoWallet: Wallet | undefined = _wallets.find(
-      (w) => w.bankAccount.bankCode === 'PDAX'
+      (w) => w.bankAccount.bankCode === 'PDAX' && w.currencyCode === 'PHP'
     );
     if (unionWallet && cryptoWallet && _amount) {
       const result = await walletService.moneyOutInitital(

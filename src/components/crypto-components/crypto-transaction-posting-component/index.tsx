@@ -26,6 +26,7 @@ const CryptoTransactionPostingComponent = ({
     status,
     date,
     refNumber,
+    transactionType
   } = props || {};
   const [isLoadingTransactionStatus, setIsLoadingTransactionStatus] =
     useState<boolean>(true);
@@ -61,7 +62,7 @@ const CryptoTransactionPostingComponent = ({
           paymentId
         );
         const transactionStatus = respone.Data.Status;
-        console.log('status', transactionStatus);
+
         if (transactionStatus !== 'Initialized') {
           clearInterval(getStatusInterval);
           setIsLoadingTransactionStatus(false);
@@ -74,6 +75,11 @@ const CryptoTransactionPostingComponent = ({
           refreshWallets();
         }
       }, 500);
+    }
+    else if (transactionType ==='transferOut') {
+      setIsLoadingTransactionStatus(false);
+      setTransactionStatus(transactionStatus);
+      refreshWallets();
     }
   }, []);
 

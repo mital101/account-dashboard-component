@@ -65,8 +65,7 @@ const CryptoItemComponent = (props: CryptoItemComponentProps) => {
 
   useEffect(() => {
     if (wallet.length > 0) {
-      let filteredArray = wallet.find(item => item.bankAccount.bankCode === 'PDAX');
-      
+      let filteredArray = wallet.find(item => item.bankAccount.bankCode === 'PDAX' && item.currencyCode ==='PHP');
       if (filteredArray) {
         getWalletsById('PDAX')
         setIsActivated(filteredArray)
@@ -77,6 +76,7 @@ const CryptoItemComponent = (props: CryptoItemComponentProps) => {
       // changeToIndex(0);
     }
   }, [wallet]);
+
 
   if (isActivated) {
     const maskedNumber = (visibleCount: number) => {

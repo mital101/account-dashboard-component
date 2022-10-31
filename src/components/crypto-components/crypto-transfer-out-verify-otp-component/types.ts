@@ -3,6 +3,7 @@ import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 export type CryptoTransferOutVerifyOTPComponentProps = {
   style?: CryptoTransferOutVerifyOTPComponentStyles;
   props?: {
+    cryptoOutPaymentId?:string;
     onConfirmed: (amount: number, type: string, status: string, date: string, refNumber: string) => void;
   };
 };
