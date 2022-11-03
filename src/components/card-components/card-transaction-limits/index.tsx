@@ -37,8 +37,9 @@ const CardUpdateTransactionLimitsComponent = ({
 
   useEffect(() => {
     if(transactionLimitsOverall && stepLength) {
-      setAmount(transactionLimitsOverall.limitValue);
-      const xPosition = (transactionLimitsOverall.limitValue / transactionLimitValueMax * 10) * stepLength - 10;
+      const currentLimit = transactionLimitsOverall.limitValue > 250000 ? 250000 : transactionLimitsOverall.limitValue;
+      setAmount(currentLimit);
+      const xPosition = (currentLimit / transactionLimitValueMax * 10) * stepLength - 10;
       console.log('x - value', xPosition);
       position.setValue({x: xPosition, y: 0});
     }

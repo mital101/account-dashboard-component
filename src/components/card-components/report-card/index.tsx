@@ -30,7 +30,7 @@ const ReportCardComponent = ({
 
     listReportOptions.forEach((o: CardReport) => {
       listOptions.push({
-        title:  o.reason,
+        title: o.reason,
         value: o.id
       })
     })
@@ -87,7 +87,7 @@ const ReportCardComponent = ({
         subtitle={'Do you wish to cancel the changes made? All changes will not be saved once cancelled.'}
         btnLabel={'Yes, cancel the changes made'} 
         secondaryBtnLabel={'No, continue with the changes'}
-      />
+      /> 
     </View>
   );
 };

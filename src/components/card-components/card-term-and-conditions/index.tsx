@@ -55,7 +55,7 @@ const CardTermAndCondition = ({
   const onAcceptPrivacy = async () => {
     setIsEnableSubmitPrivacy(false);
     if(cryptoTC) {
-      const isAccepted = await acceptApplication(cryptoTC.templateId);
+      const isAccepted = await acceptApplication(cryptoTC.templateId, true);
       if(isAccepted) {
         onAccept && onAccept();
       }

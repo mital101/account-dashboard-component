@@ -992,6 +992,7 @@ export function useWalletContextValue(): WalletContextData {
     const result = await walletService.getWalletsByWalletType('CARD_WALLET');
     if(result.data.length > 0) {
       setCardWallets(result.data[0]);
+      setCardWalletStatus(result.data[0].status);
     }
     setIsLoadingCardWallet(false);
   }, []);
@@ -1089,13 +1090,13 @@ export function useWalletContextValue(): WalletContextData {
           const overallDailyLimitMax = response.data.filter((l: TransactionLimit) => l.transactionType === 'AGGR_OVERALL' && l.frequence === 'MaxPerTransaction');
           if(overallDailyLimit?.length > 0) {
             setTransactionLimitsOverall(overallDailyLimit[0]);
-            setTransactionLimitValue(overallDailyLimit[0].limitValue);
+            setTransactionLimitValue(overallDailyLimit[0].limitValue  > 250000 ? 250000 : overallDailyLimit[0].limitValue);
           }
           if(overallDailyLimitMin?.length > 0) {
-            setTransactionMinLimitValue(overallDailyLimitMin[0].limitValue);
+            setTransactionMinLimitValue(overallDailyLimitMin[0].limitValue < 0 ? 0 : overallDailyLimitMin[0].limitValue);
           }
           if(overallDailyLimitMax?.length > 0) {
-            setTransactionMaxLimitValue(overallDailyLimitMax[0].limitValue);
+            setTransactionMaxLimitValue(overallDailyLimitMax[0].limitValue > 250000 ? 250000 : overallDailyLimitMax[0].limitValue);
           }
         }
       }

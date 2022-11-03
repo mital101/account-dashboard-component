@@ -19,6 +19,10 @@ import { Button } from 'react-native-theme-component';
 import AlertModal from '../../alert-model';
 import { CardWalletSensitiveData } from '../../../model';
 import { WalletService } from '../../../services/wallet-service';
+import { KeyPair, RSA } from 'react-native-rsa-native';
+import { Buffer } from 'buffer';
+global.Buffer = Buffer;
+
 
 const walletService = WalletService.instance();
 
@@ -158,11 +162,13 @@ const MyCardComponent = ({
   const getSensitiveData = useCallback(async () => {
     console.log('getSensitiveData -> isShowSensitiveData', isShowSensitiveData)
     try {
-      if (cardWallet?.walletId && oneTimeToken && isShowSensitiveData) {
-        const response = await walletService.getVCSensitiveData(cardWallet.walletId, oneTimeToken);
-        console.log('response -> data', response.data);
-        setSensitiveData(response.data.pciData);
-      }
+      RSA.generateKeys(4096) // set key size
+      .then(async (keys: KeyPair) => {
+        if (cardWallet?.walletId && oneTimeToken && isShowSensitiveData && keys) {
+          const response = await walletService.getVCSensitiveData(keys.private, cardWallet.walletId, oneTimeToken);
+          setSensitiveData(response.data.pciData);
+        }
+      });
     } catch (e) {
       setIsShowErrorGetSensitiveData(true);
     }
@@ -252,6 +258,9 @@ const MyCardComponent = ({
     onSelectPhysicalCard && onSelectPhysicalCard();
   }
 
+  const fromBase64 = (encoded: string) => {
+    return Buffer.from(encoded, 'base64').toString('utf8')
+  }
   console.log('render my card',transactionLimitValue);
 
   return (
@@ -326,16 +335,15 @@ const MyCardComponent = ({
             <Text style={[styles.cardText, styles.subTitle]}>UnionDigital Bank Debit</Text>
             </View>
             <View style={styles.rowCardNumber}>
-              <Text style={[styles.cardText, styles.title]}>{isShowSensitiveData ? sensitiveData?.pan : `****  ${cardWallet?.cardData?.cardLastFourDigitNumber}`}</Text>
+              <Text style={[styles.cardText, styles.title]}>{(isShowSensitiveData && sensitiveData?.pan) ? fromBase64(sensitiveData.pan) : `****  ${cardWallet?.cardData?.cardLastFourDigitNumber}`}</Text>
             </View>
             <View style={styles.row}>
               <View style={styles.row}>
                 <Text style={[styles.cardText, {width: 35}]}>{`VALID THRU: `}</Text>
-                <Text style={styles.cardText}>{`${isShowSensitiveData ? sensitiveData?.expiry : '****'}`}</Text>
-
+                <Text style={styles.cardText}>{`${(isShowSensitiveData && sensitiveData?.expiry) ? fromBase64(sensitiveData?.expiry) : '****'}`}</Text>
               </View>
               <View style={styles.cvvSection}>
-                <Text style={styles.cardText}>{`CVV:  ${isShowSensitiveData ? sensitiveData?.cvv : '****'}`}</Text>
+                <Text style={styles.cardText}>{`CVV:  ${(isShowSensitiveData && sensitiveData?.cvv) ? fromBase64(sensitiveData.cvv) : '****'}`}</Text>
               </View>
             </View>
             <View style={styles.rowSpaceBetween}>
