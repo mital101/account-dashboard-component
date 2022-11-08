@@ -115,6 +115,43 @@ export interface WalletContextData {
   errorUnlinkWallet?: Error;
   errorUpdatePrimary?: Error;
   errorLinkWallet?: Error;
+  cardWallet?: CardWallet; // card wallet informations
+  isLoadingCardWallet: boolean; // fetching card wallet status
+  getCardWallet: () => void; // fetch card wallet
+  generateOTPForCardDetails: () => void; // generate otp for getting card details
+  verifyOTPForCardDetails: (otpNumber: string, otpId: string) => Promise<boolean>; // verify otp async function
+  otpId?: string; //OTP id for verify
+  isLoadingGenerateOTP: boolean; //loading verify otp status;
+  errorVerifyOTPCard?: Error;
+  isLoadingVerifyOTP?: boolean;
+  oneTimeToken?: string;
+  generateOTPForUpdateCardStatus: () => void;
+  verifyOTPForUpdateCardStatus: (otpNumber: string, otpId: string) => Promise<boolean>;
+  cardWalletStatus?: string;
+  updateCardStatus: (status: string) => void;
+  getTransactionLimit: () => void;
+  generateOTPForUpdateTransactionLimit: () => void;
+  verifyOTPForUpdateTransactionLimit: (otpNumber: string, otpId: string) => Promise<boolean>;
+  isLoadingGetTransactionLimit: boolean;
+  transactionLimits: TransactionLimit[];
+  transactionLimitsOverall?: TransactionLimit;
+  setTransactionLimitsOverall?: (transactionInfo: TransactionLimit) => void;
+  transactionLimitValue: number;
+  transactionLimitValueMin: number;
+  transactionLimitValueMax: number;
+  updateTransactionLimitValue?: (value: number) => void;
+  getTransactionChannels: () => void;
+  generateOTPForUpdateTransactionChannel: () => void;
+  verifyOTPForUpdateTransactionChannel: (otpNumber: string, otpId: string) => Promise<boolean>;
+  isLoadingGetTransactionChannel: boolean;
+  initIsEnableTransactionChannel: boolean;
+  isEnableTransactionChannel: boolean;
+  setIsEnableTransactionChannel: (isEnable: boolean) => void;
+  setInitIsEnableTransactionChannel: (isEnable: boolean) => void;
+  generateOTPForCardReport: () => void;
+  verifyOTPForCardReport: (otpNumber: string, otpId: string) => Promise<boolean>;
+  selectedReportOption?: CardReport;
+  setSelectedReportOption: (option?: CardReport) => void,
 }
 ```
 
