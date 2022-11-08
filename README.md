@@ -84,6 +84,25 @@ List of functions:
 - `linkBankAccount(bankId: string, accountId: string, consentId: string)`:Link an account into current wallets
 - `unlinkBankWallet(walletId: string)`: Remove wallet by `walletId`
 - `setDefaultWallet(walletId: string, isDefaultWallet: bool)`: Set a wallet with `walletId` is primary account or not. If `isDefaultWallet` is `true`, wallet will be set as primary. If `isDefaultWallet` is `false` wallet will set as normal account
+- `getCardWallet()`: Get wallet with type = 'CARD_WALLET' linked to user's account
+- `generateOTPForCardDetails()`: Generate OTP to user phone number for view card sensitive data
+- `verifyOTPForCardDetails()`: Verify OTP for view card sensitive data
+- `generateOTPForUpdateCardStatus()`: Generate OTP to user phone number for update card status
+- `verifyOTPForUpdateCardStatus()`: Verify OTP for update card status
+- `updateCardStatus()`: Update Virtual Card status
+- `getTransactionLimit()`: Get transactions limit
+- `generateOTPForUpdateTransactionLimit()`: Generate OTP to user phone number for update transaction limit
+- `verifyOTPForUpdateTransactionLimit()`: Verify OTP number for update transaction limit
+- `setTransactionLimitsOverall()`: Set temp transaction limit value
+- `updateTransactionLimitValue()`: update daily transaction limit
+- `getTransactionChannels()`: Get transaction channels
+- `generateOTPForUpdateTransactionChannel()`: Generate OTP to user phone number for update transaction channel
+- `verifyOTPForUpdateTransactionChannel()`: Verify OTP number for update transaction channel
+- `setIsEnableTransactionChannel()`: Transaction channel value
+- `setInitIsEnableTransactionChannel()`: Transaction channel init value
+- `generateOTPForCardReport()`: Generate OTP to user phone number for report/replace card
+- `verifyOTPForCardReport()`: Verify OTP for report/replace card
+- `setSelectedReportOption()`: Update selected report reason value
 
 ### WalletContext
 
