@@ -38,6 +38,7 @@ import { CardWalletSensitiveData } from '../../../model';
 import { WalletService } from '../../../services/wallet-service';
 import { KeyPair, RSA } from 'react-native-rsa-native';
 import { Buffer } from 'buffer';
+import LoadingSpinner from '@banking-component/wallet-component/src/components/loading-spinner';
 global.Buffer = Buffer;
 
 const walletService = WalletService.instance();
@@ -63,6 +64,8 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
     onSuccessReportCard,
     onFailedReportCard,
     onSelectPhysicalCard,
+    isShowLoadingSensitiveData, 
+    setIsShowLoadingSensitiveData
   } = props;
   const [toolTipCardVisible, setToolTipCardVisible] =
     useState<boolean>(isShowWalkThrough);
@@ -101,7 +104,9 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
 
   useEffect(() => {
     console.log('getSensitiveData -> isShowSensitiveData', isShowSensitiveData);
-    getSensitiveData();
+    if(isShowSensitiveData) {
+      getSensitiveData();
+    }
   }, [isShowSensitiveData]);
 
   useEffect(() => {
@@ -218,10 +223,14 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
   }, [cardWallet?.walletId, oneTimeToken, isShowSensitiveData]);
 
   const getSensitiveData = useCallback(async () => {
-    console.log('getSensitiveData -> isShowSensitiveData', isShowSensitiveData);
+    setIsShowLoadingSensitiveData(true);
+    setSensitiveData(undefined);
+    console.log('set true');
     try {
       RSA.generateKeys(4096) // set key size
         .then(async (keys: KeyPair) => {
+          const publicKey = keys.public.replace('-----BEGIN PUBLIC KEY-----\n', '').replace('\n-----END PUBLIC KEY-----', '');
+          const privateKey = keys.private.replace('-----BEGIN PRIVATE KEY-----\n', '').replace('\n-----END PRIVATE KEY-----', '');
           if (
             cardWallet?.walletId &&
             oneTimeToken &&
@@ -229,15 +238,27 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
             keys
           ) {
             const response = await walletService.getVCSensitiveData(
-              keys.private,
+              publicKey,
               cardWallet.walletId,
               oneTimeToken
             );
-            setSensitiveData(response.data.pciData);
+            if(response.data.pciData) {
+              RSA.decrypt(response.data.pciData.cvv, privateKey).then(str => console.log('promise', str));
+              const cvv = await RSA.decrypt(response.data.pciData.cvv, privateKey);
+              const expiry = await RSA.decrypt(response.data.pciData.expiry, privateKey);
+              const pan = await RSA.decrypt(response.data.pciData.pan, privateKey);
+              setSensitiveData({
+                cvv,
+                expiry: `${expiry.slice(0, 2)} / ${expiry.slice(2)}`,
+                pan
+              });
+              setIsShowLoadingSensitiveData(false);
+            }
           }
         });
     } catch (e) {
       setIsShowErrorGetSensitiveData(true);
+      setIsShowLoadingSensitiveData(false);
     }
   }, [cardWallet?.walletId, oneTimeToken, isShowSensitiveData]);
 
@@ -328,7 +349,8 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
   const fromBase64 = (encoded: string) => {
     return Buffer.from(encoded, 'base64').toString('utf8');
   };
-  console.log('render my card', transactionLimitValue);
+
+  console.log('render my card', isShowLoadingSensitiveData);
 
   return (
     <View style={styles.container} ref={refScreen} collapsable={false}>
@@ -440,7 +462,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
               <View style={styles.rowCardNumber}>
                 <Text style={[styles.cardText, styles.title]}>
                   {isShowSensitiveData && sensitiveData?.pan
-                    ? fromBase64(sensitiveData.pan)
+                    ? sensitiveData.pan
                     : `****  ${cardWallet?.cardData?.cardLastFourDigitNumber}`}
                 </Text>
               </View>
@@ -451,14 +473,14 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
                   >{`VALID THRU: `}</Text>
                   <Text style={styles.cardText}>{`${
                     isShowSensitiveData && sensitiveData?.expiry
-                      ? fromBase64(sensitiveData?.expiry)
+                      ? sensitiveData?.expiry
                       : '****'
                   }`}</Text>
                 </View>
                 <View style={styles.cvvSection}>
                   <Text style={styles.cardText}>{`CVV:  ${
                     isShowSensitiveData && sensitiveData?.cvv
-                      ? fromBase64(sensitiveData.cvv)
+                      ? sensitiveData.cvv
                       : '****'
                   }`}</Text>
                 </View>
@@ -474,6 +496,9 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
                   />
                 </View>
               </View>
+              {isShowLoadingSensitiveData && <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', opacity: 0.3, justifyContent: 'space-around', backgroundColor: 'gray'}}>
+                  <LoadingSpinner />
+              </View>}
             </View>
           </Tooltip>
         )}

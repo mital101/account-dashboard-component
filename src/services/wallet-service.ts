@@ -671,11 +671,18 @@ export class WalletService {
     walletId: string,
     OTT: string
   ) => {
-    console.log('getVCSensitiveData -> param', walletId, OTT);
+    console.log('getVCSensitiveData -> param', walletId, OTT, rsaKey);
+    console.log('getVCSensitiveData -> rsaKey', rsaKey);
     if (this._walletClient) {
       try {
         const response = await this._walletClient.get(
-          `/wallets/${walletId}/sensitive-data?oneTimeToken=${OTT}&encryptAlgorithm=RSA&encryptKey=${rsaKey}`
+          `/wallets/${walletId}/sensitive-data?oneTimeToken=${OTT}`,
+          {
+            headers: {
+              encryptAlgorithm: 'RSA',
+              encryptKey: rsaKey
+            }
+          }
         );
         console.log('getVCSensitiveData -> response.data', response.data);
         return response.data;

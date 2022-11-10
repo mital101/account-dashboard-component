@@ -7,6 +7,8 @@ export type MyCardComponentProps = {
       isShowWalkThrough: boolean;
       isShowSensitiveData: boolean;
       isInProgressStatus: boolean;
+      isShowLoadingSensitiveData: boolean;
+      setIsShowLoadingSensitiveData: (isShow: boolean) => void;
       transactionLimitValue?: number;
       isVCActive: boolean;
       onToggleShowingSensitiveData: () => void;
