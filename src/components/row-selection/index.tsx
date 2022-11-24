@@ -11,7 +11,7 @@ import {
 import { defaultsDeep } from 'lodash';
 import { useContext } from 'react';
 import { ThemeContext } from 'react-native-theme-component';
-import { ArrowRightIcon } from '@banking-component/wallet-component/src/assets/arrow-right.icon';
+import { ArrowRightIcon } from '@banking-component/account-dashboard-component/src/assets/arrow-right.icon';
 
 export type RowSelectionProps = {
   props: {

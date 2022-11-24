@@ -19,7 +19,7 @@ import useMergeStyles from "./styles";
 // import { Wallet } from "../../../model";
 import CryptoDetailsModal from "./components/crypto-details-modal";
 import LinearGradient from 'react-native-linear-gradient';
-import {WalletContext} from '@banking-component/wallet-component';
+import {WalletContext} from '@banking-component/account-dashboard-component';
 export type CryptoItemComponentProps = {
   wallet?: any;
   onLinkAccount: (isActivated) => void;

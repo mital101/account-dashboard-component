@@ -1,4 +1,4 @@
-# `@banking-component/wallet-component`
+# `@banking-component/account-dashboard-component`
 
 Manage wallets
 
@@ -27,7 +27,7 @@ Manage wallets
 Open a Terminal in your project's folder and run the command
 
 ```sh
-yarn add https://github.com/101digital/wallet-component.git
+yarn add https://github.com/101digital/account-dashboard-component.git
 ```
 
 - Installed [react-native-clipboard](https://github.com/react-native-clipboard/clipboard)
@@ -40,7 +40,7 @@ yarn add https://github.com/101digital/wallet-component.git
 - `WalletService` is initiated should be from `App.ts`
 
 ```javascript
-import { WalletService } from '@banking-component/wallet-component';
+import { WalletService } from '@banking-component/account-dashboard-component';
 
 WalletService.instance().initClients({
   walletClient: createAuthorizedApiClient(wallet), // Your Axios authorized client Wallet Url
@@ -52,7 +52,7 @@ WalletService.instance().initClients({
 - Wrapped the app with `WalletProvider`
 
 ```javascript
-import { WalletProvider } from '@banking-component/wallet-component';
+import { WalletProvider } from '@banking-component/account-dashboard-component';
 
 const App = () => {
   return (
@@ -69,7 +69,7 @@ export default App;
 
 - All icons, images and texts are provided by default. You can use your custom by passing them as a props into each component
 
-- In order to do multiple languages, you need to configurate `i18n` for [react-native-theme-component](https://github.com/101digital/react-native-theme-component.git). And then, you have to copy and paste all fields and values in [texts](wallet-component-data.json) into your app locale file. You can also change text value, but DON'T change the key.
+- In order to do multiple languages, you need to configurate `i18n` for [react-native-theme-component](https://github.com/101digital/react-native-theme-component.git). And then, you have to copy and paste all fields and values in [texts](account-dashboard-component-data.json) into your app locale file. You can also change text value, but DON'T change the key.
 
 ## API Reference
 
@@ -198,7 +198,7 @@ import {
   WalletComponent,
   WalletContext,
   WalletComponentRefs,
-} from '@banking-component/wallet-component';
+} from '@banking-component/account-dashboard-component';
 import { AlertModal } from 'react-native-theme-component';
 import { ProductContext, RecommandBannerComponent } from 'product-comparison-component';
 import { AccountLinkingContext } from '@banking-component/account-linking';

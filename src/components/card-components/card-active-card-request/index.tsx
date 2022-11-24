@@ -10,7 +10,7 @@ import LoadingSpinner from '../../loading-spinner';
 import { Button } from 'react-native-theme-component';
 import { InfoIcon, OncompletedIcon } from '../../../assets/images';
 import { CustomerInvokeContext, CustomerInvokeService } from 'customer-invoke-component';
-import { WalletService } from '@banking-component/wallet-component/src/services/wallet-service';
+import { WalletService } from '@banking-component/account-dashboard-component/src/services/wallet-service';
 
 const onboardingServices = CustomerInvokeService.instance();
 const walletServices = WalletService.instance();

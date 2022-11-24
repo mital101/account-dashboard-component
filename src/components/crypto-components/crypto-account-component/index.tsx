@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useState, useEffect } from 'react';
+import React, { ReactNode, useContext, useState, useEffect } from "react";
 import {
   TouchableOpacity,
   Dimensions,
@@ -8,34 +8,34 @@ import {
   ScrollView,
   Text,
   TextStyle,
-  FlatList,
-} from 'react-native';
-import useMergeStyles from './styles';
-import { ThemeContext } from 'react-native-theme-component';
-import { AuthContext } from 'react-native-auth-component';
+  FlatList
+} from "react-native";
+import useMergeStyles from "./styles";
+import { ThemeContext } from "react-native-theme-component";
+import { AuthContext } from "react-native-auth-component";
 
 import {
   CryptoHelpLinkIcon,
   InfoIcon,
   PointerIcon,
-  SeperateLineIcon,
-} from '../../../assets/images';
+  SeperateLineIcon
+} from "../../../assets/images";
 import Tooltip, {
-  TooltipChildrenContext,
-} from 'react-native-walkthrough-tooltip';
+  TooltipChildrenContext
+} from "react-native-walkthrough-tooltip";
 
-import EmptyWalletComponent from '../no-crypto-wallet-component';
-import CryptoItemComponent from '../crypto-item-component/index';
-import AccountSummaryCard from '../../crypto-components/crypto-account-summary-card';
-import BreakdownSummaryCard from '../../crypto-components/crypto-breakdown-card';
-import MyCryptoCard from '../../crypto-components/my-crypto-card';
+import EmptyWalletComponent from "../no-crypto-account-dashboard-component";
+import CryptoItemComponent from "../crypto-item-component/index";
+import AccountSummaryCard from "../../crypto-components/crypto-account-summary-card";
+import BreakdownSummaryCard from "../../crypto-components/crypto-breakdown-card";
+import MyCryptoCard from "../../crypto-components/my-crypto-card";
 
-import MarketPricesComponent from '../../market-price-component';
-import { Wallet, Transaction } from '../../../model';
-import { WalletItemComponentStyle } from '../../wallet-card-component/wallet-item-component';
-import { TransactionCardComponentStyles } from '../../wallet-card-component/transaction-card-component';
-import CryptoTransactionsCardComponent from '../crypto-transaction-card';
-import { WalletContext } from '../../../context/wallet-context';
+import MarketPricesComponent from "../../market-price-component";
+import { Wallet, Transaction } from "../../../model";
+import { WalletItemComponentStyle } from "../../wallet-card-component/wallet-item-component";
+import { TransactionCardComponentStyles } from "../../wallet-card-component/transaction-card-component";
+import CryptoTransactionsCardComponent from "../crypto-transaction-card";
+import { WalletContext } from "../../../context/wallet-context";
 
 export type CryptoAccountComponentProps = {
   style?: CryptoAccountComponentStyles;
@@ -101,7 +101,7 @@ const CryptoAccountComponent = ({
   isActive,
   onClickMyCrypto,
   onSelectCryptoTransaction,
-  userId,
+  userId
 }: CryptoAccountComponentProps) => {
   const { colors, i18n } = useContext(ThemeContext);
 
@@ -117,26 +117,27 @@ const CryptoAccountComponent = ({
   const {
     getCryptoTransactions,
     cryptoTransactions,
-    isLoadingGetCryptoTransactions,
+    isLoadingGetCryptoTransactions
   } = useContext(WalletContext);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isEmpty, setIsEmpty] = useState<boolean>(false);
 
-  const { walletsById, getFinancialProfile, financialProfile } =
-    useContext(WalletContext);
+  const { walletsById, getFinancialProfile, financialProfile } = useContext(
+    WalletContext
+  );
   const [cryptoWallet, getCryptoWallet] = useState<any>([]);
 
   useEffect(() => {
     if (userId) {
-      console.log('userId ', userId);
+      console.log("userId ", userId);
 
-      getFinancialProfile(userId, 'PDAX');
+      getFinancialProfile(userId, "PDAX");
     }
   }, []);
 
   useEffect(() => {
     if (walletsById) {
-      let filteredArray = walletsById.find((item) => item.status === 'ACTIVE');
+      let filteredArray = walletsById.find(item => item.status === "ACTIVE");
       getCryptoWallet(filteredArray);
     }
   }, [walletsById]);
@@ -150,7 +151,7 @@ const CryptoAccountComponent = ({
       <ScrollView
         style={styles.containerWrapper}
         showsVerticalScrollIndicator={false}
-        ref={(ref) => {
+        ref={ref => {
           setRef(ref);
         }}
       >
@@ -220,7 +221,7 @@ const CryptoAccountComponent = ({
                 props={{
                   data: item,
                   isVisible: !isVisible,
-                  onSelect: onSelectCryptoTransaction,
+                  onSelect: onSelectCryptoTransaction
                 }}
               />
             )}

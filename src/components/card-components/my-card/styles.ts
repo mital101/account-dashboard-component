@@ -1,6 +1,6 @@
 import { defaultsDeep } from 'lodash';
 import { StyleSheet } from 'react-native';
-import { MyCardComponentStyles } from '@banking-component/wallet-component/src/components/card-components/my-card/types';
+import { MyCardComponentStyles } from '@banking-component/account-dashboard-component/src/components/card-components/my-card/types';
 import { ThemeContext } from 'react-native-theme-component';
 import { useContext } from 'react';
 

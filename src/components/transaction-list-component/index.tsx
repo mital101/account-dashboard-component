@@ -10,7 +10,7 @@ import PageIndicatorComponent from './page-indicator-component';
 import TransactionPageComponent from './transaction-page-component';
 import EmptyTransactionComponent from './no-transaction-component';
 import { isEmpty } from 'lodash';
-import EmptyWalletComponent from '../no-wallet-component';
+import EmptyWalletComponent from '../no-account-dashboard-component';
 import { Wallet } from '../../model';
 const { width } = Dimensions.get('window');
 

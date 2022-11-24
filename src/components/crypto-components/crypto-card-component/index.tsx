@@ -29,7 +29,7 @@ import Tooltip, {
   TooltipChildrenContext,
 } from 'react-native-walkthrough-tooltip';
 
-import EmptyWalletComponent from '../no-crypto-wallet-component';
+import EmptyWalletComponent from '../no-crypto-account-dashboard-component';
 import CryptoItemComponent from '../crypto-item-component/index';
 import AccountInfoCard from '../../crypto-components/crypto-account-info-card';
 import MarketPricesComponent from '../../market-price-component';

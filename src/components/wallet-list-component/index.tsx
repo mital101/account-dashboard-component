@@ -12,7 +12,7 @@ import ViewCashflowComponent from './view-cashflow-component';
 import ActionSheetComponent from './action-sheet-component';
 import SelectionComponent from './section-component';
 import { Wallet } from '../../model';
-import EmptyWalletComponent from '../no-wallet-component';
+import EmptyWalletComponent from '../no-account-dashboard-component';
 import { isEmpty, uniqBy } from 'lodash';
 
 const WalletListComponent = forwardRef((props: WalletListComponentProps, ref) => {

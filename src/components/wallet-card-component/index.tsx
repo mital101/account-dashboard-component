@@ -21,7 +21,7 @@ import Carousel from "react-native-snap-carousel";
 import { ThemeContext } from "react-native-theme-component";
 import { WalletContext } from "../../context/wallet-context";
 import { CardWallet, Transaction, Wallet,WalletTypeList } from "../../model";
-import EmptyWalletComponent from "../no-wallet-component";
+import EmptyWalletComponent from "../no-account-dashboard-component";
 import useMergeStyles from "./styles";
 import TransactionCardComponent, {
   TransactionCardComponentStyles

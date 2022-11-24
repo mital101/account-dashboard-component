@@ -8,7 +8,7 @@ import CountdownTimer, {
   CountDownTimerRef,
 } from 'react-native-theme-component/src/countdown-timer';
 import { WalletContext } from '../../../context/wallet-context';
-import { WalletService } from '@banking-component/wallet-component/src/services/wallet-service';
+import { WalletService } from '@banking-component/account-dashboard-component/src/services/wallet-service';
 
 const walletService = WalletService.instance();
 

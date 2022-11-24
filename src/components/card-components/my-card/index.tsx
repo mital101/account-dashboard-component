@@ -1,11 +1,11 @@
-import { MyCardComponentProps } from './types';
+import { MyCardComponentProps } from "./types";
 import React, {
   useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
-} from 'react';
+  useState
+} from "react";
 import {
   Image,
   ScrollView,
@@ -13,9 +13,9 @@ import {
   TouchableOpacity,
   View,
   Switch,
-  RefreshControl,
-} from 'react-native';
-import useMergeStyles from './styles';
+  RefreshControl
+} from "react-native";
+import useMergeStyles from "./styles";
 import {
   CloseEyesIcon,
   EyesIcon,
@@ -24,21 +24,21 @@ import {
   Page1,
   Page2,
   Page3,
-  PointerIcon,
-} from '../../../assets/images';
-import { Carousel } from 'account-origination-component/src/components/carousel';
-import RowSelection from '../../../components/row-selection';
+  PointerIcon
+} from "../../../assets/images";
+import { Carousel } from "account-origination-component/src/components/carousel";
+import RowSelection from "../../../components/row-selection";
 import Tooltip, {
-  TooltipChildrenContext,
-} from 'react-native-walkthrough-tooltip';
-import { WalletContext } from '../../../context/wallet-context';
-import { Button } from 'react-native-theme-component';
-import AlertModal from '../../alert-model';
-import { CardWalletSensitiveData } from '../../../model';
-import { WalletService } from '../../../services/wallet-service';
-import { KeyPair, RSA } from 'react-native-rsa-native';
-import { Buffer } from 'buffer';
-import LoadingSpinner from '@banking-component/wallet-component/src/components/loading-spinner';
+  TooltipChildrenContext
+} from "react-native-walkthrough-tooltip";
+import { WalletContext } from "../../../context/wallet-context";
+import { Button } from "react-native-theme-component";
+import AlertModal from "../../alert-model";
+import { CardWalletSensitiveData } from "../../../model";
+import { WalletService } from "../../../services/wallet-service";
+import { KeyPair, RSA } from "react-native-rsa-native";
+import { Buffer } from "buffer";
+import LoadingSpinner from "@banking-component/account-dashboard-component/src/components/loading-spinner";
 global.Buffer = Buffer;
 
 const walletService = WalletService.instance();
@@ -64,24 +64,30 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
     onSuccessReportCard,
     onFailedReportCard,
     onSelectPhysicalCard,
-    isShowLoadingSensitiveData, 
+    isShowLoadingSensitiveData,
     setIsShowLoadingSensitiveData
   } = props;
-  const [toolTipCardVisible, setToolTipCardVisible] =
-    useState<boolean>(isShowWalkThrough);
-  const [toolTipOptionsVisible, setToolTipOptionsVisible] =
-    useState<boolean>(false);
+  const [toolTipCardVisible, setToolTipCardVisible] = useState<boolean>(
+    isShowWalkThrough
+  );
+  const [toolTipOptionsVisible, setToolTipOptionsVisible] = useState<boolean>(
+    false
+  );
   const [isSkiped, setIsSkiped] = useState<boolean>(false);
   const [isVisibleOkBtn, setIsVisibleOkBtn] = useState<boolean>(true);
   const [ttOptionsYPosition, setTTOptionsYPosition] = useState<number>(0);
   const [ttPointerCardPosition, setTTCardPointerPosition] = useState<number>(0);
-  const [ttPointerOptionsPosition, setTTPointerOptionsPosition] =
-    useState<number>(0);
-  const [isShowAlertUpdateStatusVC, setIsShowAlertUpdateStatusVC] =
-    useState<boolean>(false);
+  const [ttPointerOptionsPosition, setTTPointerOptionsPosition] = useState<
+    number
+  >(0);
+  const [isShowAlertUpdateStatusVC, setIsShowAlertUpdateStatusVC] = useState<
+    boolean
+  >(false);
   const [sensitiveData, setSensitiveData] = useState<CardWalletSensitiveData>();
-  const [isShowErrorGetSensitiveData, setIsShowErrorGetSensitiveData] =
-    useState<boolean>(false);
+  const [
+    isShowErrorGetSensitiveData,
+    setIsShowErrorGetSensitiveData
+  ] = useState<boolean>(false);
 
   const {
     cardWallet,
@@ -93,7 +99,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
     initIsEnableTransactionChannel,
     oneTimeToken,
     isLoadingCardWallet = false,
-    selectedReportOption,
+    selectedReportOption
   } = useContext(WalletContext);
 
   useEffect(() => {
@@ -103,8 +109,8 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
   }, []);
 
   useEffect(() => {
-    console.log('getSensitiveData -> isShowSensitiveData', isShowSensitiveData);
-    if(isShowSensitiveData) {
+    console.log("getSensitiveData -> isShowSensitiveData", isShowSensitiveData);
+    if (isShowSensitiveData) {
       getSensitiveData();
     }
   }, [isShowSensitiveData]);
@@ -126,17 +132,17 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
   }, [selectedReportOption]);
 
   const reportAndReplaceCard = useCallback(async () => {
-    console.log('reportAndReplaceCard -> ', selectedReportOption);
+    console.log("reportAndReplaceCard -> ", selectedReportOption);
     if (cardWallet?.walletId && oneTimeToken && selectedReportOption) {
       try {
         await walletService.updateCardStatus(
-          'BLOCKED',
+          "BLOCKED",
           cardWallet.walletId,
           oneTimeToken,
           selectedReportOption.reason,
           selectedReportOption.reasonCode
         );
-        console.log('rreportAndReplaceCard => esponse -> data');
+        console.log("rreportAndReplaceCard => esponse -> data");
         getCardWallet();
         onSuccessReportCard && onSuccessReportCard();
       } catch (error) {
@@ -147,7 +153,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
 
   const updateTransactionChannel = useCallback(async () => {
     console.log(
-      'updateTransactionLimitValue',
+      "updateTransactionLimitValue",
       transactionLimitValue,
       transactionLimitsOverall
     );
@@ -172,7 +178,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
 
   const updateTransactionLimitValue = useCallback(async () => {
     console.log(
-      'updateTransactionLimitValue',
+      "updateTransactionLimitValue",
       transactionLimitValue,
       transactionLimitsOverall
     );
@@ -188,7 +194,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
           transactionLimitValue,
           oneTimeToken
         );
-        console.log('response -> data', response?.limitSettings);
+        console.log("response -> data", response?.limitSettings);
         if (response?.limitSettings.length > 0) {
           onSuccessUpdateTransactionLimit &&
             onSuccessUpdateTransactionLimit(response?.limitSettings[0]);
@@ -201,20 +207,20 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
     transactionLimitsOverall,
     transactionLimitValue,
     oneTimeToken,
-    cardWallet?.walletId,
+    cardWallet?.walletId
   ]);
 
   const updateCardStatus = useCallback(async () => {
-    console.log('updateCardStatus -> isVCActive', isVCActive);
+    console.log("updateCardStatus -> isVCActive", isVCActive);
     if (cardWallet?.walletId && oneTimeToken) {
       try {
-        const targetStatus = isVCActive ? 'LOCKED' : 'ACTIVE';
+        const targetStatus = isVCActive ? "LOCKED" : "ACTIVE";
         const response = await walletService.updateCardStatus(
           targetStatus,
           cardWallet.walletId,
           oneTimeToken
         );
-        console.log('response -> data', response.data);
+        console.log("response -> data", response.data);
         onSuccessUpdatedStatus && onSuccessUpdatedStatus();
       } catch (error) {
         onFailedUpdatedStatus && onFailedUpdatedStatus();
@@ -225,7 +231,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
   const getSensitiveData = useCallback(async () => {
     setIsShowLoadingSensitiveData(true);
     setSensitiveData(undefined);
-    console.log('set true');
+    console.log("set true");
     try {
       RSA.generateKeys(4096) // set key size
         .then(async (keys: KeyPair) => {
@@ -244,11 +250,20 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
               cardWallet.walletId,
               oneTimeToken
             );
-            console.log('privateKey', privateKey);
-            if(response.data.pciData) {
-              const cvv = await RSA.decrypt(response.data.pciData.cvv, privateKey);
-              const expiry = await RSA.decrypt(response.data.pciData.expiry, privateKey);
-              const pan = await RSA.decrypt(response.data.pciData.pan, privateKey);
+            console.log("privateKey", privateKey);
+            if (response.data.pciData) {
+              const cvv = await RSA.decrypt(
+                response.data.pciData.cvv,
+                privateKey
+              );
+              const expiry = await RSA.decrypt(
+                response.data.pciData.expiry,
+                privateKey
+              );
+              const pan = await RSA.decrypt(
+                response.data.pciData.pan,
+                privateKey
+              );
               setSensitiveData({
                 cvv,
                 expiry: `${expiry.slice(0, 2)} / ${expiry.slice(2)}`,
@@ -274,7 +289,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
   const carouselList = [
     { item: <Page1 width={170} height={254} /> },
     { item: <Page2 width={170} height={254} /> },
-    { item: <Page3 width={170} height={254} /> },
+    { item: <Page3 width={170} height={254} /> }
   ];
 
   useEffect(() => {
@@ -295,17 +310,17 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
   }, []);
 
   const onSelectTransactionChannel = () => {
-    console.log('onSelectTransactionChannel');
+    console.log("onSelectTransactionChannel");
     onUpdateTransactionChannel();
   };
 
   const onSelectTransactionLimits = () => {
-    console.log('onSelectTransactionLimits');
+    console.log("onSelectTransactionLimits");
     onUpdateTransactionLimits();
   };
 
   const onSelectReportCard = () => {
-    console.log('onSelectReportCard');
+    console.log("onSelectReportCard");
     onReportCard();
   };
 
@@ -349,10 +364,10 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
   };
 
   const fromBase64 = (encoded: string) => {
-    return Buffer.from(encoded, 'base64').toString('utf8');
+    return Buffer.from(encoded, "base64").toString("utf8");
   };
 
-  console.log('render my card', isShowLoadingSensitiveData);
+  console.log("render my card", isShowLoadingSensitiveData);
 
   return (
     <View style={styles.container} ref={refScreen} collapsable={false}>
@@ -366,7 +381,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
           />
         }
       >
-        <Text style={styles.pageTitle}>{'My Card'}</Text>
+        <Text style={styles.pageTitle}>{"My Card"}</Text>
         {isInProgressStatus ? (
           <View style={styles.cardProgressContainer}>
             <Text style={styles.cardProgressTitle}>
@@ -377,9 +392,9 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
             </Text>
             {isVisibleOkBtn && (
               <Button
-                label={'OK'}
+                label={"OK"}
                 style={{
-                  primaryContainerStyle: { borderRadius: 35, marginTop: 15 },
+                  primaryContainerStyle: { borderRadius: 35, marginTop: 15 }
                 }}
                 onPress={onHideOKBtn}
               />
@@ -438,7 +453,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
             <View
               style={[
                 styles.vcCardContainer,
-                !isVCActive && { backgroundColor: '#676666' },
+                !isVCActive && { backgroundColor: "#676666" }
               ]}
             >
               <View style={styles.rowSpaceBetween}>
@@ -476,14 +491,14 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
                   <Text style={styles.cardText}>{`${
                     isShowSensitiveData && sensitiveData?.expiry
                       ? sensitiveData?.expiry
-                      : '****'
+                      : "****"
                   }`}</Text>
                 </View>
                 <View style={styles.cvvSection}>
                   <Text style={styles.cardText}>{`CVV:  ${
                     isShowSensitiveData && sensitiveData?.cvv
                       ? sensitiveData.cvv
-                      : '****'
+                      : "****"
                   }`}</Text>
                 </View>
               </View>
@@ -498,9 +513,23 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
                   />
                 </View>
               </View>
-              {isShowLoadingSensitiveData && <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', opacity: 0.3, justifyContent: 'space-around', backgroundColor: 'gray'}}>
+              {isShowLoadingSensitiveData && (
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    alignItems: "center",
+                    opacity: 0.3,
+                    justifyContent: "space-around",
+                    backgroundColor: "gray"
+                  }}
+                >
                   <LoadingSpinner />
-              </View>}
+                </View>
+              )}
             </View>
           </Tooltip>
         )}
@@ -585,49 +614,49 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
               >
                 <RowSelection
                   props={{
-                    title: 'Lock or Unlock card',
+                    title: "Lock or Unlock card",
                     subtitle: `Your card is `,
-                    value: `${isVCActive ? 'unlocked' : 'locked'}.`,
+                    value: `${isVCActive ? "unlocked" : "locked"}.`,
                     rightIcon: (
                       <Switch
-                        trackColor={{ false: 'red', true: '#40916C' }}
-                        thumbColor={isVCActive ? '#FFFFFF' : '#f4f3f4'}
+                        trackColor={{ false: "red", true: "#40916C" }}
+                        thumbColor={isVCActive ? "#FFFFFF" : "#f4f3f4"}
                         ios_backgroundColor="#3e3e3e"
                         onValueChange={onToggleActiveSwitch}
                         value={isVCActive}
                         disabled={isInProgressStatus}
                       />
                     ),
-                    disabled: isInProgressStatus,
+                    disabled: isInProgressStatus
                   }}
                   style={{
                     value: {
-                      color: isVCActive ? '#40916C' : '#CC444B',
-                    },
+                      color: isVCActive ? "#40916C" : "#CC444B"
+                    }
                   }}
                 />
                 <RowSelection
                   props={{
-                    title: 'Transaction channels',
-                    subtitle: 'Update card’s stransaction channels status',
+                    title: "Transaction channels",
+                    subtitle: "Update card’s stransaction channels status",
                     onPress: onSelectTransactionChannel,
-                    disabled: isInProgressStatus || !isVCActive,
+                    disabled: isInProgressStatus || !isVCActive
                   }}
                 />
                 <RowSelection
                   props={{
-                    title: 'Transaction limits',
-                    subtitle: 'Update card’s transaction limits',
+                    title: "Transaction limits",
+                    subtitle: "Update card’s transaction limits",
                     onPress: onSelectTransactionLimits,
-                    disabled: isInProgressStatus || !isVCActive,
+                    disabled: isInProgressStatus || !isVCActive
                   }}
                 />
                 <RowSelection
                   props={{
-                    title: 'Report Card',
-                    subtitle: 'Lost your card? Request for a new one',
+                    title: "Report Card",
+                    subtitle: "Lost your card? Request for a new one",
                     onPress: onSelectReportCard,
-                    disabled: isInProgressStatus || !isVCActive,
+                    disabled: isInProgressStatus || !isVCActive
                   }}
                 />
               </View>
@@ -635,7 +664,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
           </TooltipChildrenContext.Consumer>
         </Tooltip>
         <View style={styles.learnSection}>
-          <Text style={styles.titleSection}>{'Learn & Grow'}</Text>
+          <Text style={styles.titleSection}>{"Learn & Grow"}</Text>
           <View style={styles.sliderContainerStyle}>
             <Carousel
               showBullets={false}
@@ -649,29 +678,29 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
         isVisible={isShowAlertUpdateStatusVC}
         title={
           isVCActive
-            ? 'Are you sure you would like to lock your card?'
-            : 'Unlock Card?'
+            ? "Are you sure you would like to lock your card?"
+            : "Unlock Card?"
         }
         onConfirmed={onConfirmAlertUpdateStatusVC}
         onCancel={onCancelAlertUpdateStatusVC}
-        iconColor={'#FBC02D'}
+        iconColor={"#FBC02D"}
         subtitle={
           isVCActive
-            ? 'You will not be able to perform card transactions if you lock the card. Existing Direct Debit, recurring automatic payments, standing instructions will not be affected by the temporary block and you will remain responsible for these transactions.'
-            : 'Are you sure you would like to unlock your card?'
+            ? "You will not be able to perform card transactions if you lock the card. Existing Direct Debit, recurring automatic payments, standing instructions will not be affected by the temporary block and you will remain responsible for these transactions."
+            : "Are you sure you would like to unlock your card?"
         }
-        btnLabel={'Confirm'}
-        secondaryBtnLabel={'Cancel'}
+        btnLabel={"Confirm"}
+        secondaryBtnLabel={"Cancel"}
       />
       <AlertModal
         isVisible={isShowErrorGetSensitiveData}
-        title={'Something went wrong'}
+        title={"Something went wrong"}
         onConfirmed={getSensitiveData}
         onCancel={onHideErrorAlert}
-        iconColor={'#FBC02D'}
+        iconColor={"#FBC02D"}
         subtitle={`We're having difficulty trying to connect to our server. Please try again.`}
-        btnLabel={'Retry'}
-        secondaryBtnLabel={'Cancel'}
+        btnLabel={"Retry"}
+        secondaryBtnLabel={"Cancel"}
       />
     </View>
   );

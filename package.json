@@ -1,11 +1,11 @@
 {
-  "name": "@banking-component/wallet-component",
+  "name": "@banking-component/account-dashboard-component",
   "private": true,
-  "version": "1.9.94",
+  "version": "1.9.95",
   "description": "Manage wallets/transactions",
   "repository": {
     "type": "git",
-    "url": "https://github.com/101digital/wallet-component.git"
+    "url": "https://github.com/101digital/account-dashboard-component.git"
   },
   "main": "index.js",
   "types": "index.d.ts",

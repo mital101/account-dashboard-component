@@ -1,10 +1,10 @@
 {
-  "id": "wallet-component",
+  "id": "account-dashboard-component",
   "name": "Wallet Component",
   "repository": {
     "type": "git",
     "url": "https://github.com/101digital/react-native-banking-components.git",
-    "directory": "packages/wallet-component"
+    "directory": "packages/account-dashboard-component"
   },
   "config": {
     "env": {
@@ -36,7 +36,7 @@
       "templateName": "Wallet List component template 1",
       "componentName": "WalletListComponent",
       "imports": [
-        "import { WalletListComponent, WalletListComponentRefs, WalletContext } from '@banking-component/wallet-component';",
+        "import { WalletListComponent, WalletListComponentRefs, WalletContext } from '@banking-component/account-dashboard-component';",
         "import { AccountLinkingContext } from '@banking-component/account-linking';",
         "import { ThemeContext, useCurrencyFormat } from 'react-native-theme-component';",
         "import { CompasionRequestParams, ProductContext, RecommandBannerComponent } from 'product-comparison-component';",
@@ -197,7 +197,7 @@
       "componentName": "TransactionListComponent",
       "imports": [
         "import { Dimensions } from 'react-native';",
-        "import { TransactionListComponent, WalletContext, Wallet } from '@banking-component/wallet-component';",
+        "import { TransactionListComponent, WalletContext, Wallet } from '@banking-component/account-dashboard-component';",
         "const { width } = Dimensions.get('window');"
       ],
       "headers": [
@@ -240,7 +240,7 @@
       "imports": [
         "import { Dimensions } from 'react-native';",
         "import { AuthContext } from 'react-native-auth-component';",
-        "import { WalletCardComponent, WalletContext } from '@banking-component/wallet-component';",
+        "import { WalletCardComponent, WalletContext } from '@banking-component/account-dashboard-component';",
         "import { isEmpty } from 'lodash';",
         "const { width } = Dimensions.get('window');"
       ],
@@ -316,7 +316,7 @@
       "templateName": "Recent transaction component template",
       "componentName": "RecentTransactionComponent",
       "imports": [
-        "import { RecentTransactionComponent, WalletContext, Wallet } from '@banking-component/wallet-component';"
+        "import { RecentTransactionComponent, WalletContext, Wallet } from '@banking-component/account-dashboard-component';"
       ],
       "headers": ["  const { wallet } = route.params;"],
       "renders": [
@@ -351,7 +351,7 @@
       "templateName": "Transaction details component template",
       "componentName": "TransactionDetailsComponent",
       "imports": [
-        "import { Transaction, TransactionDetailsComponent  } from '@banking-component/wallet-component';"
+        "import { Transaction, TransactionDetailsComponent  } from '@banking-component/account-dashboard-component';"
       ],
       "headers": ["  const { transaction } = route.params;"],
       "renders": [

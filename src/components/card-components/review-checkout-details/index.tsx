@@ -4,7 +4,7 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import useMergeStyles from './styles';
 import AlertModal from '../../alert-model';
 import { EditPencilIcon } from '../../../assets/edit-pencil.icon';
-import { InformationIcon } from '@banking-component/wallet-component/src/assets/information2.icon';
+import { InformationIcon } from '@banking-component/account-dashboard-component/src/assets/information2.icon';
 import { Button } from 'react-native-theme-component';
 
 const ReviewCheckoutDetailsComponent = ({
