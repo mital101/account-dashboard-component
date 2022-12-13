@@ -1,17 +1,16 @@
-import React from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
-// import { colors, palette } from '../../assets';
-// import { fonts } from '../../assets/fonts';
-import CircularImageView from './circular-image-view';
-// import { withHeightPercent } from '../../helpers/screen-utils';
+import React from "react";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
+import CircularImageView from "../../core/circular-image-view";
 
 export interface IListCardVariant {
   title: string;
   subTitle: string;
 }
 
-const ListCardVariant: React.FC<IListCardVariant> = (props: IListCardVariant) => {
-  const { title = '', subTitle = '' } = props;
+const ListCardVariant: React.FC<IListCardVariant> = (
+  props: IListCardVariant
+) => {
+  const { title = "", subTitle = "" } = props;
   return (
     <View style={styles.container}>
       <CircularImageView />
@@ -27,13 +26,13 @@ export default ListCardVariant;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
     // borderColor: colors.primary,
     borderRadius: 24,
-    height: Dimensions.get('screen').height / 100 * 20,
+    height: (Dimensions.get("screen").height / 100) * 20,
     paddingHorizontal: 20,
     marginRight: 16,
   },
@@ -48,6 +47,6 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     // ...palette.label,
-    width: '70%',
+    width: "70%",
   },
 });

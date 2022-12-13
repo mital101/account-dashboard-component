@@ -1,29 +1,37 @@
 import React, { useContext } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import { ThemeContext } from "react-native-theme-component";
 import { BRoundedCloseIcon } from "../../../assets/rounded-close.icon";
+import { WalletContext } from "../../../context/wallet-context";
 import { ActivateVirtualCardStyle } from "../types";
-import mergeStyle from "./styles";
+import mergeStyle from "../virtual-card-component/styles";
 export interface VirtualCardComponentProps {
   style?: ActivateVirtualCardStyle;
+  onActivateVirtualCardPress?: () => void;
 }
 
 const VirtualCardComponent: React.FC<VirtualCardComponentProps> = (
   props: VirtualCardComponentProps
 ) => {
-  const { style } = props;
+  const { style, onActivateVirtualCardPress } = props;
   const styles: ActivateVirtualCardStyle = mergeStyle(style);
   const { i18n } = useContext(ThemeContext);
+  const { isVirtualCardActive } = useContext(WalletContext);
   return (
-    <View style={styles.containerStyle}>
+    <TouchableOpacity
+      style={styles.containerStyle}
+      onPress={onActivateVirtualCardPress}
+    >
       <Text style={styles.virtualCardTextStyle}>
-        {i18n?.t("adb_card.lbl_activate_card") ??
-          "Activate your virtual card now!"}
+        {!isVirtualCardActive
+          ? i18n?.t("adb_card.lbl_activate_card") ??
+            "Activate your virtual card now!"
+          : "Your account is ready! Order your physical card today."}
       </Text>
       <TouchableOpacity style={styles.virtualCardIconContainerStyle}>
         <BRoundedCloseIcon />
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 };
 

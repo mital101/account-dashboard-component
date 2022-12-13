@@ -1,15 +1,16 @@
 import React, { useContext } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemeContext } from "react-native-theme-component";
+import BarcodeIcon from "../../../assets/barcode-icon";
 import AccountBalanceCard from "../balance-component";
+import CircularImageView from "../core/circular-image-view";
 import { ActivateVirtualCardStyle, BalanceStyle } from "../types";
 import VirtualCardComponent from "../virtual-card-component";
-import BarcodeIcon from "./components/BarcodeIcon";
-import CircularImageView from "./components/circular-image-view";
 
 export interface ProfileInterface {
   BalanceStyles?: BalanceStyle;
   ActivateCardStyles?: ActivateVirtualCardStyle;
+  onActivateVirtualCardPress: () => void;
 }
 const data = [
   {
@@ -30,7 +31,8 @@ const data = [
   },
 ];
 const ProfileHeader: React.FC<ProfileInterface> = (props) => {
-  const { BalanceStyles, ActivateCardStyles } = props;
+  const { BalanceStyles, ActivateCardStyles, onActivateVirtualCardPress } =
+    props;
   const { i18n } = useContext(ThemeContext);
   return (
     <>
@@ -41,7 +43,7 @@ const ProfileHeader: React.FC<ProfileInterface> = (props) => {
       <View style={styles.membershipContainer}>
         <View style={{ marginBottom: 24 }}>
           <Text style={styles.type}>
-            {i18n?.t("wallet_card_component.lbl_mem_id") ?? "Membership ID"}
+            {i18n?.t("adb_card.lbl_mem_id") ?? "Membership ID"}
           </Text>
           <View style={styles.row}>
             <Text style={styles.value}>2022 0302 1992 1120</Text>
@@ -52,13 +54,15 @@ const ProfileHeader: React.FC<ProfileInterface> = (props) => {
         </View>
         <View style={{ marginBottom: 24, alignItems: "flex-end" }}>
           <Text style={styles.type}>
-            {i18n?.t("wallet_card_component.lbl_mem_point") ??
-              "Membership Plus Point"}
+            {i18n?.t("adb_card.lbl_mem_point") ?? "Membership Plus Point"}
           </Text>
           <Text style={styles.value}>1,000 pts</Text>
         </View>
       </View>
-      <VirtualCardComponent style={ActivateCardStyles} />
+      <VirtualCardComponent
+        style={ActivateCardStyles}
+        onActivateVirtualCardPress={onActivateVirtualCardPress}
+      />
       <AccountBalanceCard balance={630} style={BalanceStyles} />
       <View style={styles.listContainer}>
         {data.map((res) => (
@@ -86,12 +90,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     //   fontFamily: fonts.semiBold,
-    //   color: colors.secondary,
+    color: "#1b1b1b",
     marginBottom: 8,
   },
   subTitle: {
     fontSize: 14,
-    //   color: colors.secondary,
+    color: "#1b1b1b",
   },
   imageContainer: {
     marginVertical: 32,

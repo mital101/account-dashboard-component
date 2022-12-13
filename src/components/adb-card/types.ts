@@ -7,7 +7,8 @@ export interface ADBCardComponentPropType {
   style?: ADBCardComponentStyleType;
   balanceCardStyle?: BalanceStyle;
   activateVirtualCardStyle?: ActivateVirtualCardStyle;
-  walletItemStyle?:WalletItemStyle
+  walletItemStyle?: WalletItemStyle;
+  onActivateVirtualCardPress: () => void;
 }
 
 export interface BalanceStyle {
@@ -19,12 +20,30 @@ export interface BalanceStyle {
 export interface ActivateVirtualCardStyle {
   containerStyle?: StyleProp<ViewStyle>;
   virtualCardTextStyle?: StyleProp<TextStyle>;
-  virtualCardIconContainerStyle?:StyleProp<ViewStyle>
+  virtualCardIconContainerStyle?: StyleProp<ViewStyle>;
 }
 
 export interface WalletItemStyle {
-  containerStyle?:StyleProp<ViewStyle>;
-  rightContainerStyle?:StyleProp<ViewStyle>;
+  containerStyle?: StyleProp<ViewStyle>;
+  rightContainerStyle?: StyleProp<ViewStyle>;
+  titleStyle?: StyleProp<TextStyle>;
+  subTitleStyle?: StyleProp<TextStyle>;
+}
+export interface VirtualCardInfoProps {
+  style?: VirtualCardInfoStyle;
+  onActivateNowPress: () => void;
+}
+
+export interface VirtualCardInfoStyle {
+  containerStyle?: StyleProp<ViewStyle>;
+  titleContainerStyle?: StyleProp<TextStyle>;
+  titleStyle?: StyleProp<TextStyle>;
+  subTitleStyle?: StyleProp<TextStyle>;
+}
+
+export interface AppPasscodeCompStyle {
+  containerStyle?: StyleProp<ViewStyle>;
+  titleContainerStyle?: StyleProp<TextStyle>;
   titleStyle?: StyleProp<TextStyle>;
   subTitleStyle?: StyleProp<TextStyle>;
 }

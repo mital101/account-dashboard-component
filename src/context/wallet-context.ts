@@ -1,27 +1,20 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { WalletService } from '../services/wallet-service';
-import { showMessage } from 'react-native-theme-component';
+import { chain, groupBy, isEmpty, orderBy } from 'lodash';
 import moment from 'moment';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { showMessage } from 'react-native-theme-component';
+import { maxLengthExchangeRateHistory } from '../constants/common';
 import {
-  GroupedTransactions,
+  CardWallet, CryptoTCData, Currency, CurrencyExchangeRateData, FinancialProfile, GroupedTransactions,
   GroupedWallets,
   Paging,
   Transaction,
   TransactionSummary,
-  Wallet,
-  WalletSummary,
-  WalletTransaction,
-  CryptoTCData,
-  CurrencyExchangeRateData,
-  Currency,
-  WalletLimit,
-  FinancialProfile,
-  CardWallet,
+  Wallet, WalletLimit, WalletSummary,
+  WalletTransaction
 } from '../model';
-import _, { chain, groupBy, isEmpty, orderBy } from 'lodash';
+import walletLocalStore from '../services/local-store';
+import { WalletService } from '../services/wallet-service';
 import { CardReport, FilterTransaction, TransactionChannel, TransactionLimit, TransferType } from '../types';
-import { maxLengthExchangeRateHistory } from '../constants/common';
-
 const walletService = WalletService.instance();
 
 export interface WalletContextData {
@@ -159,7 +152,9 @@ export interface WalletContextData {
   generateOTPForCardReport: () => void;
   verifyOTPForCardReport: (otpNumber: string, otpId: string) => Promise<boolean>;
   selectedReportOption?: CardReport;
-  setSelectedReportOption: (option?: CardReport) => void,
+  setSelectedReportOption: (option?: CardReport) => void;
+  isVirtualCardActive:boolean;
+  setVirtualCardToActive:(val:boolean)=>Promise<void>
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -269,6 +264,8 @@ export const walletDefaultValue: WalletContextData = {
   verifyOTPForCardReport: async () => false,
   selectedReportOption: undefined,
   setSelectedReportOption: () => undefined,
+  isVirtualCardActive:false,
+  setVirtualCardToActive:async ()=>undefined
 };
 
 export const WalletContext =
@@ -305,6 +302,7 @@ export function useWalletContextValue(): WalletContextData {
 
   const [_isLoadingCryptoTC, setIsLoadingCryptoTC] = useState(true);
   const [_cryptoTC, setCryptoTC] = useState<CryptoTCData | undefined>();
+  const [_isVirtualCardActive, setVirtualCardActive] = useState<boolean>(false);
 
   const [_isLoadingCryptoExchange, setIsLoadingCryptoExchange] = useState(true);
   const [_cryptoExchangeData, setCryptoExchangeData] = useState<
@@ -363,6 +361,14 @@ export function useWalletContextValue(): WalletContextData {
   const [_initIsEnableTransactionChannel, setInitIsEnableTransactionChannel] = useState<boolean>(false);
   const [_selectedReportOption, setSelectedReportOption] = useState<CardReport>();
   
+
+  const getVirtualCardStatus = async () => {
+    const res = await walletLocalStore.getCustomerCardStatus()
+    setVirtualCardActive(res === 'true' ? true : false);
+  }
+  useEffect(() => {
+    getVirtualCardStatus()
+  }, [])
 
   const getWallets = useCallback(async () => {
     try {
@@ -1242,6 +1248,13 @@ export function useWalletContextValue(): WalletContextData {
     ;
   }, []);
 
+  const setVirtualCardToActive = useCallback(
+    async (val: boolean) => {
+      await walletLocalStore.storeCustomerCardStatus(`${val}`)
+      setVirtualCardActive(val);
+    }, []
+  )
+
   return useMemo(
     () => ({
       wallets: _wallets,
@@ -1355,9 +1368,12 @@ export function useWalletContextValue(): WalletContextData {
       selectedReportOption: _selectedReportOption,
       setSelectedReportOption,
       transactionLimitValueMin: _transactionMinLimitValue,
-      transactionLimitValueMax: _transactionMaxLimitValue
+      transactionLimitValueMax: _transactionMaxLimitValue,
+      isVirtualCardActive: _isVirtualCardActive,
+      setVirtualCardToActive
     }),
     [
+      _isVirtualCardActive,
       _isLinkedSuccessfully,
       _wallets,
       _isLinkingWallet,

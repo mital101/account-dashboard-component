@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { Text, View } from "react-native";
-// import { colors, palette } from '../../assets';
 import { ThemeContext } from "react-native-theme-component";
 import { BalanceStyle } from "../types";
 import mergeStyles from "./styles";

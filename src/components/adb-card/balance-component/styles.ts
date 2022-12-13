@@ -19,9 +19,11 @@ const useMergeStyles = (style?: BalanceStyle) => {
     accountBalanceText: {
       // ...palette.highlight,
       fontSize: 14,
+      color: "#1b1b1b",
     },
     accountBalance: {
       // ...palette.bigTitle,
+      color: "#1b1b1b",
       padding: 8,
       fontSize: 32,
       fontWeight: "600",

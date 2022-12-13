@@ -1,21 +1,30 @@
-import React, { ReactNode, useContext } from 'react';
-import { Dimensions, Platform, SafeAreaView, View, TouchableOpacity, Text } from 'react-native';
-import Modal from 'react-native-modal';
+import React, { ReactNode, useContext } from "react";
+import {
+  Dimensions,
+  Platform,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import Modal from "react-native-modal";
+import { ThemeContext } from "react-native-theme-component";
 import {
   BRoundedCloseIcon,
   BRoundedTickIcon,
-  BTransactionIcon,
   BShareIcon,
-} from '../../../assets/images';
-import { ActionSheetStyle } from '../../../types';
-import useMergeStyles from './styles';
-import { ThemeContext } from 'react-native-theme-component';
-import { Wallet } from '../../../model';
+  BTransactionIcon,
+} from "../../../assets/images";
+import { Wallet } from "../../../model";
+import { ActionSheetStyle } from "../../../types";
+import useMergeStyles from "./styles";
 
 const deviceHeight =
-  Platform.OS === 'ios'
-    ? Dimensions.get('window').height
-    : require('react-native-extra-dimensions-android').get('REAL_WINDOW_HEIGHT');
+  Platform.OS === "ios"
+    ? Dimensions.get("window").height
+    : require("react-native-extra-dimensions-android").get(
+        "REAL_WINDOW_HEIGHT"
+      );
 
 export type ActionSheetComponentProps = {
   wallet?: Wallet;
@@ -80,10 +89,13 @@ const ActionSheetComponent = (props: ActionSheetComponentProps) => {
                 }}
               >
                 <View style={styles.leftIconContainer}>
-                  {setPrimaryIcon ?? <BRoundedTickIcon width={18} height={18} />}
+                  {setPrimaryIcon ?? (
+                    <BRoundedTickIcon width={18} height={18} />
+                  )}
                 </View>
                 <Text style={styles.buttonTextStyle}>
-                  {i18n?.t('wallets_list_component.btn_set_primary') ?? 'Set as primary account'}
+                  {i18n?.t("wallets_list_component.btn_set_primary") ??
+                    "Set as primary account"}
                 </Text>
               </TouchableOpacity>
             )}
@@ -100,7 +112,8 @@ const ActionSheetComponent = (props: ActionSheetComponentProps) => {
                   {unlinkIcon ?? <BRoundedCloseIcon width={18} height={18} />}
                 </View>
                 <Text style={styles.buttonTextStyle}>
-                  {i18n?.t('wallets_list_component.btn_unlink_account') ?? 'Unlink bank account'}
+                  {i18n?.t("wallets_list_component.btn_unlink_account") ??
+                    "Unlink bank account"}
                 </Text>
               </TouchableOpacity>
             )}
@@ -114,10 +127,13 @@ const ActionSheetComponent = (props: ActionSheetComponentProps) => {
                 }}
               >
                 <View style={styles.leftIconContainer}>
-                  {viewTransactionIcon ?? <BTransactionIcon width={18} height={18} />}
+                  {viewTransactionIcon ?? (
+                    <BTransactionIcon width={18} height={18} />
+                  )}
                 </View>
                 <Text style={styles.buttonTextStyle}>
-                  {i18n?.t('wallets_list_component.btn_view_transaction') ?? 'View transactions'}
+                  {i18n?.t("wallets_list_component.btn_view_transaction") ??
+                    "View transactions"}
                 </Text>
               </TouchableOpacity>
             )}
@@ -134,7 +150,8 @@ const ActionSheetComponent = (props: ActionSheetComponentProps) => {
                   {shareIcon ?? <BShareIcon size={18} />}
                 </View>
                 <Text style={styles.buttonTextStyle}>
-                  {i18n?.t('wallets_list_component.btn_share_information') ?? 'Share Information'}
+                  {i18n?.t("wallets_list_component.btn_share_information") ??
+                    "Share Information"}
                 </Text>
               </TouchableOpacity>
             )}
@@ -145,7 +162,8 @@ const ActionSheetComponent = (props: ActionSheetComponentProps) => {
             >
               {cancelIcon}
               <Text style={styles.cancelTextStyle}>
-                {i18n?.t('wallets_list_component.btn_cancel')?.toUpperCase() ?? 'CANCEL'}
+                {i18n?.t("wallets_list_component.btn_cancel")?.toUpperCase() ??
+                  "CANCEL"}
               </Text>
             </TouchableOpacity>
           </View>

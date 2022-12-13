@@ -20,9 +20,14 @@ const useMergeStyles = (style?: ActivateVirtualCardStyle) => {
     virtualCardTextStyle: {
       color: "#ffffff",
       fontSize: 12,
-      width:'90%'
+      width: "90%",
     },
-    virtualCardIconContainerStyle:{height:20,backgroundColor:'white', width:20,borderRadius:100}
+    virtualCardIconContainerStyle: {
+      height: 20,
+      backgroundColor: "white",
+      width: 20,
+      borderRadius: 100,
+    },
   });
 
   return defaultsDeep(style, defaultStyles);
