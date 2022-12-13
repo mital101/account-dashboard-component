@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   Dimensions,
   StyleSheet,
@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { ThemeContext } from "react-native-theme-component";
 import { CloseEyesIcon } from "../../../../../assets/close-eyes.icon";
 import { EyesIcon } from "../../../../../assets/eyes.icon";
 import VisaIcon from "../common/visa-icon";
@@ -18,22 +17,8 @@ export interface VirtualCardProps {
   cardBottomText?: string;
 }
 
-const radioGroup = [
-  {
-    id: "rd-1",
-    title: "Mailing address",
-    desc: "{Olive P5-20, Empire Residence, 40170, Damansara Perdana, Selangor}",
-  },
-  {
-    id: "rd-1",
-    title: "Mailing address",
-    desc: "{Olive P5-20, Empire Residence, 40170, Damansara Perdana, Selangor}",
-  },
-];
-
 const VirtualCard: React.FC<VirtualCardProps> = (props) => {
   const { cardHolderName, showEyeIcon, showCardType, cardBottomText } = props;
-  const { colors } = useContext(ThemeContext);
   const [showCardNumber, setShowCardNumber] = useState(false);
   const [cardNumber] = useState("1234567895639044");
   return (

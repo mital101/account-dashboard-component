@@ -13,6 +13,7 @@ const ADBCardComponent: React.FC<ADBCardComponentPropType> = (props) => {
     onActivateVirtualCardPress,
   } = props;
   const styles = useMergeStyles(style);
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "#ffffff", paddingTop: 20 }}

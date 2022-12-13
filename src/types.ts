@@ -1,8 +1,19 @@
-import { ReactNode } from 'react';
-import { ImageSourcePropType, ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
-import { AlertModalStyles } from 'react-native-theme-component/src/alert';
-import { EmptyWalletThemeProps } from './components/no-account-dashboard-component';
-import { BankImagesMap, Transaction, TransactionSummary, Wallet } from './model';
+import { ReactNode } from "react";
+import {
+  ImageSourcePropType,
+  ImageStyle,
+  StyleProp,
+  TextStyle,
+  ViewStyle,
+} from "react-native";
+import { AlertModalStyles } from "react-native-theme-component/src/alert";
+import { EmptyWalletThemeProps } from "./components/no-account-dashboard-component";
+import {
+  BankImagesMap,
+  Transaction,
+  TransactionSummary,
+  Wallet,
+} from "./model";
 
 export type WalletListComponentRefs = {
   showActionsSheet: (wallet: Wallet) => void;
@@ -12,15 +23,14 @@ export type WalletListComponentRefs = {
   hideActionSheet: () => void;
 };
 
-export type TransferType = 'moneyin' | 'moneyout';
+export type TransferType = "moneyin" | "moneyout";
 
 export type FilterTransaction = {
   types?: string[];
   status?: string;
   from?: string;
   to?: string;
-}
-
+};
 
 export type WalletListComponentProps = {
   Root: {
@@ -227,7 +237,9 @@ export type TransactionListComponentProps = {
       carouselItemWidth?: number;
     };
     components?: {
-      renderSummary?: (summary?: TransactionSummary) => React.ReactElement | null;
+      renderSummary?: (
+        summary?: TransactionSummary
+      ) => React.ReactElement | null;
       tickIcon?: ReactNode;
       moneyInIcon?: ReactNode;
       moneyOutIcon?: ReactNode;
@@ -250,7 +262,10 @@ export type TransactionListComponentProps = {
     style?: TransactionPageStyle;
     component?: {
       sectionHeader?: (date: string) => React.ReactElement | null;
-      renderItem?: (index: number, item: Transaction) => React.ReactElement | null;
+      renderItem?: (
+        index: number,
+        item: Transaction
+      ) => React.ReactElement | null;
     };
     props?: {
       onItemPress?: (transaction: Transaction) => void;
@@ -318,24 +333,69 @@ export type OnboardingItem = {
   imageComponent: ReactNode;
 };
 
-
 export type TransactionLimit = {
   limitUnit: string;
-  transactionType: string,
-  frequence: string,
-  cardProxyNumber: string,
-  limitValue: number,
-  remainingLimitValue: number
-}
+  transactionType: string;
+  frequence: string;
+  cardProxyNumber: string;
+  limitValue: number;
+  remainingLimitValue: number;
+};
 
 export type TransactionChannel = {
-  name: string,
-  code: string,
-  enabled: boolean
-}
+  name: string;
+  code: string;
+  enabled: boolean;
+};
 
 export type CardReport = {
-  id: string,
-  reason: string,
-  reasonCode: string
+  id: string;
+  reason: string;
+  reasonCode: string;
+};
+
+export interface VirtualCardApplicationBody {
+  submitType: string;
+  productDetails: ProductDetails;
+}
+
+export interface ProductDetails {
+  bankId: string;
+  productId: string;
+  productType: string;
+}
+export interface ADBWallet {
+  internalId: string;
+  walletId: string;
+  userId: string;
+  walletName: string;
+  currentBalance: number;
+  availableBalance: number;
+  minimumBalance: number;
+  bankAccount: BankAccount;
+  currencyCode: string;
+  status: string;
+  type: string;
+  isDefaultWallet: boolean;
+  expiredAt: string;
+  createdAt: string;
+  orgId: string;
+  cardData: CardData;
+}
+export interface BankAccount {
+  bankCode: string;
+  accountNumber: string;
+  accountType: string;
+  accountHolderName: string;
+  productId: string;
+  internalProductCategory: string;
+  accountSubType: string;
+  openingDate: string;
+  id: string;
+}
+
+export interface CardData {
+  cardProxyNumber: string;
+  cardLinkedWalletId: string;
+  cardLastFourDigitNumber: string;
 }

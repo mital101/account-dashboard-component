@@ -1,20 +1,34 @@
-import { chain, groupBy, isEmpty, orderBy } from 'lodash';
-import moment from 'moment';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { showMessage } from 'react-native-theme-component';
-import { maxLengthExchangeRateHistory } from '../constants/common';
+import { chain, groupBy, isEmpty, orderBy } from "lodash";
+import moment from "moment";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { showMessage } from "react-native-theme-component";
+import { maxLengthExchangeRateHistory } from "../constants/common";
 import {
-  CardWallet, CryptoTCData, Currency, CurrencyExchangeRateData, FinancialProfile, GroupedTransactions,
+  CardWallet,
+  CryptoTCData,
+  Currency,
+  CurrencyExchangeRateData,
+  FinancialProfile,
+  GroupedTransactions,
   GroupedWallets,
   Paging,
   Transaction,
   TransactionSummary,
-  Wallet, WalletLimit, WalletSummary,
-  WalletTransaction
-} from '../model';
-import walletLocalStore from '../services/local-store';
-import { WalletService } from '../services/wallet-service';
-import { CardReport, FilterTransaction, TransactionChannel, TransactionLimit, TransferType } from '../types';
+  Wallet,
+  WalletLimit,
+  WalletSummary,
+  WalletTransaction,
+} from "../model";
+import walletLocalStore from "../services/local-store";
+import { WalletService } from "../services/wallet-service";
+import {
+  ADBWallet,
+  CardReport,
+  FilterTransaction,
+  TransactionChannel,
+  TransactionLimit,
+  TransferType,
+} from "../types";
 const walletService = WalletService.instance();
 
 export interface WalletContextData {
@@ -115,25 +129,34 @@ export interface WalletContextData {
   isLoadingCardWallet?: boolean;
   getCardWallet: () => void;
   generateOTPForCardDetails: () => void;
-  verifyOTPForCardDetails: (otpNumber: string, otpId: string) => Promise<boolean>;
+  verifyOTPForCardDetails: (
+    otpNumber: string,
+    otpId: string
+  ) => Promise<boolean>;
   otpId?: string;
   isLoadingGenerateOTP: boolean;
   errorVerifyOTPCard?: Error;
   isLoadingVerifyOTP?: boolean;
   oneTimeToken?: string;
   generateOTPForUpdateCardStatus: () => void;
-  verifyOTPForUpdateCardStatus: (otpNumber: string, otpId: string) => Promise<boolean>;
+  verifyOTPForUpdateCardStatus: (
+    otpNumber: string,
+    otpId: string
+  ) => Promise<boolean>;
   cardWalletStatus?: string;
   updateCardStatus: (status: string) => void;
 
   getTransactionLimit: () => void;
   generateOTPForUpdateTransactionLimit: () => void;
-  verifyOTPForUpdateTransactionLimit: (otpNumber: string, otpId: string) => Promise<boolean>;
+  verifyOTPForUpdateTransactionLimit: (
+    otpNumber: string,
+    otpId: string
+  ) => Promise<boolean>;
   isLoadingGetTransactionLimit: boolean;
   transactionLimits: TransactionLimit[];
   transactionLimitsOverall?: TransactionLimit;
   setTransactionLimitsOverall?: (transactionInfo: TransactionLimit) => void;
-  
+
   transactionLimitValue: number;
   transactionLimitValueMin: number;
   transactionLimitValueMax: number;
@@ -141,7 +164,10 @@ export interface WalletContextData {
 
   getTransactionChannels: () => void;
   generateOTPForUpdateTransactionChannel: () => void;
-  verifyOTPForUpdateTransactionChannel: (otpNumber: string, otpId: string) => Promise<boolean>;
+  verifyOTPForUpdateTransactionChannel: (
+    otpNumber: string,
+    otpId: string
+  ) => Promise<boolean>;
   isLoadingGetTransactionChannel: boolean;
   initIsEnableTransactionChannel: boolean;
   isEnableTransactionChannel: boolean;
@@ -150,11 +176,16 @@ export interface WalletContextData {
 
   //
   generateOTPForCardReport: () => void;
-  verifyOTPForCardReport: (otpNumber: string, otpId: string) => Promise<boolean>;
+  verifyOTPForCardReport: (
+    otpNumber: string,
+    otpId: string
+  ) => Promise<boolean>;
   selectedReportOption?: CardReport;
   setSelectedReportOption: (option?: CardReport) => void;
-  isVirtualCardActive:boolean;
-  setVirtualCardToActive:(val:boolean)=>Promise<void>
+  isVirtualCardActive: boolean;
+  setVirtualCardToActive: (val: boolean) => Promise<void>;
+  isSubmittingVCApplication: boolean;
+  createVCApplication: () => Promise<boolean>;
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -205,7 +236,7 @@ export const walletDefaultValue: WalletContextData = {
   getWalletsById: () => null,
   refreshWalletsById: () => null,
   isLoadingInitMoneyIn: false,
-  paymentId: '',
+  paymentId: "",
   amount: 0,
   initMoneyin: async () => undefined,
   setAmountCryptoIn: () => undefined,
@@ -264,8 +295,10 @@ export const walletDefaultValue: WalletContextData = {
   verifyOTPForCardReport: async () => false,
   selectedReportOption: undefined,
   setSelectedReportOption: () => undefined,
-  isVirtualCardActive:false,
-  setVirtualCardToActive:async ()=>undefined
+  isVirtualCardActive: false,
+  setVirtualCardToActive: async () => undefined,
+  isSubmittingVCApplication: false,
+  createVCApplication: async () => false,
 };
 
 export const WalletContext =
@@ -341,39 +374,54 @@ export function useWalletContextValue(): WalletContextData {
   const [_walletLimits, setWalletLimits] = useState<WalletLimit[]>([]);
   const [_cardWallet, setCardWallets] = useState<CardWallet>();
   const [_isLoadingCardWallet, setIsLoadingCardWallet] = useState<boolean>();
-  const [_isLoadingGenerateOTP, setIsLoadingGenerateOTP] = useState<boolean>(false);
+  const [_isLoadingGenerateOTP, setIsLoadingGenerateOTP] =
+    useState<boolean>(false);
   const [_errorVerifyOTPCard, setErrorVerifyOTPCard] = useState<Error>();
   const [_otpId, setOtpId] = useState<string>();
   const [_isLoadingVerifyOTP, setIsLoadingVerifyOTP] = useState<boolean>();
   const [_oneTimeToken, setOneTimeToken] = useState<string>();
   const [_cardWalletStatus, setCardWalletStatus] = useState<string>();
 
-  const [_transactionLimits, setTransactionLimits] = useState<TransactionLimit[]>([]);
-  const [_transactionLimitsOverall, setTransactionLimitsOverall] = useState<TransactionLimit>();
-  const [_isLoadingTransactionLimits, setIsLoadingTransactionLimits] = useState<boolean>(false);
+  const [_transactionLimits, setTransactionLimits] = useState<
+    TransactionLimit[]
+  >([]);
+  const [_transactionLimitsOverall, setTransactionLimitsOverall] =
+    useState<TransactionLimit>();
+  const [_isLoadingTransactionLimits, setIsLoadingTransactionLimits] =
+    useState<boolean>(false);
 
-  const [_transactionLimitValue, setTransactionLimitValue] = useState<number>(0);
-  const [_transactionMaxLimitValue, setTransactionMaxLimitValue] = useState<number>(0);
-  const [_transactionMinLimitValue, setTransactionMinLimitValue] = useState<number>(0);
+  const [_transactionLimitValue, setTransactionLimitValue] =
+    useState<number>(0);
+  const [_transactionMaxLimitValue, setTransactionMaxLimitValue] =
+    useState<number>(0);
+  const [_transactionMinLimitValue, setTransactionMinLimitValue] =
+    useState<number>(0);
 
-  const [_isLoadingGetTransactionChannel, setIsLoadingGetTransactionChannel] = useState<boolean>(false);
-  const [_isEnableTransactionChannel, setIsEnableTransactionChannel] = useState<boolean>(false);
-  const [_initIsEnableTransactionChannel, setInitIsEnableTransactionChannel] = useState<boolean>(false);
-  const [_selectedReportOption, setSelectedReportOption] = useState<CardReport>();
-  
+  const [_isLoadingGetTransactionChannel, setIsLoadingGetTransactionChannel] =
+    useState<boolean>(false);
+  const [_isEnableTransactionChannel, setIsEnableTransactionChannel] =
+    useState<boolean>(false);
+  const [_initIsEnableTransactionChannel, setInitIsEnableTransactionChannel] =
+    useState<boolean>(false);
+  const [_selectedReportOption, setSelectedReportOption] =
+    useState<CardReport>();
+
+  const [_isSubmittingVCApplication, setSubmittingVCApplication] =
+    useState<boolean>(false);
 
   const getVirtualCardStatus = async () => {
-    const res = await walletLocalStore.getCustomerCardStatus()
-    setVirtualCardActive(res === 'true' ? true : false);
-  }
+    const res = await walletLocalStore.getCustomerCardStatus();
+    setVirtualCardActive(res === "true" ? true : false);
+  };
   useEffect(() => {
-    getVirtualCardStatus()
-  }, [])
+    getVirtualCardStatus();
+  }, []);
 
   const getWallets = useCallback(async () => {
     try {
       setIsLoadingWallets(true);
-      await _fetchWallets();
+      // await _fetchWallets();
+      await _fetchUserWallets();
       setIsLoadingWallets(false);
       clearWalletErrors();
     } catch (err) {
@@ -384,7 +432,7 @@ export function useWalletContextValue(): WalletContextData {
 
   const _fetchWallets = async () => {
     const resp = await walletService.getWallets();
-    console.log('_fetchWallets -> resp', resp);
+    console.log("_fetchWallets -> resp", resp);
     let _walletsData: Wallet[] = resp.data;
     if (isEmpty(_walletsData)) {
       setWallets([]);
@@ -400,17 +448,17 @@ export function useWalletContextValue(): WalletContextData {
       }
       const walletsOrdered = orderBy<Wallet>(
         _walletsData,
-        ['isDefaultWallet'],
-        ['desc']
+        ["isDefaultWallet"],
+        ["desc"]
       );
       const unionWallet: Wallet | undefined = walletsOrdered.find(
-        (w) => w.bankAccount.bankCode === 'UnionDigital'
+        (w) => w.bankAccount.bankCode === "UnionDigital"
       );
       const cryptoWallet: Wallet | undefined = walletsOrdered.find(
-        (w) => w.bankAccount.bankCode === 'PDAX' && w.currencyCode === 'PHP'
+        (w) => w.bankAccount.bankCode === "PDAX" && w.currencyCode === "PHP"
       );
       const cardWallet: CardWallet | undefined = walletsOrdered.find(
-        (w) => w.type === 'CARD_WALLET'
+        (w) => w.type === "CARD_WALLET"
       );
       if (unionWallet) {
         getWalletLimits(unionWallet?.walletId);
@@ -421,6 +469,24 @@ export function useWalletContextValue(): WalletContextData {
       setCardWallets(cardWallet);
       setCardWalletStatus(cardWallet?.status);
       setSummary(resp.summary);
+    }
+  };
+
+  const _fetchUserWallets = async () => {
+    const resp = await walletService.getUserWallets();
+    let _walletsData: ADBWallet[] = resp.data;
+    console.log("Waller Data : ", JSON.stringify(_walletsData));
+
+    const walletsOrdered = orderBy<ADBWallet>(
+      _walletsData,
+      ["isDefaultWallet"],
+      ["desc"]
+    );
+    const cardWallet: CardWallet | undefined = walletsOrdered.find(
+      (w) => w.type === "CARD_WALLET"
+    );
+    if (cardWallet && cardWallet?.status === "ACTIVE") {
+      setVirtualCardActive(true);
     }
   };
 
@@ -467,7 +533,7 @@ export function useWalletContextValue(): WalletContextData {
         setCryptoTC(resp.data);
         // clearWalletErrors();
       } catch (err) {
-        console.log('err ', err);
+        console.log("err ", err);
 
         setIsLoadingCryptoTC(false);
         setLoadError(err as Error);
@@ -523,8 +589,8 @@ export function useWalletContextValue(): WalletContextData {
       refreshWallets();
       setIsUpdatingPrimary(false);
       showMessage({
-        message: 'Primary Account Changed Successfully',
-        backgroundColor: '#44ac44',
+        message: "Primary Account Changed Successfully",
+        backgroundColor: "#44ac44",
       });
     } catch (error) {
       setIsUpdatingPrimary(false);
@@ -540,8 +606,8 @@ export function useWalletContextValue(): WalletContextData {
         refreshWallets();
         setIsUnlinking(false);
         showMessage({
-          message: 'Account successfully removed',
-          backgroundColor: '#44ac44',
+          message: "Account successfully removed",
+          backgroundColor: "#44ac44",
         });
       } catch (error) {
         setIsUnlinking(false);
@@ -559,8 +625,8 @@ export function useWalletContextValue(): WalletContextData {
       return _wallets;
     }
     const aggregatedWallet: Wallet = {
-      walletName: 'All Accounts',
-      walletId: _wallets.map((w: Wallet) => w.walletId).join(','),
+      walletName: "All Accounts",
+      walletId: _wallets.map((w: Wallet) => w.walletId).join(","),
       availableBalance: _summary?.availableBalance ?? 0,
       currentBalance: _summary?.currentBalance ?? 0,
       isDefaultWallet: false,
@@ -573,15 +639,15 @@ export function useWalletContextValue(): WalletContextData {
   }, [_wallets, _summary]);
 
   const getGroupWallets = useCallback(() => {
-    const group = chain(_wallets).groupBy('type').value();
+    const group = chain(_wallets).groupBy("type").value();
     return Object.keys(group).map((key) => {
       let section;
       switch (key) {
-        case 'BANK_WALLET':
-          section = 'Bank Accounts';
+        case "BANK_WALLET":
+          section = "Bank Accounts";
           break;
-        case 'VIRTUAL_WALLET':
-          section = 'Wallets';
+        case "VIRTUAL_WALLET":
+          section = "Wallets";
           break;
         default:
           section = key;
@@ -589,7 +655,7 @@ export function useWalletContextValue(): WalletContextData {
       }
       return {
         section,
-        data: orderBy<Wallet>(group[key], ['isDefaultWallet'], ['desc']),
+        data: orderBy<Wallet>(group[key], ["isDefaultWallet"], ["desc"]),
       };
     });
   }, [_wallets]);
@@ -604,7 +670,7 @@ export function useWalletContextValue(): WalletContextData {
         return undefined;
       }
       const wallet = _wallets.find(
-        (item) => item.walletId.replace(/-/g, '') === walletId.replace(/-/g, '')
+        (item) => item.walletId.replace(/-/g, "") === walletId.replace(/-/g, "")
       );
       return wallet;
     },
@@ -818,16 +884,16 @@ export function useWalletContextValue(): WalletContextData {
       const sortedByDate = orderBy<Transaction>(
         data,
         [(txn: any) => new Date(txn.txnDateTime)],
-        ['desc']
+        ["desc"]
       );
       const group = groupBy<Transaction>(
         sortedByDate,
         (transaction: Transaction) =>
-          moment(transaction.txnDateTime).format('DD MMM YYYY')
+          moment(transaction.txnDateTime).format("DD MMM YYYY")
       );
       return Object.keys(group).map((key) => ({
-        section: moment(key, 'DD MMM YYYY').toISOString(),
-        data: orderBy<Transaction>(group[key], ['txnDateTime'], ['desc']),
+        section: moment(key, "DD MMM YYYY").toISOString(),
+        data: orderBy<Transaction>(group[key], ["txnDateTime"], ["desc"]),
       }));
     },
     [_transactions]
@@ -871,7 +937,7 @@ export function useWalletContextValue(): WalletContextData {
       const result = await walletService.getCurrenciesExchangeRate(
         1,
         limit ?? 100,
-        'PHP',
+        "PHP",
         fromCurrency,
         includePercentageChange,
         percentageChangeUnit,
@@ -891,7 +957,7 @@ export function useWalletContextValue(): WalletContextData {
     const result = await walletService.getCurrenciesHistoricalExchangeRate(
       updateAtFrom,
       type,
-      'PHP',
+      "PHP",
       maxLengthExchangeRateHistory,
       1
     );
@@ -909,10 +975,10 @@ export function useWalletContextValue(): WalletContextData {
   const initMoneyin = useCallback(async () => {
     setIsLoadingInitMoneyIn(true);
     const unionWallet: Wallet | undefined = _wallets.find(
-      (w) => w.bankAccount.bankCode === 'UnionDigital'
+      (w) => w.bankAccount.bankCode === "UnionDigital"
     );
     const cryptoWallet: Wallet | undefined = _wallets.find(
-      (w) => w.bankAccount.bankCode === 'PDAX' && w.currencyCode === 'PHP'
+      (w) => w.bankAccount.bankCode === "PDAX" && w.currencyCode === "PHP"
     );
     if (unionWallet && cryptoWallet && _amount) {
       const result = await walletService.moneyInInitital(
@@ -928,10 +994,10 @@ export function useWalletContextValue(): WalletContextData {
   const initMoneyOut = useCallback(async () => {
     setIsLoadingInitMoneyOut(true);
     const unionWallet: Wallet | undefined = _wallets.find(
-      (w) => w.bankAccount.bankCode === 'UnionDigital'
+      (w) => w.bankAccount.bankCode === "UnionDigital"
     );
     const cryptoWallet: Wallet | undefined = _wallets.find(
-      (w) => w.bankAccount.bankCode === 'PDAX' && w.currencyCode === 'PHP'
+      (w) => w.bankAccount.bankCode === "PDAX" && w.currencyCode === "PHP"
     );
     if (unionWallet && cryptoWallet && _amount) {
       const result = await walletService.moneyOutInitital(
@@ -977,7 +1043,7 @@ export function useWalletContextValue(): WalletContextData {
 
   const getFinancialProfile = useCallback(
     async (userId: string, bankId: string) => {
-      console.log('getFinancialProfile -> request');
+      console.log("getFinancialProfile -> request");
       setIsLoadingFinancialProfile(true);
       const result = await walletService.getFinancialProfile(userId, bankId);
       setIsLoadingFinancialProfile(false);
@@ -995,8 +1061,8 @@ export function useWalletContextValue(): WalletContextData {
 
   const getCardWallet = useCallback(async () => {
     setIsLoadingCardWallet(true);
-    const result = await walletService.getWalletsByWalletType('CARD_WALLET');
-    if(result.data.length > 0) {
+    const result = await walletService.getWalletsByWalletType("CARD_WALLET");
+    if (result.data.length > 0) {
       setCardWallets(result.data[0]);
       setCardWalletStatus(result.data[0].status);
     }
@@ -1004,256 +1070,385 @@ export function useWalletContextValue(): WalletContextData {
   }, []);
 
   const generateOTPForCardDetails = useCallback(async () => {
-    console.log('generateOTPForCardDetails -> _cardWallet', _cardWallet);
+    console.log("generateOTPForCardDetails -> _cardWallet", _cardWallet);
     setIsLoadingGenerateOTP(true);
     setOneTimeToken(undefined);
     setErrorVerifyOTPCard(undefined);
     setIsLoadingVerifyOTP(false);
-    if(_cardWallet) {
+    if (_cardWallet) {
       try {
-        const respone = await walletService.generateOTP('pci-data', _cardWallet.walletId);
+        const respone = await walletService.generateOTP(
+          "pci-data",
+          _cardWallet.walletId
+        );
         console.log(respone);
-        if(respone.data) {
-          console.log('setOtpId', respone.data.id)
+        if (respone.data) {
+          console.log("setOtpId", respone.data.id);
           setOtpId(respone.data.id);
         }
       } catch (error: any) {
-        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error)
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
       }
     }
     setIsLoadingGenerateOTP(false);
   }, [_cardWallet]);
 
-  const verifyOTPForCardDetails = useCallback(async (otpNumber: string, otpId: string) => {
-    console.log('verifyOTPForCardDetails -> otpNumber', otpNumber, otpId);
-    setIsLoadingVerifyOTP(true);
-    setErrorVerifyOTPCard(undefined);
-    let isSuccess = false;
-    try {
-      const respone = await walletService.verifyOTP('pci-data', otpNumber, otpId);
-      setOneTimeToken(respone.data?.oneTimeToken);
-      isSuccess = true;
-    } catch (error: any) {
-      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
-      setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
-      setIsLoadingVerifyOTP(false);
-    }
-    return isSuccess;
-    ;
-  }, []);
+  const verifyOTPForCardDetails = useCallback(
+    async (otpNumber: string, otpId: string) => {
+      console.log("verifyOTPForCardDetails -> otpNumber", otpNumber, otpId);
+      setIsLoadingVerifyOTP(true);
+      setErrorVerifyOTPCard(undefined);
+      let isSuccess = false;
+      try {
+        const respone = await walletService.verifyOTP(
+          "pci-data",
+          otpNumber,
+          otpId
+        );
+        setOneTimeToken(respone.data?.oneTimeToken);
+        isSuccess = true;
+      } catch (error: any) {
+        console.log(
+          "error?.response?.data?.errors[0]",
+          error?.response?.data?.errors[0]
+        );
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
+        setIsLoadingVerifyOTP(false);
+      }
+      return isSuccess;
+    },
+    []
+  );
 
   const generateOTPForUpdateCardStatus = useCallback(async () => {
-    console.log('generateOTPForUpdateCardStatus -> _cardWallet', _cardWallet);
+    console.log("generateOTPForUpdateCardStatus -> _cardWallet", _cardWallet);
     setIsLoadingGenerateOTP(true);
     setOneTimeToken(undefined);
     setErrorVerifyOTPCard(undefined);
     setIsLoadingVerifyOTP(false);
-    if(_cardWallet && _cardWalletStatus) {
+    if (_cardWallet && _cardWalletStatus) {
       try {
-        const respone = await walletService.generateOTP(_cardWalletStatus == 'ACTIVE' ? 'lock-card' : 'unlock-card', _cardWallet.walletId);
+        const respone = await walletService.generateOTP(
+          _cardWalletStatus == "ACTIVE" ? "lock-card" : "unlock-card",
+          _cardWallet.walletId
+        );
         console.log(respone);
-        if(respone.data) {
-          console.log('setOtpId', respone.data.id)
+        if (respone.data) {
+          console.log("setOtpId", respone.data.id);
           setOtpId(respone.data.id);
         }
       } catch (error: any) {
-        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error)
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
       }
     }
     setIsLoadingGenerateOTP(false);
   }, [_cardWallet, _cardWalletStatus]);
 
-  const verifyOTPForUpdateCardStatus = useCallback(async (otpNumber: string, otpId: string) => {
-    console.log('verifyOTPForUpdateCardStatus -> otpNumber', otpNumber, otpId);
-    setIsLoadingVerifyOTP(true);
-    setErrorVerifyOTPCard(undefined);
-    let isSuccess = false;
-    try {
-      if(_cardWalletStatus) {
-        const respone = await walletService.verifyOTP(_cardWalletStatus == 'ACTIVE' ? 'lock-card' : 'unlock-card', otpNumber, otpId);
-        setOneTimeToken(respone.data?.oneTimeToken);
-        isSuccess = true;
+  const verifyOTPForUpdateCardStatus = useCallback(
+    async (otpNumber: string, otpId: string) => {
+      console.log(
+        "verifyOTPForUpdateCardStatus -> otpNumber",
+        otpNumber,
+        otpId
+      );
+      setIsLoadingVerifyOTP(true);
+      setErrorVerifyOTPCard(undefined);
+      let isSuccess = false;
+      try {
+        if (_cardWalletStatus) {
+          const respone = await walletService.verifyOTP(
+            _cardWalletStatus == "ACTIVE" ? "lock-card" : "unlock-card",
+            otpNumber,
+            otpId
+          );
+          setOneTimeToken(respone.data?.oneTimeToken);
+          isSuccess = true;
+        }
+      } catch (error: any) {
+        console.log(
+          "error?.response?.data?.errors[0]",
+          error?.response?.data?.errors[0]
+        );
+        setIsLoadingVerifyOTP(false);
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
       }
-    } catch (error: any) {
-      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
-      setIsLoadingVerifyOTP(false);
-      setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
-    }
-    return isSuccess;
-    ;
-  }, [_cardWalletStatus]);
+      return isSuccess;
+    },
+    [_cardWalletStatus]
+  );
 
   const getTransactionLimit = useCallback(async () => {
     setIsLoadingTransactionLimits(true);
     try {
-      if(_cardWallet?.walletId) {
-        const response = await walletService.getTransactionLimitByProxyNumber(_cardWallet.walletId);
+      if (_cardWallet?.walletId) {
+        const response = await walletService.getTransactionLimitByProxyNumber(
+          _cardWallet.walletId
+        );
         setTransactionLimits(response.data);
-        if(response.data.length > 0) {
-          console.log('getTransactionLimit -> limit', response.data);
-          const overallDailyLimit = response.data.filter((l: TransactionLimit) => l.transactionType === 'AGGR_OVERALL' && l.frequence === 'Daily');
-          const overallDailyLimitMin = response.data.filter((l: TransactionLimit) => l.transactionType === 'AGGR_OVERALL' && l.frequence === 'MinPerTransaction');
-          const overallDailyLimitMax = response.data.filter((l: TransactionLimit) => l.transactionType === 'AGGR_OVERALL' && l.frequence === 'MaxPerTransaction');
-          if(overallDailyLimit?.length > 0) {
+        if (response.data.length > 0) {
+          console.log("getTransactionLimit -> limit", response.data);
+          const overallDailyLimit = response.data.filter(
+            (l: TransactionLimit) =>
+              l.transactionType === "AGGR_OVERALL" && l.frequence === "Daily"
+          );
+          const overallDailyLimitMin = response.data.filter(
+            (l: TransactionLimit) =>
+              l.transactionType === "AGGR_OVERALL" &&
+              l.frequence === "MinPerTransaction"
+          );
+          const overallDailyLimitMax = response.data.filter(
+            (l: TransactionLimit) =>
+              l.transactionType === "AGGR_OVERALL" &&
+              l.frequence === "MaxPerTransaction"
+          );
+          if (overallDailyLimit?.length > 0) {
             setTransactionLimitsOverall(overallDailyLimit[0]);
-            setTransactionLimitValue(overallDailyLimit[0].limitValue  > 250000 ? 250000 : overallDailyLimit[0].limitValue);
+            setTransactionLimitValue(
+              overallDailyLimit[0].limitValue > 250000
+                ? 250000
+                : overallDailyLimit[0].limitValue
+            );
           }
-          if(overallDailyLimitMin?.length > 0) {
-            setTransactionMinLimitValue(overallDailyLimitMin[0].limitValue < 0 ? 0 : overallDailyLimitMin[0].limitValue);
+          if (overallDailyLimitMin?.length > 0) {
+            setTransactionMinLimitValue(
+              overallDailyLimitMin[0].limitValue < 0
+                ? 0
+                : overallDailyLimitMin[0].limitValue
+            );
           }
-          if(overallDailyLimitMax?.length > 0) {
-            setTransactionMaxLimitValue(overallDailyLimitMax[0].limitValue > 250000 ? 250000 : overallDailyLimitMax[0].limitValue);
+          if (overallDailyLimitMax?.length > 0) {
+            setTransactionMaxLimitValue(
+              overallDailyLimitMax[0].limitValue > 250000
+                ? 250000
+                : overallDailyLimitMax[0].limitValue
+            );
           }
         }
       }
     } catch (error: any) {
-      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
+      console.log(
+        "error?.response?.data?.errors[0]",
+        error?.response?.data?.errors[0]
+      );
       setIsLoadingTransactionLimits(false);
     }
     setIsLoadingTransactionLimits(false);
   }, [_cardWallet]);
 
-
   const generateOTPForUpdateTransactionLimit = useCallback(async () => {
-    console.log('generateOTPForUpdateTransactionLimit -> _cardWallet', _cardWallet);
+    console.log(
+      "generateOTPForUpdateTransactionLimit -> _cardWallet",
+      _cardWallet
+    );
     setIsLoadingGenerateOTP(true);
     setOneTimeToken(undefined);
     setErrorVerifyOTPCard(undefined);
     setIsLoadingVerifyOTP(false);
-    if(_cardWallet) {
+    if (_cardWallet) {
       try {
-        const respone = await walletService.generateOTP("card-limit", _cardWallet.walletId);
+        const respone = await walletService.generateOTP(
+          "card-limit",
+          _cardWallet.walletId
+        );
         console.log(respone);
-        if(respone.data) {
-          console.log('setOtpId', respone.data.id)
+        if (respone.data) {
+          console.log("setOtpId", respone.data.id);
           setOtpId(respone.data.id);
         }
       } catch (error: any) {
-        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error)
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
       }
     }
     setIsLoadingGenerateOTP(false);
   }, [_cardWallet]);
 
-  const verifyOTPForUpdateTransactionLimit = useCallback(async (otpNumber: string, otpId: string) => {
-    console.log('verifyOTPForUpdateTragenerateOTPForUpdateTransactionLimit -> otpNumber', otpNumber, otpId);
-    setIsLoadingVerifyOTP(true);
-    setErrorVerifyOTPCard(undefined);
-    let isSuccess = false;
-    try {
-        const respone = await walletService.verifyOTP("card-limit", otpNumber, otpId);
+  const verifyOTPForUpdateTransactionLimit = useCallback(
+    async (otpNumber: string, otpId: string) => {
+      console.log(
+        "verifyOTPForUpdateTragenerateOTPForUpdateTransactionLimit -> otpNumber",
+        otpNumber,
+        otpId
+      );
+      setIsLoadingVerifyOTP(true);
+      setErrorVerifyOTPCard(undefined);
+      let isSuccess = false;
+      try {
+        const respone = await walletService.verifyOTP(
+          "card-limit",
+          otpNumber,
+          otpId
+        );
         setOneTimeToken(respone.data?.oneTimeToken);
         isSuccess = true;
-    } catch (error: any) {
-      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
-      setIsLoadingVerifyOTP(false);
-      setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
-    }
-    return isSuccess;
-    ;
-  }, []);
-
+      } catch (error: any) {
+        console.log(
+          "error?.response?.data?.errors[0]",
+          error?.response?.data?.errors[0]
+        );
+        setIsLoadingVerifyOTP(false);
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
+      }
+      return isSuccess;
+    },
+    []
+  );
 
   const getTransactionChannels = useCallback(async () => {
     setIsLoadingGetTransactionChannel(true);
     try {
-      if(_cardWallet?.walletId) {
-        const response = await walletService.getTransactionChannels(_cardWallet.walletId);
-        if(response.data?.channels?.length > 0) {
-          console.log('getTransactionChannels -> limit', response.data);
-          const isEnable = response.data.channels.filter((c: TransactionChannel) => c.code === 'ECOMDOMESTIC' || c.code === 'ECOMINTERNATIONAL').some((c: TransactionChannel) => c.enabled)
-          console.log('getTransactionChannels -> isEnable', isEnable);
+      if (_cardWallet?.walletId) {
+        const response = await walletService.getTransactionChannels(
+          _cardWallet.walletId
+        );
+        if (response.data?.channels?.length > 0) {
+          console.log("getTransactionChannels -> limit", response.data);
+          const isEnable = response.data.channels
+            .filter(
+              (c: TransactionChannel) =>
+                c.code === "ECOMDOMESTIC" || c.code === "ECOMINTERNATIONAL"
+            )
+            .some((c: TransactionChannel) => c.enabled);
+          console.log("getTransactionChannels -> isEnable", isEnable);
           setIsEnableTransactionChannel(isEnable);
           setInitIsEnableTransactionChannel(isEnable);
         }
       }
     } catch (error: any) {
-      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
+      console.log(
+        "error?.response?.data?.errors[0]",
+        error?.response?.data?.errors[0]
+      );
       setIsLoadingGetTransactionChannel(false);
     }
     setIsLoadingGetTransactionChannel(false);
   }, [_cardWallet]);
 
-
   const generateOTPForUpdateTransactionChannel = useCallback(async () => {
-    console.log('generateOTPForUpdateTransactionLimit -> _cardWallet', _cardWallet);
+    console.log(
+      "generateOTPForUpdateTransactionLimit -> _cardWallet",
+      _cardWallet
+    );
     setIsLoadingGenerateOTP(true);
     setOneTimeToken(undefined);
     setErrorVerifyOTPCard(undefined);
     setIsLoadingVerifyOTP(false);
-    if(_cardWallet) {
+    if (_cardWallet) {
       try {
-        const respone = await walletService.generateOTP('put-channel-data', _cardWallet.walletId);
-        if(respone.data) {
+        const respone = await walletService.generateOTP(
+          "put-channel-data",
+          _cardWallet.walletId
+        );
+        if (respone.data) {
           setOtpId(respone.data.id);
         }
       } catch (error: any) {
-        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error)
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
       }
     }
     setIsLoadingGenerateOTP(false);
   }, [_cardWallet]);
 
-  const verifyOTPForUpdateTransactionChannel = useCallback(async (otpNumber: string, otpId: string) => {
-    setIsLoadingVerifyOTP(true);
-    setErrorVerifyOTPCard(undefined);
-    let isSuccess = false;
-    try {
-      const respone = await walletService.verifyOTP("put-channel-data", otpNumber, otpId);
-      setOneTimeToken(respone.data?.oneTimeToken);
-      isSuccess = true;
-    } catch (error: any) {
-      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
-      setIsLoadingVerifyOTP(false);
-      setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
-    }
-    return isSuccess;
-    ;
-  }, []);
-
+  const verifyOTPForUpdateTransactionChannel = useCallback(
+    async (otpNumber: string, otpId: string) => {
+      setIsLoadingVerifyOTP(true);
+      setErrorVerifyOTPCard(undefined);
+      let isSuccess = false;
+      try {
+        const respone = await walletService.verifyOTP(
+          "put-channel-data",
+          otpNumber,
+          otpId
+        );
+        setOneTimeToken(respone.data?.oneTimeToken);
+        isSuccess = true;
+      } catch (error: any) {
+        console.log(
+          "error?.response?.data?.errors[0]",
+          error?.response?.data?.errors[0]
+        );
+        setIsLoadingVerifyOTP(false);
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
+      }
+      return isSuccess;
+    },
+    []
+  );
 
   const generateOTPForCardReport = useCallback(async () => {
-    console.log('generateOTPForCardReport -> _cardWallet', _cardWallet);
+    console.log("generateOTPForCardReport -> _cardWallet", _cardWallet);
     setIsLoadingGenerateOTP(true);
     setOneTimeToken(undefined);
     setErrorVerifyOTPCard(undefined);
     setIsLoadingVerifyOTP(false);
-    if(_cardWallet) {
+    if (_cardWallet) {
       try {
-        const respone = await walletService.generateOTP('block-card', _cardWallet.walletId);
-        if(respone.data) {
+        const respone = await walletService.generateOTP(
+          "block-card",
+          _cardWallet.walletId
+        );
+        if (respone.data) {
           setOtpId(respone.data.id);
         }
       } catch (error: any) {
-        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error)
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
       }
     }
     setIsLoadingGenerateOTP(false);
   }, [_cardWallet]);
 
-  const verifyOTPForCardReport = useCallback(async (otpNumber: string, otpId: string) => {
-    setIsLoadingVerifyOTP(true);
-    setErrorVerifyOTPCard(undefined);
-    let isSuccess = false;
-    try {
-      const respone = await walletService.verifyOTP("block-card", otpNumber, otpId);
-      setOneTimeToken(respone.data?.oneTimeToken);
-      isSuccess = true;
-    } catch (error: any) {
-      console.log('error?.response?.data?.errors[0]', error?.response?.data?.errors[0]);
-      setIsLoadingVerifyOTP(false);
-      setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
-    }
-    return isSuccess;
-    ;
+  const verifyOTPForCardReport = useCallback(
+    async (otpNumber: string, otpId: string) => {
+      setIsLoadingVerifyOTP(true);
+      setErrorVerifyOTPCard(undefined);
+      let isSuccess = false;
+      try {
+        const respone = await walletService.verifyOTP(
+          "block-card",
+          otpNumber,
+          otpId
+        );
+        setOneTimeToken(respone.data?.oneTimeToken);
+        isSuccess = true;
+      } catch (error: any) {
+        console.log(
+          "error?.response?.data?.errors[0]",
+          error?.response?.data?.errors[0]
+        );
+        setIsLoadingVerifyOTP(false);
+        setErrorVerifyOTPCard(error?.response?.data?.errors[0] as Error);
+      }
+      return isSuccess;
+    },
+    []
+  );
+
+  const setVirtualCardToActive = useCallback(async (val: boolean) => {
+    await walletLocalStore.storeCustomerCardStatus(`${val}`);
+    setVirtualCardActive(val);
   }, []);
 
-  const setVirtualCardToActive = useCallback(
-    async (val: boolean) => {
-      await walletLocalStore.storeCustomerCardStatus(`${val}`)
-      setVirtualCardActive(val);
-    }, []
-  )
+  const createVCApplication = useCallback(async () => {
+    const body = {
+      submitType: "Submit",
+      productDetails: {
+        bankId: "ADBMYKL",
+        productId: "VirtualDebitCard",
+        productType: "CARD",
+      },
+    };
+    let isSuccess = false;
+    try {
+      setSubmittingVCApplication(true);
+      const response = await walletService.createVirtualCardApplication(body);
+      console.log("Response : VC", response);
+      setSubmittingVCApplication(false);
+      isSuccess = true;
+    } catch (err) {
+      console.log("err --> ", err);
+      setSubmittingVCApplication(false);
+    }
+    return isSuccess;
+  }, []);
 
   return useMemo(
     () => ({
@@ -1370,9 +1565,12 @@ export function useWalletContextValue(): WalletContextData {
       transactionLimitValueMin: _transactionMinLimitValue,
       transactionLimitValueMax: _transactionMaxLimitValue,
       isVirtualCardActive: _isVirtualCardActive,
-      setVirtualCardToActive
+      setVirtualCardToActive,
+      createVCApplication,
+      isSubmittingVCApplication: _isSubmittingVCApplication,
     }),
     [
+      _isSubmittingVCApplication,
       _isVirtualCardActive,
       _isLinkedSuccessfully,
       _wallets,
@@ -1433,7 +1631,7 @@ export function useWalletContextValue(): WalletContextData {
       _initIsEnableTransactionChannel,
       _selectedReportOption,
       _transactionMinLimitValue,
-      _transactionMaxLimitValue
+      _transactionMaxLimitValue,
     ]
   );
 }

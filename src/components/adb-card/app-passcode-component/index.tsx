@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import TouchID from "react-native-touch-id";
+import { InfoIcon } from "../../../assets/info.icon";
 import { BRoundedTickIcon } from "../../../assets/rounded-tick.icon";
 import { WalletContext } from "../../../context/wallet-context";
 import AlertModal from "../../alert-model";
@@ -89,21 +90,31 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
   const styles: AppPasscodeCompStyle = useMergeStyles(style);
   const [userVal, setUserVal] = React.useState("");
   const [showAlert, setShowAlert] = React.useState(false);
-  const { setVirtualCardToActive } = useContext(WalletContext);
+  const [error, setError] = React.useState(false);
+  const { createVCApplication, isSubmittingVCApplication } =
+    useContext(WalletContext);
   React.useEffect(() => {
     TouchID.authenticate("Authentication required to proceed", {
       passcodeFallback: false,
     })
       .then(() => {
-        setVirtualCardToActive(true);
-        setShowAlert(true);
+        createVCApplication().then((e) => {
+          setShowAlert(true);
+          if (!e) {
+            setError(true);
+          }
+        });
       })
       .catch(() => {});
   }, []);
   React.useEffect(() => {
     if (userVal.length >= 6) {
-      setShowAlert(true);
-      setVirtualCardToActive(true);
+      createVCApplication().then((e) => {
+        setShowAlert(true);
+        if (!e) {
+          setError(true);
+        }
+      });
     }
   }, [userVal]);
   return (
@@ -139,13 +150,15 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
       <AlertModal
         isVisible={showAlert}
         position="bottom"
-        title={"Success!"}
+        title={error ? "Unsuccessful!" : "Success!"}
         subtitle={
-          "Your virtual card has been activated. Get your  physical card today!"
+          error
+            ? "Sorry, your request is unsuccessful in this instance. Please try again later."
+            : "Your virtual card has been activated. Get your  physical card today!"
         }
         icon={
           <View style={{ height: 55, width: 55 }}>
-            <BRoundedTickIcon />
+            {error ? <InfoIcon /> : <BRoundedTickIcon />}
           </View>
         }
         style={{
@@ -161,11 +174,20 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
               <Button
                 labelColor="#1b1b1b"
                 background="#ffffff"
-                label="Go to Card"
+                label={error ? "Go to Home" : "Go to Card"}
                 onPress={onPressGotoCard}
               />
             </View>
-            <Button label="Order Physical Card" onPress={orderPhysicalCard} />
+            <Button
+              label={error ? "Retry" : "Order Physical Card"}
+              onPress={() => {
+                if (!error) {
+                  orderPhysicalCard();
+                } else {
+                  setShowAlert(false);
+                }
+              }}
+            />
           </View>
         }
       />
