@@ -47,11 +47,13 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 24,
     width: "90%",
+    color: "#1b1b1b",
   },
   desc: {
     fontSize: 14,
     lineHeight: 20,
     width: "90%",
     marginTop: 8,
+    color: "#1b1b1b",
   },
 });

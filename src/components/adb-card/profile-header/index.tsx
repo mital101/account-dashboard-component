@@ -11,6 +11,7 @@ export interface ProfileInterface {
   BalanceStyles?: BalanceStyle;
   ActivateCardStyles?: ActivateVirtualCardStyle;
   onActivateVirtualCardPress: () => void;
+  onBarcodePress?: () => void
 }
 const data = [
   {
@@ -31,7 +32,7 @@ const data = [
   },
 ];
 const ProfileHeader: React.FC<ProfileInterface> = (props) => {
-  const { BalanceStyles, ActivateCardStyles, onActivateVirtualCardPress } =
+  const { BalanceStyles, ActivateCardStyles, onActivateVirtualCardPress, onBarcodePress } =
     props;
   const { i18n } = useContext(ThemeContext);
   return (
@@ -47,7 +48,7 @@ const ProfileHeader: React.FC<ProfileInterface> = (props) => {
           </Text>
           <View style={styles.row}>
             <Text style={styles.value}>2022 0302 1992 1120</Text>
-            <TouchableOpacity style={styles.barcodeIconContainer}>
+            <TouchableOpacity style={styles.barcodeIconContainer} onPress={onBarcodePress}>
               <BarcodeIcon />
             </TouchableOpacity>
           </View>

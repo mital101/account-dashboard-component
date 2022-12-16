@@ -23,11 +23,13 @@ import walletLocalStore from "../services/local-store";
 import { WalletService } from "../services/wallet-service";
 import {
   ADBWallet,
+  CardLimitsType,
   CardReport,
   FilterTransaction,
   TransactionChannel,
   TransactionLimit,
   TransferType,
+  UdpateLimitType,
 } from "../types";
 const walletService = WalletService.instance();
 
@@ -186,6 +188,12 @@ export interface WalletContextData {
   setVirtualCardToActive: (val: boolean) => Promise<void>;
   isSubmittingVCApplication: boolean;
   createVCApplication: () => Promise<boolean>;
+  fetchCardLimits: (walletId: string) => Promise<void>;
+  isLoadingCardLimit: boolean;
+  errorLoadingCardLimit?: Error;
+  cardLimits: CardLimitsType[] | null;
+  updateCardLimits: (limitSetting: UdpateLimitType) => Promise<void>;
+  isUpdatingCardLimits: boolean;
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -299,6 +307,12 @@ export const walletDefaultValue: WalletContextData = {
   setVirtualCardToActive: async () => undefined,
   isSubmittingVCApplication: false,
   createVCApplication: async () => false,
+
+  fetchCardLimits: async () => undefined,
+  isLoadingCardLimit: false,
+  cardLimits: null,
+  updateCardLimits: async () => undefined,
+  isUpdatingCardLimits: false,
 };
 
 export const WalletContext =
@@ -409,6 +423,15 @@ export function useWalletContextValue(): WalletContextData {
   const [_isSubmittingVCApplication, setSubmittingVCApplication] =
     useState<boolean>(false);
 
+  const [_isLoadingCardLimit, setIsLoadingCardLimit] = useState<boolean>(false);
+  const [_cardLimit, setCardLimits] = useState<CardLimitsType[] | null>(null);
+  const [_errorLoadingCardLimits, setErrorLoadingCardLimits] =
+    useState<Error>();
+  const [_isUpdatingCardLimit, setIsUpdatingCardLimit] =
+    useState<boolean>(false);
+  const [_errorUpdatingCardLimits, setErrorUpdatingCardLimits] =
+    useState<Error>();
+
   const getVirtualCardStatus = async () => {
     const res = await walletLocalStore.getCustomerCardStatus();
     setVirtualCardActive(res === "true" ? true : false);
@@ -487,6 +510,7 @@ export function useWalletContextValue(): WalletContextData {
     );
     if (cardWallet && cardWallet?.status === "ACTIVE") {
       setVirtualCardActive(true);
+      setCardWallets(cardWallet);
     }
   };
 
@@ -1450,11 +1474,43 @@ export function useWalletContextValue(): WalletContextData {
     return isSuccess;
   }, []);
 
+  const fetchCardLimits = useCallback(async (walletId: string) => {
+    try {
+      setIsLoadingCardLimit(true);
+      const response = await walletService.getCardLimit(walletId);
+      console.log("fetchCardLimits : Res", response);
+      setIsLoadingCardLimit(false);
+      setCardLimits(response.data);
+    } catch (err) {
+      console.log("fetchCardLimits --> Err", err);
+      setErrorLoadingCardLimits(err as Error);
+      setIsLoadingCardLimit(false);
+    }
+  }, []);
+
+  const updateCardLimits = useCallback(
+    async (limitSettings: UdpateLimitType) => {
+      try {
+        setIsUpdatingCardLimit(true);
+        const response = await walletService.updateCardLimit(limitSettings);
+        console.log("updateCardLimits : Res", response);
+        await fetchCardLimits(limitSettings.walletId);
+        setIsUpdatingCardLimit(false);
+      } catch (err) {
+        console.log("updateCardLimits --> Err", err);
+        setErrorUpdatingCardLimits(err as Error);
+        setIsUpdatingCardLimit(false);
+      }
+    },
+    []
+  );
+
   return useMemo(
     () => ({
       wallets: _wallets,
       isLoadingWallets: _isLoadingWallets,
       getWallets,
+      updateCardLimits,
       summary: _summary,
       errorLoadWallet: _loadError,
       getGroupWallets,
@@ -1568,8 +1624,17 @@ export function useWalletContextValue(): WalletContextData {
       setVirtualCardToActive,
       createVCApplication,
       isSubmittingVCApplication: _isSubmittingVCApplication,
+      fetchCardLimits,
+      errorLoadingCardLimit: _errorLoadingCardLimits,
+      cardLimits: _cardLimit,
+      isLoadingCardLimit: _isLoadingCardLimit,
+      isUpdatingCardLimits: _isUpdatingCardLimit,
     }),
     [
+      _isUpdatingCardLimit,
+      _isLoadingCardLimit,
+      _cardLimit,
+      _errorLoadingCardLimits,
       _isSubmittingVCApplication,
       _isVirtualCardActive,
       _isLinkedSuccessfully,

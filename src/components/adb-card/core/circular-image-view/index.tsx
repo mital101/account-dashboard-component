@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ImageIcon from "../../../../assets/image-icon";
 import useMergeStyles, {
-  CircularImageViewStyles,
+  CircularImageViewStyles
 } from "../circular-image-view/styles";
 export interface ICircularImageView {
   style?: CircularImageViewStyles;

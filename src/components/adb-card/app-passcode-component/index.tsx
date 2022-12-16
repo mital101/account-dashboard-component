@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ThemeContext } from "react-native-theme-component";
 import TouchID from "react-native-touch-id";
 import { InfoIcon } from "../../../assets/info.icon";
 import { BRoundedTickIcon } from "../../../assets/rounded-tick.icon";
@@ -93,6 +94,7 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
   const [error, setError] = React.useState(false);
   const { createVCApplication, isSubmittingVCApplication } =
     useContext(WalletContext);
+  const { i18n } = useContext(ThemeContext);
   React.useEffect(() => {
     TouchID.authenticate("Authentication required to proceed", {
       passcodeFallback: false,
@@ -120,9 +122,12 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
   return (
     <View style={styles.containerStyle}>
       <View style={styles.titleContainerStyle}>
-        <Text style={styles.titleStyle}>Enter your app passcode</Text>
+        <Text style={styles.titleStyle}>
+          {i18n?.t("adb_card.lbl_enter_app_pass") ?? "Enter your app passcode"}
+        </Text>
         <Text style={styles.subTitleStyle}>
-          Enter your 6-digit passcode to continue.
+          {i18n?.t("adb_card.lbl_enter_digit_pass") ??
+            "Enter your 6-digit passcode to continue."}
         </Text>
       </View>
       <TextInput
@@ -153,8 +158,10 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
         title={error ? "Unsuccessful!" : "Success!"}
         subtitle={
           error
-            ? "Sorry, your request is unsuccessful in this instance. Please try again later."
-            : "Your virtual card has been activated. Get your  physical card today!"
+            ? i18n?.t("adb_card.lbl_req_failed") ??
+              "Sorry, your request is unsuccessful in this instance. Please try again later."
+            : i18n?.t("adb_card.lbl_card_activated") ??
+              "Your virtual card has been activated. Get your  physical card today!"
         }
         icon={
           <View style={{ height: 55, width: 55 }}>
@@ -174,12 +181,21 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
               <Button
                 labelColor="#1b1b1b"
                 background="#ffffff"
-                label={error ? "Go to Home" : "Go to Card"}
+                label={
+                  error
+                    ? i18n?.t("adb_card.btn_go_home") ?? "Go to Home"
+                    : i18n?.t("adb_card.btn_go_card") ?? "Go to Card Centre"
+                }
                 onPress={onPressGotoCard}
               />
             </View>
             <Button
-              label={error ? "Retry" : "Order Physical Card"}
+              label={
+                error
+                  ? i18n?.t("adb_card.btn_retry") ?? "Retry"
+                  : i18n?.t("adb_card.btn_order_physical_card") ??
+                    "Order Physical Card"
+              }
               onPress={() => {
                 if (!error) {
                   orderPhysicalCard();

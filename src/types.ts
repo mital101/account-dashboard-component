@@ -7,7 +7,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { AlertModalStyles } from "react-native-theme-component/src/alert";
-import { EmptyWalletThemeProps } from "./components/no-account-dashboard-component";
+import { EmptyWalletThemeProps } from "./components/no-wallet-component";
 import {
   BankImagesMap,
   Transaction,
@@ -354,48 +354,38 @@ export type CardReport = {
   reasonCode: string;
 };
 
-export interface VirtualCardApplicationBody {
-  submitType: string;
-  productDetails: ProductDetails;
-}
-
-export interface ProductDetails {
-  bankId: string;
-  productId: string;
-  productType: string;
-}
-export interface ADBWallet {
-  internalId: string;
-  walletId: string;
-  userId: string;
-  walletName: string;
-  currentBalance: number;
-  availableBalance: number;
-  minimumBalance: number;
-  bankAccount: BankAccount;
-  currencyCode: string;
-  status: string;
-  type: string;
-  isDefaultWallet: boolean;
-  expiredAt: string;
-  createdAt: string;
-  orgId: string;
-  cardData: CardData;
-}
-export interface BankAccount {
-  bankCode: string;
-  accountNumber: string;
-  accountType: string;
-  accountHolderName: string;
-  productId: string;
-  internalProductCategory: string;
-  accountSubType: string;
-  openingDate: string;
-  id: string;
-}
-
-export interface CardData {
+export interface CardLimitsType {
+  limitUnit: string;
+  transactionType:
+    | TransactionTypes.CARD_RETAIL
+    | TransactionTypes.CARD_WITHDRAW
+    | TransactionTypes.CONTACTLESS_WITHDRAW;
+  frequence: string;
   cardProxyNumber: string;
-  cardLinkedWalletId: string;
-  cardLastFourDigitNumber: string;
+  limitValue: number;
+}
+
+export enum TransactionTypes {
+  CARD_RETAIL = "CARD_RETAIL",
+  CARD_WITHDRAW = "CARD_WITHDRAW",
+  CONTACTLESS_WITHDRAW = "CONTACTLESS_PERTXN",
+}
+
+export interface UdpateLimitType {
+  walletId: string;
+  limitSettings: LimitSetting[];
+}
+
+export interface LimitSetting {
+  limitName?: string;
+  serviceProvider: string;
+  limitUnit: string;
+  frequence: string;
+  limitValue: number;
+  limitSettingFactors: LimitSettingFactor[];
+}
+
+export interface LimitSettingFactor {
+  attributeName: string;
+  attributeFixedValues: string;
 }

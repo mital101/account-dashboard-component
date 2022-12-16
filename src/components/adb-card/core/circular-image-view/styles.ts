@@ -14,6 +14,7 @@ const useMergeStyles = (
     containerStyle: {
       justifyContent: "center",
       alignItems: "center",
+      width: 80,
     },
     iconContainerStyle: {
       backgroundColor: "#a5a5a5",
@@ -23,7 +24,7 @@ const useMergeStyles = (
       justifyContent: "center",
       alignItems: "center",
     },
-    labelStyle: { marginTop: 5, color: "#1b1b1b" },
+    labelStyle: { marginTop: 5, color: "#1b1b1b",  textAlign:'center' },
   });
 
   return defaultsDeep(style, defaultStyles);

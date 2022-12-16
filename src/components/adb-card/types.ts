@@ -9,6 +9,7 @@ export interface ADBCardComponentPropType {
   activateVirtualCardStyle?: ActivateVirtualCardStyle;
   walletItemStyle?: WalletItemStyle;
   onActivateVirtualCardPress: () => void;
+  onBarcodePress?: () => void;
 }
 
 export interface BalanceStyle {

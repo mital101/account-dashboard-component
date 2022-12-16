@@ -23,10 +23,11 @@ const VirtualCardComponent: React.FC<VirtualCardComponentProps> = (
       onPress={onActivateVirtualCardPress}
     >
       <Text style={styles.virtualCardTextStyle}>
-        {!isVirtualCardActive
-          ? i18n?.t("adb_card.lbl_activate_card") ??
+      {!isVirtualCardActive
+          ? i18n?.t("adb_card.lbl_activate_card", {other: " now!"}) ??
             "Activate your virtual card now!"
-          : "Your account is ready! Order your physical card today."}
+          : i18n?.t("adb_card.lbl_acc_ready") ??
+            "Your account is ready! Order your physical card today."}
       </Text>
       <TouchableOpacity style={styles.virtualCardIconContainerStyle}>
         <BRoundedCloseIcon />

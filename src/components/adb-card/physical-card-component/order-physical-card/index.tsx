@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Button } from "react-native-theme-component";
+import { Button, ThemeContext } from "react-native-theme-component";
 import { InfoIcon } from "../../../../assets/info.icon";
 import { BRoundedTickIcon } from "../../../../assets/rounded-tick.icon";
 import AlertModal from "../../../alert-model";
@@ -38,6 +38,7 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
   props
 ) => {
   const { style, onPressGotoHome, onPressTrackCard } = props;
+  const { i18n } = useContext(ThemeContext);
   const styles: OrderPhysicalCardStyles = useMergeStyles(style);
   const [radioData, setRadioData] = React.useState(addressRadioGroup);
   const [showAlert, setAlert] = React.useState(false);
@@ -64,7 +65,10 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
         bounces={false}
       >
         <View>
-          <Text style={styles.titleStyle}>Get your physical card today!</Text>
+          <Text style={styles.titleStyle}>
+            {i18n?.t("adb_card.lbl_get_physical_card_today") ??
+              "Get your physical card today!"}
+          </Text>
           <VirtualCard
             showEyeIcon
             cardHolderName="{Nur Aeolanda Binti Mahmud}"
@@ -72,7 +76,9 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
             cardBottomText="{ADB} VISA Debit Card"
           />
           <View style={innerStyles.subTitleContainer}>
-            <Text style={innerStyles.deliverText}>Deliver to</Text>
+            <Text style={innerStyles.deliverText}>
+              {i18n?.t("adb_card.lbl_deliver_to") ?? "Deliver to"}
+            </Text>
             <TouchableOpacity onPress={() => setShowSheet(true)}>
               <InfoIcon height={16} width={16} color={"#000000"} />
             </TouchableOpacity>
@@ -89,7 +95,7 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
               </TouchableOpacity>
               <View style={innerStyles.radioBtnTextContainer}>
                 <Text style={innerStyles.radioBtnTitle}>{item.title}</Text>
-                <Text>{item.desc}</Text>
+                <Text style={{ color: "#1b1b1b" }}>{item.desc}</Text>
               </View>
             </View>
           ))}
@@ -109,7 +115,7 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
             }}
             bgColor="#1b1b1b"
             variant="primary"
-            label="Continue"
+            label={i18n?.t("adb_card.btn_continue") ?? "Continue"}
             onPress={() => {
               setAlert(true);
               setError(false);
@@ -124,11 +130,17 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
       <AlertModal
         isVisible={showAlert}
         position="bottom"
-        title={error ? "Unsuccessful!" : "Success!"}
+        title={
+          error
+            ? i18n?.t("adb_card.lbl_unsuccessful") ?? "Unsuccessful!"
+            : i18n?.t("adb_card.lbl_success") ?? "Success!"
+        }
         subtitle={
           error
-            ? "Error when performing request. Please try again later."
-            : "Your order has been placed. Enjoy hassle free payments, ATM withdrawals and pay in-store merchants. "
+            ? i18n?.t("adb_card.lbl_error_req") ??
+              "Error when performing request. Please try again later."
+            : i18n?.t("adb_card.lbl_odr_placed") ??
+              "Your order has been placed. Enjoy hassle free payments, ATM withdrawals and pay in-store merchants."
         }
         icon={
           <View style={{ height: 55, width: 55 }}>
@@ -151,8 +163,8 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
             {!error && (
               <View style={innerStyles.greyContainer}>
                 <Text style={innerStyles.greyContainerText}>
-                  Your Visa debit card will be delivered to your selected
-                  address.
+                  {i18n?.t("adb_card.lbl_will_deliver_address") ??
+                    "Your Visa debit card will be delivered to your selected address."}
                 </Text>
               </View>
             )}
@@ -171,7 +183,7 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
                 }}
                 bgColor="#ffffff"
                 variant="primary"
-                label={"Go to Home"}
+                label={i18n?.t("adb_card.btn_go_home") ?? "Go to Home"}
                 onPress={() => {
                   setAlert(false);
                   if (!error) {
@@ -189,7 +201,11 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
               }}
               bgColor="#1b1b1b"
               variant="primary"
-              label={error ? "Retry" : "Track Your Card"}
+              label={
+                error
+                  ? i18n?.t("adb_card.btn_retry") ?? "Retry"
+                  : i18n?.t("adb_card.btn_track_card") ?? "Track Your Card"
+              }
               onPress={() => {
                 setAlert(false);
                 if (!error) {
@@ -215,6 +231,7 @@ const innerStyles = StyleSheet.create({
   deliverText: {
     fontWeight: "600",
     marginRight: 10,
+    color: "#1b1b1b",
   },
   radioButtonContainer: {
     flexDirection: "row",
@@ -240,6 +257,7 @@ const innerStyles = StyleSheet.create({
   radioBtnTitle: {
     fontWeight: "600",
     marginBottom: 4,
+    color: "#1b1b1b",
   },
   greyContainer: {
     backgroundColor: "#dddddd",
@@ -250,5 +268,6 @@ const innerStyles = StyleSheet.create({
   },
   greyContainerText: {
     fontSize: 12,
+    color: "#1b1b1b",
   },
 });

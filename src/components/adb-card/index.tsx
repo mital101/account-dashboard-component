@@ -11,6 +11,7 @@ const ADBCardComponent: React.FC<ADBCardComponentPropType> = (props) => {
     balanceCardStyle,
     activateVirtualCardStyle,
     onActivateVirtualCardPress,
+    onBarcodePress
   } = props;
   const styles = useMergeStyles(style);
 
@@ -28,6 +29,7 @@ const ADBCardComponent: React.FC<ADBCardComponentPropType> = (props) => {
               BalanceStyles={balanceCardStyle}
               ActivateCardStyles={activateVirtualCardStyle}
               onActivateVirtualCardPress={onActivateVirtualCardPress}
+              onBarcodePress={onBarcodePress}
             />
             <WalletItemComponent />
           </View>

@@ -1,16 +1,18 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   ScrollView,
   StyleProp,
   Text,
   TextStyle,
   View,
-  ViewStyle,
+  ViewStyle
 } from "react-native";
+import { ThemeContext } from "react-native-theme-component";
 import { WalletContext } from "../../../context/wallet-context";
 import VirtualCard from "../card-info-component/components/virtual-card";
 import CarouselCard from "../core/carousel-card";
 import CircularImageView from "../core/circular-image-view";
+import LimitBottomSheet from "./limits-sheet";
 import useMergeStyles from "./styles";
 
 export interface CardManagementProps {
@@ -28,6 +30,8 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
   const { style, onCarouselPress, onLimitPress } = props;
   const styles: CardManagementStyles = useMergeStyles(style);
   const { isVirtualCardActive } = useContext(WalletContext);
+  const { i18n } = useContext(ThemeContext);
+  const [showSheet,setShowSheet] = useState(false)
   return (
     <ScrollView style={{ backgroundColor: "#ffffff" }}>
       <View style={styles.navContainerStyle}>
@@ -40,8 +44,8 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
       <View
         style={{
           flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
+          alignItems: "flex-start",
+          justifyContent: "space-around",
           marginVertical: 12,
         }}
       >
@@ -51,16 +55,16 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
               marginHorizontal: 12,
             },
           }}
-          label="Settings"
+          label={i18n?.t("adb_card.lbl_setting") ?? "Settings"}
         />
         <CircularImageView
-          onClick={onLimitPress}
+          onClick={() => setShowSheet(true)}
           style={{
             containerStyle: {
               marginHorizontal: 12,
             },
           }}
-          label="Limit"
+          label={i18n?.t("adb_card.lbl_limit") ?? "Limit"}
         />
         <CircularImageView
           style={{
@@ -68,7 +72,15 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
               marginHorizontal: 12,
             },
           }}
-          label="Lock"
+          label={i18n?.t("adb_card.lbl_report_replace") ?? "Report & Replace"}
+        />
+        <CircularImageView
+          style={{
+            containerStyle: {
+              marginHorizontal: 12,
+            },
+          }}
+          label={i18n?.t("adb_card.lbl_lock") ?? "Lock"}
         />
       </View>
       <View
@@ -82,18 +94,32 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
         <CarouselCard
           title={
             isVirtualCardActive
-              ? "Do you also want a physical card?"
-              : "Activate virtual card!"
+              ? i18n?.t("adb_card.lbl_want_physical_card") ??
+                "Do you also want a physical card?"
+              : i18n?.t("adb_card.lbl_activate_card", {other: "!"}) ??
+                "Activate virtual card!"
           }
           subTitle={
             isVirtualCardActive
-              ? "Enjoy hassle free payments, ATM withdrawals and pay in-store merchants. "
-              : "Activate your virtual card and start spending now!"
+              ? i18n?.t("adb_card.lbl_enjoy_hassle_free") ??
+                "Enjoy hassle free payments, ATM withdrawals and pay in-store merchants. "
+              : i18n?.t(
+                  "adb_card.lbl_activate_card",
+                  {other: "and start spending now!"}
+                ) ?? "Activate your virtual card and start spending now!"
           }
-          buttonLabel={isVirtualCardActive ? "Order Now" : "Activate Now"}
+          buttonLabel={
+            isVirtualCardActive
+              ? i18n?.t("adb_card.btn_order_now") ?? "Order Now"
+              : i18n?.t("adb_card.btn_active_now") ?? "Activate Now"
+          }
           onPress={onCarouselPress}
         />
       </View>
+      <LimitBottomSheet isVisible={showSheet} onClose={() => setShowSheet(false)} onCardLimitPress={() => {
+        setShowSheet(false)
+        onLimitPress()
+      }} onOnlineLimitPress={() => {}} />
     </ScrollView>
   );
 };

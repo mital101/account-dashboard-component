@@ -15,9 +15,13 @@ const VirtualCardInfo: React.FC<VirtualCardInfoProps> = (
   return (
     <View style={styles.containerStyle}>
       <View style={styles.titleContainerStyle}>
-        <Text style={styles.titleStyle}>Activate your virtual card</Text>
+        <Text style={styles.titleStyle}>
+          {i18n?.t("adb_card.lbl_activate_card") ??
+            "Activate your virtual card"}
+        </Text>
         <Text style={styles.subTitleStyle}>
-          Activate yours now and enjoy the banking experience.
+          {i18n?.t("adb_card.lbl_activate_card_sub") ??
+            "Activate yours now and enjoy the banking experience."}
         </Text>
         <VirtualCard cardHolderName="{Nur Aeolanda Binti Mahmud}" />
         <Text style={{ alignSelf: "center", color: "#1b1b1b" }}>
@@ -34,9 +38,15 @@ const VirtualCardInfo: React.FC<VirtualCardInfoProps> = (
             marginBottom: 16,
           }}
         >
-          <Text style={{ color: "#1b1b1b" }}>Copy</Text>
+          <Text style={{ color: "#1b1b1b" }}>
+          {i18n?.t("adb_card.lbl_no_transaction") ??
+              "You will not be able to perform any transaction before activating your virtual card."}
+          </Text>
         </TouchableOpacity>
-        <Button label="Activate Now" onPress={onActivateNowPress} />
+        <Button
+          label={i18n?.t("adb_card.btn_active_now") ?? "Activate Now"}
+          onPress={onActivateNowPress}
+        />
       </View>
     </View>
   );

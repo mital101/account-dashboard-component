@@ -9,6 +9,7 @@ export interface EditableInputStyles {
   inputContainerStyle?: StyleProp<ViewStyle>;
   valueContainer?: StyleProp<ViewStyle>;
   valueStyle?: StyleProp<TextStyle>;
+  errorLabel?: StyleProp<TextStyle>;
 }
 
 const useMergeStyles = (
@@ -49,6 +50,10 @@ const useMergeStyles = (
     },
     valueStyle: {
         color: "#000000"
+    },
+    errorLabel: {
+      color: "red",
+      marginTop: 5,
     }
   });
 

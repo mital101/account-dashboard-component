@@ -1,5 +1,9 @@
 import qs from "qs";
-import { FilterTransaction, VirtualCardApplicationBody } from "../types";
+import {
+  FilterTransaction,
+  UdpateLimitType,
+  VirtualCardApplicationBody,
+} from "../types";
 
 type WalletClient = {
   walletClient: any;
@@ -1175,10 +1179,38 @@ export class WalletService {
         );
         return response.data;
       } catch (err) {
-        console.log("response ---> err", err);
+        console.log("createVirtualCardApplication ---> err", err);
       }
     } else {
       throw new Error("Wallet Service Client is not registered");
+    }
+  };
+
+  getCardLimit = async (walletId: string) => {
+    if (this._limitClient) {
+      console.log("Wallet Id : ", walletId);
+      try {
+        const response = await this._limitClient.get("/limits", {
+          params: {
+            serviceProvider: "Finexus",
+            walletId,
+            transactionType: "CARD_TRANSACTION",
+          },
+        });
+        return response.data;
+      } catch (err) {
+        console.log("getCardLimit ---> err", err);
+      }
+    }
+  };
+  updateCardLimit = async (body: UdpateLimitType) => {
+    if (this._limitClient) {
+      try {
+        const response = await this._limitClient.get("/limit-settings", body);
+        return response.data;
+      } catch (err) {
+        console.log("getCardLimit ---> err", err);
+      }
     }
   };
 }
