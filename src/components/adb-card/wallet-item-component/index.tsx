@@ -1,6 +1,6 @@
 import React from "react";
 import { FlatList } from "react-native";
-import ListCardVariant from "../wallet-item-component/list-card-component";
+import ListCardVariant from "./list-card-component";
 
 const data = [
   {

@@ -1,3 +1,4 @@
+import { NumberFormatter } from "@banking-component/wallet-component/src/components/adb-card/helpers";
 import React, { useContext, useMemo, useState } from "react";
 import { KeyboardAvoidingView, Text, View } from "react-native";
 import { ThemeContext } from "react-native-theme-component";
@@ -14,15 +15,22 @@ import useMergeStyle, { CardLimitStyles } from "./styles";
 export interface CardLimitProps {
   style?: CardLimitStyles;
   onPressGotoHome: () => void;
+  onDeviceBiometFailed: (val:string, atrFixedValue:string, setState:any) => void;
+  onDeviceBiometSuccess: (val:string, atrFixedValue:string, setState:any) => void;
+  showAlert: boolean;
+  setAlert: (val:boolean) => void;
+  error: boolean;
+  setError: (val:boolean) => void;
 }
 
 const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
-  const { style, onPressGotoHome } = props;
+  const { style, onPressGotoHome, onDeviceBiometFailed,onDeviceBiometSuccess,showAlert, setAlert, error, setError } = props;
   const styles: CardLimitStyles = useMergeStyle(style);
   const { cardLimits, updateCardLimits,cardWallet, isLoadingCardLimit } = useContext(WalletContext);
   const { i18n } = useContext(ThemeContext);
-  const [showAlert, setAlert] = useState(false);
-  const [error, setError] = useState<boolean>(false);
+  const isAlertVisible = useMemo(() => showAlert, [showAlert])
+  // const [showAlert, setAlert] = useState(false);
+  // const [error, setError] = useState<boolean>(false);
   const [rtError, setRtError] = useState(false);
   const [cwError, setCwError] = useState(false);
   const [ctError, setCtError] = useState(false);
@@ -118,38 +126,38 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
     }, [isUpdatingCardLimits])
 
   const checkUserAuth = (val:string, atrFixedValue:string, setState:any) => {
-    TouchID.authenticate("Authentication required to proceed", {
-      passcodeFallback: true,
-    })
+    TouchID.authenticate("Authentication required to proceed")
       .then(() => {
         setUpdatingLimits(true);
-        const body = {   
-          walletId: cardWallet?.walletId ?? '',
-        limitSettings : [
-            {
-                serviceProvider : "Finexus",
-                limitUnit: "MYR",            
-                frequence: "Daily",            
-                limitValue: Number(val),
-                limitSettingFactors : [
-                    {
-              attributeName: "transactionType",
-              attributeFixedValues: atrFixedValue
-            }
-                ]
-            }
-        ]
-    }
-        updateCardLimits(body).then(() => {
-          setUpdatingLimits(false);
-          setError(false);
-          setAlert(true);
-          setState(val)
-        })
+    //     const body = {   
+    //       walletId: cardWallet?.walletId ?? '',
+    //     limitSettings : [
+    //         {
+    //             serviceProvider : "Finexus",
+    //             limitUnit: "MYR",            
+    //             frequence: "Daily",            
+    //             limitValue: Number(val),
+    //             limitSettingFactors : [
+    //                 {
+    //           attributeName: "transactionType",
+    //           attributeFixedValues: atrFixedValue
+    //         }
+    //             ]
+    //         }
+    //     ]
+    // }
+    //     updateCardLimits(body).then(() => {
+    //       setUpdatingLimits(false);
+    //       setError(false);
+    //       setAlert(true);
+    //       setState(val)
+    //     })
+    onDeviceBiometSuccess(val, atrFixedValue, setState)
       })
       .catch(() => {
-        setError(true);
-        setAlert(true);
+        onDeviceBiometFailed(val, atrFixedValue, setState)
+        // setError(true);
+        // setAlert(true);
       });
   };
   return (
@@ -178,7 +186,7 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
             }
           }}
           // value={retailTransactionLimit.toFixed(2).toString()}
-          value={rtLimit}
+          value={NumberFormatter(`${rtLimit}`, 2)}
           keyboardType="number-pad"
           label="Retail transaction daily limit"
           valuePrefix={currencyCode}
@@ -195,7 +203,7 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
             }
           }}
           // value={cashWithdrawalLimit.toFixed(2).toString()}
-          value={cwLimit}
+          value={NumberFormatter(`${cwLimit}`, 2)}
           keyboardType="number-pad"
           label="Cash withdrawal daily limit"
           valuePrefix={currencyCode}
@@ -212,7 +220,7 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
             }
           }}
           // value={contactLessLimit.toFixed(2).toString()}
-          value={ctLimit}
+          value={NumberFormatter(`${ctLimit}`, 2)}
           keyboardType="number-pad"
           label="Contactless transaction limit"
           valuePrefix={currencyCode}
@@ -229,7 +237,7 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
         />
       </View>
       <AlertModal
-        isVisible={showAlert}
+        isVisible={isAlertVisible}
         position="bottom"
         title={
           error

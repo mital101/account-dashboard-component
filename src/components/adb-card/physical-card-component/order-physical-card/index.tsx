@@ -4,7 +4,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { Button, ThemeContext } from "react-native-theme-component";
 import { InfoIcon } from "../../../../assets/info.icon";
@@ -17,6 +17,7 @@ export interface OrderPhysicalCardProps {
   style?: OrderPhysicalCardStyles;
   onPressGotoHome: () => void;
   onPressTrackCard: () => void;
+  onPressSettings: () => void;
 }
 
 export const addressRadioGroup = [
@@ -37,7 +38,7 @@ export const addressRadioGroup = [
 const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
   props
 ) => {
-  const { style, onPressGotoHome, onPressTrackCard } = props;
+  const { style, onPressGotoHome, onPressTrackCard, onPressSettings } = props;
   const { i18n } = useContext(ThemeContext);
   const styles: OrderPhysicalCardStyles = useMergeStyles(style);
   const [radioData, setRadioData] = React.useState(addressRadioGroup);
@@ -126,6 +127,7 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
       <DeliverInfoSheet
         isVisible={showSheet}
         onClose={() => setShowSheet(false)}
+        onPressSettings={onPressSettings}
       />
       <AlertModal
         isVisible={showAlert}

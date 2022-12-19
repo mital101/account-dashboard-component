@@ -4,7 +4,7 @@ import { ThemeContext } from "react-native-theme-component";
 import { BRoundedCloseIcon } from "../../../assets/rounded-close.icon";
 import { WalletContext } from "../../../context/wallet-context";
 import { ActivateVirtualCardStyle } from "../types";
-import mergeStyle from "../virtual-card-component/styles";
+import mergeStyle from "./styles";
 export interface VirtualCardComponentProps {
   style?: ActivateVirtualCardStyle;
   onActivateVirtualCardPress?: () => void;
@@ -23,8 +23,8 @@ const VirtualCardComponent: React.FC<VirtualCardComponentProps> = (
       onPress={onActivateVirtualCardPress}
     >
       <Text style={styles.virtualCardTextStyle}>
-      {!isVirtualCardActive
-          ? i18n?.t("adb_card.lbl_activate_card", {other: " now!"}) ??
+        {!isVirtualCardActive
+          ? i18n?.t("adb_card.lbl_activate_card", { other: "now!" }) ??
             "Activate your virtual card now!"
           : i18n?.t("adb_card.lbl_acc_ready") ??
             "Your account is ready! Order your physical card today."}

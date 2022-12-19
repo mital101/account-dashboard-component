@@ -13,6 +13,12 @@ export interface AppPassCodeProps {
   style?: AppPasscodeCompStyle;
   onPressGotoCard: () => void;
   orderPhysicalCard: () => void;
+  onSuccess: () => void;
+  // error: boolean;
+  // showAlert:boolean;
+  // setShowAlert: (val:boolean) => void;
+  // setError: (val:boolean) => void;
+  isForVirtualCard:boolean
 }
 
 const RenderButtons = ({ onPress }: { onPress: (num: string) => void }) => {
@@ -87,7 +93,7 @@ const RenderPass = ({ val }: { val: string }) => {
 const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
   props: AppPassCodeProps
 ) => {
-  const { style, onPressGotoCard, orderPhysicalCard } = props;
+  const { style, onPressGotoCard, orderPhysicalCard, onSuccess, isForVirtualCard } = props;
   const styles: AppPasscodeCompStyle = useMergeStyles(style);
   const [userVal, setUserVal] = React.useState("");
   const [showAlert, setShowAlert] = React.useState(false);
@@ -100,23 +106,32 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
       passcodeFallback: false,
     })
       .then(() => {
+        if(isForVirtualCard){
+
+          createVCApplication().then((e) => {
+            setShowAlert(true);
+            if (!e) {
+              setError(true);
+            }
+          });
+        }else{
+          onSuccess()
+        }
+      })
+      .catch(() => {});
+  }, []);
+  React.useEffect(() => {
+    if (userVal.length >= 6) {
+      if(isForVirtualCard){
         createVCApplication().then((e) => {
           setShowAlert(true);
           if (!e) {
             setError(true);
           }
         });
-      })
-      .catch(() => {});
-  }, []);
-  React.useEffect(() => {
-    if (userVal.length >= 6) {
-      createVCApplication().then((e) => {
-        setShowAlert(true);
-        if (!e) {
-          setError(true);
-        }
-      });
+      }else{
+        onSuccess()
+      }
     }
   }, [userVal]);
   return (

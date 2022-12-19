@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { ThemeContext } from "react-native-theme-component";
-import mergeStyle from "../card-info-component/styles";
 import Button from "../core/button";
 import { VirtualCardInfoProps, VirtualCardInfoStyle } from "../types";
 import VirtualCard from "./components/virtual-card";
+import mergeStyle from "./styles";
 
 const VirtualCardInfo: React.FC<VirtualCardInfoProps> = (
   props: VirtualCardInfoProps
@@ -16,7 +16,7 @@ const VirtualCardInfo: React.FC<VirtualCardInfoProps> = (
     <View style={styles.containerStyle}>
       <View style={styles.titleContainerStyle}>
         <Text style={styles.titleStyle}>
-          {i18n?.t("adb_card.lbl_activate_card") ??
+          {i18n?.t("adb_card.lbl_activate_card", { other: "" }) ??
             "Activate your virtual card"}
         </Text>
         <Text style={styles.subTitleStyle}>
@@ -39,7 +39,7 @@ const VirtualCardInfo: React.FC<VirtualCardInfoProps> = (
           }}
         >
           <Text style={{ color: "#1b1b1b" }}>
-          {i18n?.t("adb_card.lbl_no_transaction") ??
+            {i18n?.t("adb_card.lbl_no_transaction") ??
               "You will not be able to perform any transaction before activating your virtual card."}
           </Text>
         </TouchableOpacity>

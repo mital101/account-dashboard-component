@@ -31,7 +31,7 @@ const useMergeStyles = (
     },
     buttonContainer: {
       position:'absolute',
-      bottom: 10,
+      bottom: 20,
       width:'100%',
       alignSelf:'center'
     }

@@ -1,9 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ImageIcon from "../../../../assets/image-icon";
-import useMergeStyles, {
-  CircularImageViewStyles
-} from "../circular-image-view/styles";
+import useMergeStyles, { CircularImageViewStyles } from "./styles";
 export interface ICircularImageView {
   style?: CircularImageViewStyles;
   label?: string;

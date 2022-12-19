@@ -1,15 +1,16 @@
 import React from "react";
-import { Dimensions, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { BottomSheet } from "react-native-theme-component";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { BottomSheet, Button } from "react-native-theme-component";
 import { BRoundedCloseIcon } from "../../../../assets/rounded-close.icon";
 
 export interface DeliverInfoSheetProps {
   isVisible: boolean;
   onClose: () => void;
+  onPressSettings: () => void;
 }
 
 const DeliverInfoSheet: React.FC<DeliverInfoSheetProps> = (props) => {
-  const { isVisible, onClose } = props;
+  const { isVisible, onClose, onPressSettings } = props;
   return (
     <BottomSheet
       style={{
@@ -20,6 +21,7 @@ const DeliverInfoSheet: React.FC<DeliverInfoSheetProps> = (props) => {
       }}
       isVisible={isVisible}
     >
+      <View style={{height: (Dimensions.get("screen").height * 50) / 100 - 100,}}>
       <TouchableOpacity style={styles.crossContainer} onPress={onClose}>
         <BRoundedCloseIcon height={32} width={32} />
       </TouchableOpacity>
@@ -27,7 +29,24 @@ const DeliverInfoSheet: React.FC<DeliverInfoSheetProps> = (props) => {
       <Text style={styles.desc}>
         If you wish to change your mailing address, please change it via the
         Customer Settings page.
-      </Text>
+      </Text> 
+      </View>
+      <Button
+                style={{
+                  primaryContainerStyle: {
+                    borderRadius: 100,
+                    height: 56,
+                  },
+                  primaryLabelStyle: {
+                    color: "#ffffff",
+                  },
+                }}
+                bgColor="#1b1b1b"
+                variant="primary"
+                label={"Go to Settings"}
+                onPress={onPressSettings}
+                />
+               
     </BottomSheet>
   );
 };

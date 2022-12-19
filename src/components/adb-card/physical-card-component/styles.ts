@@ -1,6 +1,6 @@
 import { defaultsDeep } from "lodash";
 import { Dimensions, StyleSheet } from "react-native";
-import { CardManagementStyles } from "../physical-card-component";
+import { CardManagementStyles } from ".";
 
 const useMergeStyles = (style?: CardManagementStyles): CardManagementStyles => {
   const defaultStyles: CardManagementStyles = StyleSheet.create({
