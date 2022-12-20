@@ -511,6 +511,9 @@ export function useWalletContextValue(): WalletContextData {
     if (cardWallet && cardWallet?.status === "ACTIVE") {
       setVirtualCardActive(true);
       setCardWallets(cardWallet);
+    } else if (!cardWallet) {
+      setVirtualCardActive(false);
+      setCardWallets(undefined);
     }
   };
 
