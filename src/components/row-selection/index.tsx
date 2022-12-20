@@ -1,17 +1,16 @@
-import React, { ReactNode } from 'react';
+import { defaultsDeep } from "lodash";
+import React, { ReactNode, useContext } from "react";
 import {
+  StyleProp,
   StyleSheet,
   Text,
-  View,
-  StyleProp,
   TextStyle,
-  ViewStyle,
   TouchableOpacity,
-} from 'react-native';
-import { defaultsDeep } from 'lodash';
-import { useContext } from 'react';
-import { ThemeContext } from 'react-native-theme-component';
-import { ArrowRightIcon } from '@banking-component/account-dashboard-component/src/assets/arrow-right.icon';
+  View,
+  ViewStyle,
+} from "react-native";
+import { ThemeContext } from "react-native-theme-component";
+import { ArrowRightIcon } from "../../assets/arrow-right.icon";
 
 export type RowSelectionProps = {
   props: {
@@ -36,29 +35,51 @@ export type RowSelectionStyle = {
 };
 
 const RowSelection = ({ props, style }: RowSelectionProps) => {
-  const { title, subtitle, onPress, rightIcon, disabled = false, value } = props || {};
+  const {
+    title,
+    subtitle,
+    onPress,
+    rightIcon,
+    disabled = false,
+    value,
+  } = props || {};
   const styles = useMergeStyles(disabled, style);
 
-  const renderContent = () => <View style={styles.rowBetween}>
-  <View>
-   <Text style={styles.title}>{title}</Text>
-   <View style={styles.verticalHeight} />
-   <View style={styles.row}>
-    <Text style={styles.subtitle}>{subtitle}</Text>
-    <Text style={[styles.subtitle, styles.value]}>{value}</Text>
-   </View>
-  </View>
-  {rightIcon ? <>{rightIcon}</> : <ArrowRightIcon width={12} height={15} color={disabled ? '#CCCCCC' : '#020000'} />}
-</View>
+  const renderContent = () => (
+    <View style={styles.rowBetween}>
+      <View>
+        <Text style={styles.title}>{title}</Text>
+        <View style={styles.verticalHeight} />
+        <View style={styles.row}>
+          <Text style={styles.subtitle}>{subtitle}</Text>
+          <Text style={[styles.subtitle, styles.value]}>{value}</Text>
+        </View>
+      </View>
+      {rightIcon ? (
+        <>{rightIcon}</>
+      ) : (
+        <ArrowRightIcon
+          width={12}
+          height={15}
+          color={disabled ? "#CCCCCC" : "#020000"}
+        />
+      )}
+    </View>
+  );
 
   return onPress && !disabled ? (
     <TouchableOpacity style={styles.container} onPress={onPress || undefined}>
       {renderContent()}
     </TouchableOpacity>
-  ) : <View style={styles.container}>{renderContent()}</View>;
+  ) : (
+    <View style={styles.container}>{renderContent()}</View>
+  );
 };
 
-const useMergeStyles = (isDisabled: boolean, style?: RowSelectionStyle): RowSelectionStyle => {
+const useMergeStyles = (
+  isDisabled: boolean,
+  style?: RowSelectionStyle
+): RowSelectionStyle => {
   const { fonts } = useContext(ThemeContext);
 
   const defaultStyles = StyleSheet.create({
@@ -66,20 +87,19 @@ const useMergeStyles = (isDisabled: boolean, style?: RowSelectionStyle): RowSele
       marginBottom: 15,
       borderWidth: 1,
       borderRadius: 8,
-      borderColor: '#ECECEC',
+      borderColor: "#ECECEC",
       paddingVertical: 12,
       paddingHorizontal: 20,
-      backgroundColor: isDisabled ? '#ECECEC' : '#FFFFFF'
+      backgroundColor: isDisabled ? "#ECECEC" : "#FFFFFF",
     },
     title: {
-      color: isDisabled ? '#CCCCCC' : '#020000',
+      color: isDisabled ? "#CCCCCC" : "#020000",
       fontSize: 12,
       fontFamily: fonts.medium,
       lineHeight: 17,
-    
     },
     subtitle: {
-      color: isDisabled ? '#CCCCCC' : '#676666',
+      color: isDisabled ? "#CCCCCC" : "#676666",
       fontSize: 10,
       fontFamily: fonts.regular,
     },
@@ -87,16 +107,16 @@ const useMergeStyles = (isDisabled: boolean, style?: RowSelectionStyle): RowSele
       fontFamily: fonts.medium,
     },
     row: {
-      flexDirection: 'row'
+      flexDirection: "row",
     },
     rowBetween: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
     },
     verticalHeight: {
-      height: 7
-    }
+      height: 7,
+    },
   });
   return defaultsDeep(style, defaultStyles);
 };

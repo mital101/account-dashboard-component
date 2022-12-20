@@ -7,7 +7,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { AlertModalStyles } from "react-native-theme-component/src/alert";
-import { EmptyWalletThemeProps } from "./components/no-wallet-component";
+import { EmptyWalletThemeProps } from "./components/no-account-dashboard-component";
 import {
   BankImagesMap,
   Transaction,
