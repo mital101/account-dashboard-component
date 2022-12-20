@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
-import { StyleProp, TextStyle, ViewStyle } from 'react-native';
-    
+import { ReactNode } from "react";
+import { StyleProp, TextStyle, ViewStyle } from "react-native";
+
 export type AlertModalStyles = {
   containerStyle?: StyleProp<ViewStyle>;
   iconWrapper?: StyleProp<ViewStyle>;
@@ -14,7 +14,7 @@ export type AlertModalStyles = {
 export type AlertModalProps = {
   title?: string;
   subtitle?: string;
-  children?: ReactNode;
+  children?: JSX.Element | JSX.Element[];
   icon?: ReactNode;
   iconColor?: string;
   btnLabel?: string;
@@ -24,5 +24,6 @@ export type AlertModalProps = {
   onBackdropPress?: () => void;
   isVisible?: boolean;
   style?: AlertModalStyles;
-  backdropOpacity?: number
+  backdropOpacity?: number;
+  position?: "center" | "top" | "bottom";
 };

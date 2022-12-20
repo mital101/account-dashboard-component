@@ -1,8 +1,19 @@
-import { ReactNode } from 'react';
-import { ImageSourcePropType, ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native';
-import { AlertModalStyles } from 'react-native-theme-component/src/alert';
-import { EmptyWalletThemeProps } from './components/no-account-dashboard-component';
-import { BankImagesMap, Transaction, TransactionSummary, Wallet } from './model';
+import { ReactNode } from "react";
+import {
+  ImageSourcePropType,
+  ImageStyle,
+  StyleProp,
+  TextStyle,
+  ViewStyle,
+} from "react-native";
+import { AlertModalStyles } from "react-native-theme-component/src/alert";
+import { EmptyWalletThemeProps } from "./components/no-wallet-component";
+import {
+  BankImagesMap,
+  Transaction,
+  TransactionSummary,
+  Wallet,
+} from "./model";
 
 export type WalletListComponentRefs = {
   showActionsSheet: (wallet: Wallet) => void;
@@ -12,15 +23,14 @@ export type WalletListComponentRefs = {
   hideActionSheet: () => void;
 };
 
-export type TransferType = 'moneyin' | 'moneyout';
+export type TransferType = "moneyin" | "moneyout";
 
 export type FilterTransaction = {
   types?: string[];
   status?: string;
   from?: string;
   to?: string;
-}
-
+};
 
 export type WalletListComponentProps = {
   Root: {
@@ -227,7 +237,9 @@ export type TransactionListComponentProps = {
       carouselItemWidth?: number;
     };
     components?: {
-      renderSummary?: (summary?: TransactionSummary) => React.ReactElement | null;
+      renderSummary?: (
+        summary?: TransactionSummary
+      ) => React.ReactElement | null;
       tickIcon?: ReactNode;
       moneyInIcon?: ReactNode;
       moneyOutIcon?: ReactNode;
@@ -250,7 +262,10 @@ export type TransactionListComponentProps = {
     style?: TransactionPageStyle;
     component?: {
       sectionHeader?: (date: string) => React.ReactElement | null;
-      renderItem?: (index: number, item: Transaction) => React.ReactElement | null;
+      renderItem?: (
+        index: number,
+        item: Transaction
+      ) => React.ReactElement | null;
     };
     props?: {
       onItemPress?: (transaction: Transaction) => void;
@@ -318,24 +333,59 @@ export type OnboardingItem = {
   imageComponent: ReactNode;
 };
 
-
 export type TransactionLimit = {
   limitUnit: string;
-  transactionType: string,
-  frequence: string,
-  cardProxyNumber: string,
-  limitValue: number,
-  remainingLimitValue: number
-}
+  transactionType: string;
+  frequence: string;
+  cardProxyNumber: string;
+  limitValue: number;
+  remainingLimitValue: number;
+};
 
 export type TransactionChannel = {
-  name: string,
-  code: string,
-  enabled: boolean
-}
+  name: string;
+  code: string;
+  enabled: boolean;
+};
 
 export type CardReport = {
-  id: string,
-  reason: string,
-  reasonCode: string
+  id: string;
+  reason: string;
+  reasonCode: string;
+};
+
+export interface CardLimitsType {
+  limitUnit: string;
+  transactionType:
+    | TransactionTypes.CARD_RETAIL
+    | TransactionTypes.CARD_WITHDRAW
+    | TransactionTypes.CONTACTLESS_WITHDRAW;
+  frequence: string;
+  cardProxyNumber: string;
+  limitValue: number;
+}
+
+export enum TransactionTypes {
+  CARD_RETAIL = "CARD_RETAIL",
+  CARD_WITHDRAW = "CARD_WITHDRAW",
+  CONTACTLESS_WITHDRAW = "CONTACTLESS_PERTXN",
+}
+
+export interface UdpateLimitType {
+  walletId: string;
+  limitSettings: LimitSetting[];
+}
+
+export interface LimitSetting {
+  limitName?: string;
+  serviceProvider: string;
+  limitUnit: string;
+  frequence: string;
+  limitValue: number;
+  limitSettingFactors: LimitSettingFactor[];
+}
+
+export interface LimitSettingFactor {
+  attributeName: string;
+  attributeFixedValues: string;
 }

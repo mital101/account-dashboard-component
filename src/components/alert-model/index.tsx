@@ -1,22 +1,23 @@
-import { InfoIcon } from '../../assets/info.icon';
-import { AlertModalProps } from './types';
-import useMergeStyles from './styles';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from "react";
 import {
   Dimensions,
   Platform,
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import Modal from 'react-native-modal';
-import { Button, ThemeContext } from 'react-native-theme-component';
+} from "react-native";
+import Modal from "react-native-modal";
+import { Button, ThemeContext } from "react-native-theme-component";
+import { InfoIcon } from "../../assets/info.icon";
+import useMergeStyles from "./styles";
+import { AlertModalProps } from "./types";
 
 const deviceHeight =
-  Platform.OS === 'ios'
-    ? Dimensions.get('window').height
-    : require('react-native-extra-dimensions-android').get('REAL_WINDOW_HEIGHT');
-
+  Platform.OS === "ios"
+    ? Dimensions.get("window").height
+    : require("react-native-extra-dimensions-android").get(
+        "REAL_WINDOW_HEIGHT"
+      );
 
 const AlertModal = (props: AlertModalProps) => {
   const {
@@ -33,6 +34,7 @@ const AlertModal = (props: AlertModalProps) => {
     iconColor,
     backdropOpacity,
     onBackdropPress,
+    position,
     ...restProps
   } = props;
   const { colors } = useContext(ThemeContext);
@@ -40,16 +42,20 @@ const AlertModal = (props: AlertModalProps) => {
 
   useEffect(() => {
     if (isVisible) {
-        setIsVisible(true);
+      setIsVisible(true);
     } else {
       setIsVisible(false);
     }
   }, [isVisible]);
 
   const styles = useMergeStyles(style);
-  
+
   const Icon = icon ?? (
-    <InfoIcon width={60} height={60} color={iconColor ? iconColor : colors.primaryColor} />
+    <InfoIcon
+      width={60}
+      height={60}
+      color={iconColor ? iconColor : colors.primaryColor}
+    />
   );
 
   return (
@@ -66,20 +72,38 @@ const AlertModal = (props: AlertModalProps) => {
       statusBarTranslucent
       {...restProps}
     >
-      <View style={styles.containerStyle}>
-        <View style={styles.iconWrapper}>
-          <>
-          {Icon}
-          </>
+      <View
+        style={{
+          height: "100%",
+          justifyContent:
+            position === "top"
+              ? "flex-start"
+              : position === "bottom"
+              ? "flex-end"
+              : "center",
+        }}
+      >
+        <View style={styles.containerStyle}>
+          <View style={styles.iconWrapper}>
+            <>{Icon}</>
+          </View>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.subtitle}>{subtitle}</Text>
+          {btnLabel && (
+            <View style={styles.buttonAction}>
+              <Button label={btnLabel} onPress={onConfirmed} />
+            </View>
+          )}
+          {secondaryBtnLabel && (
+            <TouchableOpacity
+              onPress={onCancel}
+              style={styles.secondaryBtnAction}
+            >
+              <Text style={styles.secondaryBtnLabel}>{secondaryBtnLabel}</Text>
+            </TouchableOpacity>
+          )}
+          {children}
         </View>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
-        {btnLabel && <View style={styles.buttonAction}>
-         <Button label={btnLabel} onPress={onConfirmed} />
-        </View>}
-        {secondaryBtnLabel && <TouchableOpacity onPress={onCancel} style={styles.secondaryBtnAction}>
-          <Text style={styles.secondaryBtnLabel}>{secondaryBtnLabel}</Text>
-        </TouchableOpacity>}
       </View>
     </Modal>
   );
