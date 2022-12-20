@@ -1,21 +1,26 @@
-import { MyCardComponentProps } from "./types";
+import { Carousel } from "account-origination-component/src/components/carousel";
+import { Buffer } from "buffer";
 import React, {
   useCallback,
   useContext,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import {
   Image,
+  RefreshControl,
   ScrollView,
+  Switch,
   Text,
   TouchableOpacity,
   View,
-  Switch,
-  RefreshControl
 } from "react-native";
-import useMergeStyles from "./styles";
+import { KeyPair, RSA } from "react-native-rsa-native";
+import { Button } from "react-native-theme-component";
+import Tooltip, {
+  TooltipChildrenContext,
+} from "react-native-walkthrough-tooltip";
 import {
   CloseEyesIcon,
   EyesIcon,
@@ -24,21 +29,16 @@ import {
   Page1,
   Page2,
   Page3,
-  PointerIcon
+  PointerIcon,
 } from "../../../assets/images";
-import { Carousel } from "account-origination-component/src/components/carousel";
 import RowSelection from "../../../components/row-selection";
-import Tooltip, {
-  TooltipChildrenContext
-} from "react-native-walkthrough-tooltip";
 import { WalletContext } from "../../../context/wallet-context";
-import { Button } from "react-native-theme-component";
-import AlertModal from "../../alert-model";
 import { CardWalletSensitiveData } from "../../../model";
 import { WalletService } from "../../../services/wallet-service";
-import { KeyPair, RSA } from "react-native-rsa-native";
-import { Buffer } from "buffer";
-import LoadingSpinner from "@banking-component/account-dashboard-component/src/components/loading-spinner";
+import AlertModal from "../../alert-model";
+import LoadingSpinner from "../../loading-spinner";
+import useMergeStyles from "./styles";
+import { MyCardComponentProps } from "./types";
 global.Buffer = Buffer;
 
 const walletService = WalletService.instance();
@@ -65,29 +65,23 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
     onFailedReportCard,
     onSelectPhysicalCard,
     isShowLoadingSensitiveData,
-    setIsShowLoadingSensitiveData
+    setIsShowLoadingSensitiveData,
   } = props;
-  const [toolTipCardVisible, setToolTipCardVisible] = useState<boolean>(
-    isShowWalkThrough
-  );
-  const [toolTipOptionsVisible, setToolTipOptionsVisible] = useState<boolean>(
-    false
-  );
+  const [toolTipCardVisible, setToolTipCardVisible] =
+    useState<boolean>(isShowWalkThrough);
+  const [toolTipOptionsVisible, setToolTipOptionsVisible] =
+    useState<boolean>(false);
   const [isSkiped, setIsSkiped] = useState<boolean>(false);
   const [isVisibleOkBtn, setIsVisibleOkBtn] = useState<boolean>(true);
   const [ttOptionsYPosition, setTTOptionsYPosition] = useState<number>(0);
   const [ttPointerCardPosition, setTTCardPointerPosition] = useState<number>(0);
-  const [ttPointerOptionsPosition, setTTPointerOptionsPosition] = useState<
-    number
-  >(0);
-  const [isShowAlertUpdateStatusVC, setIsShowAlertUpdateStatusVC] = useState<
-    boolean
-  >(false);
+  const [ttPointerOptionsPosition, setTTPointerOptionsPosition] =
+    useState<number>(0);
+  const [isShowAlertUpdateStatusVC, setIsShowAlertUpdateStatusVC] =
+    useState<boolean>(false);
   const [sensitiveData, setSensitiveData] = useState<CardWalletSensitiveData>();
-  const [
-    isShowErrorGetSensitiveData,
-    setIsShowErrorGetSensitiveData
-  ] = useState<boolean>(false);
+  const [isShowErrorGetSensitiveData, setIsShowErrorGetSensitiveData] =
+    useState<boolean>(false);
 
   const {
     cardWallet,
@@ -99,7 +93,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
     initIsEnableTransactionChannel,
     oneTimeToken,
     isLoadingCardWallet = false,
-    selectedReportOption
+    selectedReportOption,
   } = useContext(WalletContext);
 
   useEffect(() => {
@@ -207,7 +201,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
     transactionLimitsOverall,
     transactionLimitValue,
     oneTimeToken,
-    cardWallet?.walletId
+    cardWallet?.walletId,
   ]);
 
   const updateCardStatus = useCallback(async () => {
@@ -267,7 +261,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
               setSensitiveData({
                 cvv,
                 expiry: `${expiry.slice(0, 2)} / ${expiry.slice(2)}`,
-                pan
+                pan,
               });
               setIsShowLoadingSensitiveData(false);
             }
@@ -289,7 +283,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
   const carouselList = [
     { item: <Page1 width={170} height={254} /> },
     { item: <Page2 width={170} height={254} /> },
-    { item: <Page3 width={170} height={254} /> }
+    { item: <Page3 width={170} height={254} /> },
   ];
 
   useEffect(() => {
@@ -394,7 +388,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
               <Button
                 label={"OK"}
                 style={{
-                  primaryContainerStyle: { borderRadius: 35, marginTop: 15 }
+                  primaryContainerStyle: { borderRadius: 35, marginTop: 15 },
                 }}
                 onPress={onHideOKBtn}
               />
@@ -453,7 +447,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
             <View
               style={[
                 styles.vcCardContainer,
-                !isVCActive && { backgroundColor: "#676666" }
+                !isVCActive && { backgroundColor: "#676666" },
               ]}
             >
               <View style={styles.rowSpaceBetween}>
@@ -524,7 +518,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
                     alignItems: "center",
                     opacity: 0.3,
                     justifyContent: "space-around",
-                    backgroundColor: "gray"
+                    backgroundColor: "gray",
                   }}
                 >
                   <LoadingSpinner />
@@ -627,12 +621,12 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
                         disabled={isInProgressStatus}
                       />
                     ),
-                    disabled: isInProgressStatus
+                    disabled: isInProgressStatus,
                   }}
                   style={{
                     value: {
-                      color: isVCActive ? "#40916C" : "#CC444B"
-                    }
+                      color: isVCActive ? "#40916C" : "#CC444B",
+                    },
                   }}
                 />
                 <RowSelection
@@ -640,7 +634,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
                     title: "Transaction channels",
                     subtitle: "Update card’s stransaction channels status",
                     onPress: onSelectTransactionChannel,
-                    disabled: isInProgressStatus || !isVCActive
+                    disabled: isInProgressStatus || !isVCActive,
                   }}
                 />
                 <RowSelection
@@ -648,7 +642,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
                     title: "Transaction limits",
                     subtitle: "Update card’s transaction limits",
                     onPress: onSelectTransactionLimits,
-                    disabled: isInProgressStatus || !isVCActive
+                    disabled: isInProgressStatus || !isVCActive,
                   }}
                 />
                 <RowSelection
@@ -656,7 +650,7 @@ const MyCardComponent = ({ style, props }: MyCardComponentProps) => {
                     title: "Report Card",
                     subtitle: "Lost your card? Request for a new one",
                     onPress: onSelectReportCard,
-                    disabled: isInProgressStatus || !isVCActive
+                    disabled: isInProgressStatus || !isVCActive,
                   }}
                 />
               </View>
