@@ -7,7 +7,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-// import DangerIcon from '../../../../assets/danger-icon';
+import DangerIcon from "../../../../assets/danger-icon";
 
 interface ICardInput {
   label: string;
@@ -48,7 +48,7 @@ const CardInput: React.FC<ICardInput> = (props) => {
       </View>
       {error && (
         <View style={styles.errorContainer}>
-          {/* <DangerIcon /> */}
+          <DangerIcon />
           <Text style={styles.errorText}>{errorLabel}</Text>
         </View>
       )}

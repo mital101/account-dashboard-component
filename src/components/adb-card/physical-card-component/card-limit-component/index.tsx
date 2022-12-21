@@ -1,4 +1,3 @@
-import { NumberFormatter } from "@banking-component/wallet-component/src/components/adb-card/helpers";
 import React, { useContext, useMemo, useState } from "react";
 import { KeyboardAvoidingView, Text, View } from "react-native";
 import { ThemeContext } from "react-native-theme-component";
@@ -11,30 +10,49 @@ import AlertModal from "../../../alert-model";
 import VirtualCard from "../../card-info-component/components/virtual-card";
 import Button from "../../core/button";
 import EditableInput from "../../core/editable-textinput";
+import { NumberFormatter } from "../../helpers";
 import useMergeStyle, { CardLimitStyles } from "./styles";
 export interface CardLimitProps {
   style?: CardLimitStyles;
   onPressGotoHome: () => void;
-  onDeviceBiometFailed: (val:string, atrFixedValue:string, setState:any) => void;
-  onDeviceBiometSuccess: (val:string, atrFixedValue:string, setState:any) => void;
+  onDeviceBiometFailed: (
+    val: string,
+    atrFixedValue: string,
+    setState: any
+  ) => void;
+  onDeviceBiometSuccess: (
+    val: string,
+    atrFixedValue: string,
+    setState: any
+  ) => void;
   showAlert: boolean;
-  setAlert: (val:boolean) => void;
+  setAlert: (val: boolean) => void;
   error: boolean;
-  setError: (val:boolean) => void;
+  setError: (val: boolean) => void;
 }
 
 const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
-  const { style, onPressGotoHome, onDeviceBiometFailed,onDeviceBiometSuccess,showAlert, setAlert, error, setError } = props;
+  const {
+    style,
+    onPressGotoHome,
+    onDeviceBiometFailed,
+    onDeviceBiometSuccess,
+    showAlert,
+    setAlert,
+    error,
+    setError,
+  } = props;
   const styles: CardLimitStyles = useMergeStyle(style);
-  const { cardLimits, updateCardLimits,cardWallet, isLoadingCardLimit } = useContext(WalletContext);
+  const { cardLimits, updateCardLimits, cardWallet, isLoadingCardLimit } =
+    useContext(WalletContext);
   const { i18n } = useContext(ThemeContext);
-  const isAlertVisible = useMemo(() => showAlert, [showAlert])
+  const isAlertVisible = useMemo(() => showAlert, [showAlert]);
   // const [showAlert, setAlert] = useState(false);
   // const [error, setError] = useState<boolean>(false);
   const [rtError, setRtError] = useState(false);
   const [cwError, setCwError] = useState(false);
   const [ctError, setCtError] = useState(false);
-  const [isUpdatingCardLimits, setUpdatingLimits] = useState(false)
+  const [isUpdatingCardLimits, setUpdatingLimits] = useState(false);
   const retailTransactionLimit = useMemo(() => {
     const data = cardLimits?.find(
       (res) =>
@@ -111,51 +129,50 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
     () => (cardLimits ? cardLimits[0].limitUnit : ""),
     [cardLimits]
   );
-  const [rtLimit, setRtLimit] = useState(retailTransactionLimit)
-  const [cwLimit, setCWLimit] = useState(cashWithdrawalLimit)
+  const [rtLimit, setRtLimit] = useState(retailTransactionLimit);
+  const [cwLimit, setCWLimit] = useState(cashWithdrawalLimit);
   const [ctLimit, setCtLimit] = useState(contactLessLimit);
-    React.useEffect(() => {
-      setRtLimit(retailTransactionLimit)
-      setCWLimit(cashWithdrawalLimit)
-      setCtLimit(contactLessLimit)
-    }, [retailTransactionLimit, cashWithdrawalLimit, contactLessLimit])
-    React.useEffect(() => {
-     if(!updateCardLimits){
+  React.useEffect(() => {
+    setRtLimit(retailTransactionLimit);
+    setCWLimit(cashWithdrawalLimit);
+    setCtLimit(contactLessLimit);
+  }, [retailTransactionLimit, cashWithdrawalLimit, contactLessLimit]);
+  React.useEffect(() => {
+    if (!updateCardLimits) {
+    }
+  }, [isUpdatingCardLimits]);
 
-     }
-    }, [isUpdatingCardLimits])
-
-  const checkUserAuth = (val:string, atrFixedValue:string, setState:any) => {
+  const checkUserAuth = (val: string, atrFixedValue: string, setState: any) => {
     TouchID.authenticate("Authentication required to proceed")
       .then(() => {
         setUpdatingLimits(true);
-    //     const body = {   
-    //       walletId: cardWallet?.walletId ?? '',
-    //     limitSettings : [
-    //         {
-    //             serviceProvider : "Finexus",
-    //             limitUnit: "MYR",            
-    //             frequence: "Daily",            
-    //             limitValue: Number(val),
-    //             limitSettingFactors : [
-    //                 {
-    //           attributeName: "transactionType",
-    //           attributeFixedValues: atrFixedValue
-    //         }
-    //             ]
-    //         }
-    //     ]
-    // }
-    //     updateCardLimits(body).then(() => {
-    //       setUpdatingLimits(false);
-    //       setError(false);
-    //       setAlert(true);
-    //       setState(val)
-    //     })
-    onDeviceBiometSuccess(val, atrFixedValue, setState)
+        //     const body = {
+        //       walletId: cardWallet?.walletId ?? '',
+        //     limitSettings : [
+        //         {
+        //             serviceProvider : "Finexus",
+        //             limitUnit: "MYR",
+        //             frequence: "Daily",
+        //             limitValue: Number(val),
+        //             limitSettingFactors : [
+        //                 {
+        //           attributeName: "transactionType",
+        //           attributeFixedValues: atrFixedValue
+        //         }
+        //             ]
+        //         }
+        //     ]
+        // }
+        //     updateCardLimits(body).then(() => {
+        //       setUpdatingLimits(false);
+        //       setError(false);
+        //       setAlert(true);
+        //       setState(val)
+        //     })
+        onDeviceBiometSuccess(val, atrFixedValue, setState);
       })
       .catch(() => {
-        onDeviceBiometFailed(val, atrFixedValue, setState)
+        onDeviceBiometFailed(val, atrFixedValue, setState);
         // setError(true);
         // setAlert(true);
       });
@@ -178,11 +195,14 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
       <View>
         <EditableInput
           onSave={async (e) => {
-            if(Number(e) > Number(maxRetailTransactionLimit) || Number(e) < Number(minRetailTransactionLimit) ){
-              setRtError(true)
-            }else{
-              checkUserAuth(e, TransactionTypes.CARD_RETAIL, setRtLimit)
-              setRtError(false)
+            if (
+              Number(e) > Number(maxRetailTransactionLimit) ||
+              Number(e) < Number(minRetailTransactionLimit)
+            ) {
+              setRtError(true);
+            } else {
+              checkUserAuth(e, TransactionTypes.CARD_RETAIL, setRtLimit);
+              setRtError(false);
             }
           }}
           // value={retailTransactionLimit.toFixed(2).toString()}
@@ -195,11 +215,14 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
         />
         <EditableInput
           onSave={async (e) => {
-            if(Number(e) > Number(maxCashWithdrawalLimit) || Number(e) < Number(minCashWithdrawalLimit) ){
-              setCwError(true)
-            }else{
-              checkUserAuth(e, TransactionTypes.CARD_WITHDRAW, setCWLimit)
-              setCwError(false)
+            if (
+              Number(e) > Number(maxCashWithdrawalLimit) ||
+              Number(e) < Number(minCashWithdrawalLimit)
+            ) {
+              setCwError(true);
+            } else {
+              checkUserAuth(e, TransactionTypes.CARD_WITHDRAW, setCWLimit);
+              setCwError(false);
             }
           }}
           // value={cashWithdrawalLimit.toFixed(2).toString()}
@@ -212,11 +235,18 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
         />
         <EditableInput
           onSave={async (e) => {
-            if(Number(e) > Number(maxContactLessLimit) || Number(e) < Number(minContactLessLimit) ){
-              setCtError(true)
-            }else{
-              checkUserAuth(e, TransactionTypes.CONTACTLESS_WITHDRAW, setCtLimit)
-              setCtError(false)
+            if (
+              Number(e) > Number(maxContactLessLimit) ||
+              Number(e) < Number(minContactLessLimit)
+            ) {
+              setCtError(true);
+            } else {
+              checkUserAuth(
+                e,
+                TransactionTypes.CONTACTLESS_WITHDRAW,
+                setCtLimit
+              );
+              setCtError(false);
             }
           }}
           // value={contactLessLimit.toFixed(2).toString()}
