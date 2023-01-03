@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import {
   ScrollView,
   StyleProp,
@@ -12,13 +12,15 @@ import { WalletContext } from "../../../context/wallet-context";
 import VirtualCard from "../card-info-component/components/virtual-card";
 import CarouselCard from "../core/carousel-card";
 import CircularImageView from "../core/circular-image-view";
-import LimitBottomSheet from "./limits-sheet";
+import LockCardBottomSheet from "./lock-card-sheet";
+import SettingsBottomSheet from "./settings-sheet";
 import useMergeStyles from "./styles";
 
 export interface CardManagementProps {
   style?: CardManagementStyles;
   onCarouselPress: () => void;
   onLimitPress: () => void;
+  onChangeCardPin: () => void;
 }
 export interface CardManagementStyles {
   navContainerStyle?: StyleProp<ViewStyle>;
@@ -27,16 +29,19 @@ export interface CardManagementStyles {
 }
 
 const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
-  const { style, onCarouselPress, onLimitPress } = props;
+  const { style, onCarouselPress, onLimitPress, onChangeCardPin } = props;
   const styles: CardManagementStyles = useMergeStyles(style);
-  const { isVirtualCardActive } = useContext(WalletContext);
+  const { isVirtualCardActive, updateCardStatus, cardWalletStatus, cardWallet } = useContext(WalletContext);
   const { i18n } = useContext(ThemeContext);
-  const [showSheet,setShowSheet] = useState(false)
+  const [showSettings,setShowSettings] = useState<boolean>(false)
+  const [showLockSheet,setShowLockSheet] = useState<boolean>(false)
+  const [cardLock,setCardLock] = useState<boolean>(false)
+  const isCardLocked = useMemo(() => cardWalletStatus !== "ACTIVE", [cardWalletStatus])
   return (
     <ScrollView style={{ backgroundColor: "#ffffff" }}>
       <View style={styles.navContainerStyle}>
         <Text style={styles.navContainerTextStyle}>Card</Text>
-        <VirtualCard showEyeIcon cardHolderName="{Nur Aeolanda Binti Mahmud}" />
+        <VirtualCard showEyeIcon cardHolderName="{Nur Aeolanda Binti Mahmud}" isCardLock={isCardLocked} />
         <Text style={styles.navContainerSubTitleStyle}>
           {"{ADB} Savings-i"}
         </Text>
@@ -55,24 +60,17 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
               marginHorizontal: 12,
             },
           }}
-          label={i18n?.t("adb_card.lbl_setting") ?? "Settings"}
+          onClick={() => setShowSettings(true)}
+          label={i18n?.t("adb_card.lbl_setting")}
         />
         <CircularImageView
-          onClick={() => setShowSheet(true)}
+          onClick={() => onLimitPress()}
           style={{
             containerStyle: {
               marginHorizontal: 12,
             },
           }}
-          label={i18n?.t("adb_card.lbl_limit") ?? "Limit"}
-        />
-        <CircularImageView
-          style={{
-            containerStyle: {
-              marginHorizontal: 12,
-            },
-          }}
-          label={i18n?.t("adb_card.lbl_report_replace") ?? "Report & Replace"}
+          label={i18n?.t("adb_card.lbl_limit")}
         />
         <CircularImageView
           style={{
@@ -80,7 +78,24 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
               marginHorizontal: 12,
             },
           }}
-          label={i18n?.t("adb_card.lbl_lock") ?? "Lock"}
+          label={i18n?.t("adb_card.lbl_report_replace")}
+        />
+        <CircularImageView
+        onClick={() => {
+          if(isCardLocked){
+            const status = "ACTIVE";
+            const walletId = cardWallet?.walletId ?? "" ;
+            updateCardStatus(status, walletId )
+          }else{
+            setShowLockSheet(true)
+          }
+        }}
+          style={{
+            containerStyle: {
+              marginHorizontal: 12,
+            },
+          }}
+          label={isCardLocked ? i18n?.t("adb_card.lbl_unlock") : i18n?.t("adb_card.lbl_lock")}
         />
       </View>
       <View
@@ -94,32 +109,38 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
         <CarouselCard
           title={
             isVirtualCardActive
-              ? i18n?.t("adb_card.lbl_want_physical_card") ??
-                "Do you also want a physical card?"
-              : i18n?.t("adb_card.lbl_activate_card", {other: "!"}) ??
-                "Activate virtual card!"
+              ? i18n?.t("adb_card.lbl_want_physical_card")
+              : i18n?.t("adb_card.lbl_activate_card", {other: "!"}) 
           }
           subTitle={
             isVirtualCardActive
-              ? i18n?.t("adb_card.lbl_enjoy_hassle_free") ??
-                "Enjoy hassle free payments, ATM withdrawals and pay in-store merchants. "
+              ? i18n?.t("adb_card.lbl_enjoy_hassle_free")
               : i18n?.t(
                   "adb_card.lbl_activate_card",
                   {other: "and start spending now!"}
-                ) ?? "Activate your virtual card and start spending now!"
+                )
           }
           buttonLabel={
             isVirtualCardActive
-              ? i18n?.t("adb_card.btn_order_now") ?? "Order Now"
-              : i18n?.t("adb_card.btn_active_now") ?? "Activate Now"
+              ? i18n?.t("adb_card.btn_order_now")
+              : i18n?.t("adb_card.btn_active_now")
           }
           onPress={onCarouselPress}
         />
       </View>
-      <LimitBottomSheet isVisible={showSheet} onClose={() => setShowSheet(false)} onCardLimitPress={() => {
-        setShowSheet(false)
-        onLimitPress()
-      }} onOnlineLimitPress={() => {}} />
+     <SettingsBottomSheet onClose={() => setShowSettings(false)} isVisible={showSettings} onChangeCardPin={() => {
+      setShowSettings(false);
+      onChangeCardPin();
+     }} />
+     <LockCardBottomSheet onLockCard={() => {
+      //  setCardLock(true)
+      const status = "LOCKED";
+      const walletId = cardWallet?.walletId ?? "" ;
+      const reason = "test";
+      const reasonCode = "LOST";
+      updateCardStatus(status, walletId, reason, reasonCode)
+      setShowLockSheet(false);
+      }} isVisible={showLockSheet} onClose={() => setShowLockSheet(false)} />
     </ScrollView>
   );
 };

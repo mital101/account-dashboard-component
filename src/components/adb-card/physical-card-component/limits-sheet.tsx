@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { BottomSheet } from "react-native-theme-component";
 import { ArrowRightIcon } from "../../../assets/arrow-right.icon";
@@ -104,4 +104,5 @@ const styles = StyleSheet.create({
     marginLeft: 18,
     color: "#1b1b1b",
   },
+ 
 });

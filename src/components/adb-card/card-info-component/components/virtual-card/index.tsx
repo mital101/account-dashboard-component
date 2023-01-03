@@ -4,10 +4,11 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { CloseEyesIcon } from "../../../../../assets/close-eyes.icon";
 import { EyesIcon } from "../../../../../assets/eyes.icon";
+import { LockIcon } from "../../../../../assets/lock-icon";
 import VisaIcon from "../common/visa-icon";
 
 export interface VirtualCardProps {
@@ -15,16 +16,17 @@ export interface VirtualCardProps {
   showEyeIcon?: boolean;
   showCardType?: boolean;
   cardBottomText?: string;
+  isCardLock?:boolean;
 }
 
 const VirtualCard: React.FC<VirtualCardProps> = (props) => {
-  const { cardHolderName, showEyeIcon, showCardType, cardBottomText } = props;
+  const { cardHolderName, showEyeIcon, showCardType, cardBottomText, isCardLock } = props;
   const [showCardNumber, setShowCardNumber] = useState(false);
   const [cardNumber] = useState("1234567895639044");
   return (
-    <View style={{ marginVertical: 32 }}>
-      <View style={styles.container}>
-        <View style={styles.upperContainer}>
+    <View style={{ marginVertical: 32 }} pointerEvents={isCardLock ? "none" : "auto"}>
+      <View style={[[styles.container,  {borderColor: isCardLock ? "#00000030" : "#000"}]]}>
+        <View style={[styles.upperContainer,  {opacity: isCardLock ? 0.3 : 1}]}>
           <View style={styles.cardHeaderContainer}>
             <VisaIcon />
             <View style={styles.cardDetailContainer}>
@@ -59,7 +61,7 @@ const VirtualCard: React.FC<VirtualCardProps> = (props) => {
             </View>
           </View>
         </View>
-        <View style={styles.lowerContainer}>
+        <View style={[styles.lowerContainer,  {opacity: isCardLock ? 0.3 : 1}]}>
           <Text style={styles.cardNameText}>{cardHolderName}</Text>
           <TouchableOpacity
             style={styles.eyeIconContainer}
@@ -72,6 +74,9 @@ const VirtualCard: React.FC<VirtualCardProps> = (props) => {
             )}
           </TouchableOpacity>
         </View>
+        {isCardLock && <View style={{position: "absolute", alignSelf:'center', top: '35%', height: 56, width:56, borderRadius: 100, backgroundColor: "#9b9b9b", justifyContent:'center', alignItems:'center'}}>
+             <LockIcon/> 
+        </View>}
       </View>
       {showCardType && (
         <Text style={{ textAlign: "center", marginTop: 10 }}>

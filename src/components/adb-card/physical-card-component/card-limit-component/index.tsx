@@ -1,5 +1,6 @@
 import React, { useContext, useMemo, useState } from "react";
-import { KeyboardAvoidingView, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { ThemeContext } from "react-native-theme-component";
 import TouchID from "react-native-touch-id";
 import { InfoIcon } from "../../../../assets/info.icon";
@@ -8,6 +9,7 @@ import { WalletContext } from "../../../../context/wallet-context";
 import { TransactionTypes } from "../../../../types";
 import AlertModal from "../../../alert-model";
 import VirtualCard from "../../card-info-component/components/virtual-card";
+import AlertMessage from "../../core/alert-message";
 import Button from "../../core/button";
 import EditableInput from "../../core/editable-textinput";
 import { NumberFormatter } from "../../helpers";
@@ -43,7 +45,7 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
     setError,
   } = props;
   const styles: CardLimitStyles = useMergeStyle(style);
-  const { cardLimits, updateCardLimits, cardWallet, isLoadingCardLimit } =
+  const { cardLimits, updateCardLimits, hasPhysicalCard } =
     useContext(WalletContext);
   const { i18n } = useContext(ThemeContext);
   const isAlertVisible = useMemo(() => showAlert, [showAlert]);
@@ -52,6 +54,7 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
   const [rtError, setRtError] = useState(false);
   const [cwError, setCwError] = useState(false);
   const [ctError, setCtError] = useState(false);
+  const [showAlertMsg, setAlertMsg] = useState("");
   const [isUpdatingCardLimits, setUpdatingLimits] = useState(false);
   const retailTransactionLimit = useMemo(() => {
     const data = cardLimits?.find(
@@ -146,126 +149,145 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
     TouchID.authenticate("Authentication required to proceed")
       .then(() => {
         setUpdatingLimits(true);
-        //     const body = {
-        //       walletId: cardWallet?.walletId ?? '',
-        //     limitSettings : [
-        //         {
-        //             serviceProvider : "Finexus",
-        //             limitUnit: "MYR",
-        //             frequence: "Daily",
-        //             limitValue: Number(val),
-        //             limitSettingFactors : [
-        //                 {
-        //           attributeName: "transactionType",
-        //           attributeFixedValues: atrFixedValue
-        //         }
-        //             ]
-        //         }
-        //     ]
-        // }
-        //     updateCardLimits(body).then(() => {
-        //       setUpdatingLimits(false);
-        //       setError(false);
-        //       setAlert(true);
-        //       setState(val)
-        //     })
         onDeviceBiometSuccess(val, atrFixedValue, setState);
       })
       .catch(() => {
         onDeviceBiometFailed(val, atrFixedValue, setState);
-        // setError(true);
-        // setAlert(true);
       });
   };
   return (
-    <KeyboardAvoidingView
-      style={styles.wrapperStyle}
-      keyboardVerticalOffset={0}
-    >
-      <Text style={styles.titleStyle}>
-        {i18n?.t("adb_card.lbl_card_limit") ?? "Card limit"}
-      </Text>
-      <Text style={styles.subTitleStyle}>
-        {i18n?.t("adb_card.lbl_set_preffered_limits") ??
-          "Please set your preferred limits for each transaction type."}
-      </Text>
-      <View style={styles.cardContainerStyle}>
-        <VirtualCard showEyeIcon cardHolderName="{Nur Aeolanda Binti Mahmud}" />
-      </View>
-      <View>
-        <EditableInput
-          onSave={async (e) => {
-            if (
-              Number(e) > Number(maxRetailTransactionLimit) ||
-              Number(e) < Number(minRetailTransactionLimit)
-            ) {
-              setRtError(true);
-            } else {
-              checkUserAuth(e, TransactionTypes.CARD_RETAIL, setRtLimit);
-              setRtError(false);
-            }
-          }}
-          // value={retailTransactionLimit.toFixed(2).toString()}
-          value={NumberFormatter(`${rtLimit}`, 2)}
-          keyboardType="number-pad"
-          label="Retail transaction daily limit"
-          valuePrefix={currencyCode}
-          error={rtError}
-          errorLabel={`Your Retail Transaction limit is between ${minRetailTransactionLimit} - ${maxRetailTransactionLimit} `}
-        />
-        <EditableInput
-          onSave={async (e) => {
-            if (
-              Number(e) > Number(maxCashWithdrawalLimit) ||
-              Number(e) < Number(minCashWithdrawalLimit)
-            ) {
-              setCwError(true);
-            } else {
-              checkUserAuth(e, TransactionTypes.CARD_WITHDRAW, setCWLimit);
-              setCwError(false);
-            }
-          }}
-          // value={cashWithdrawalLimit.toFixed(2).toString()}
-          value={NumberFormatter(`${cwLimit}`, 2)}
-          keyboardType="number-pad"
-          label="Cash withdrawal daily limit"
-          valuePrefix={currencyCode}
-          errorLabel={`Your Cash withdrawal limit is between ${minCashWithdrawalLimit} - ${maxCashWithdrawalLimit} `}
-          error={cwError}
-        />
-        <EditableInput
-          onSave={async (e) => {
-            if (
-              Number(e) > Number(maxContactLessLimit) ||
-              Number(e) < Number(minContactLessLimit)
-            ) {
-              setCtError(true);
-            } else {
-              checkUserAuth(
-                e,
-                TransactionTypes.CONTACTLESS_WITHDRAW,
-                setCtLimit
-              );
-              setCtError(false);
-            }
-          }}
-          // value={contactLessLimit.toFixed(2).toString()}
-          value={NumberFormatter(`${ctLimit}`, 2)}
-          keyboardType="number-pad"
-          label="Contactless transaction limit"
-          valuePrefix={currencyCode}
-          errorLabel={`Your Contactless transaction limit is between ${minContactLessLimit} - ${maxContactLessLimit} `}
-          error={ctError}
-        />
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          label={i18n?.t("adb_card.btn_go_home") ?? "Go to Home"}
-          onPress={() => {
-            onPressGotoHome();
-          }}
-        />
-      </View>
+    <>
+      <KeyboardAwareScrollView
+        style={{ backgroundColor: "#FFF" }}
+        contentContainerStyle={styles.wrapperStyle}
+      >
+        <View>
+          <Text style={styles.titleStyle}>
+            {i18n?.t("adb_card.lbl_card_limit") ?? "Card limit"}
+          </Text>
+          <Text style={styles.subTitleStyle}>
+            {i18n?.t("adb_card.lbl_set_preffered_limits") ??
+              "Please set your preferred limits for each transaction type."}
+          </Text>
+          <View style={styles.cardContainerStyle}>
+            <VirtualCard
+              showEyeIcon
+              cardHolderName="{Nur Aeolanda Binti Mahmud}"
+            />
+          </View>
+          <View>
+            <EditableInput
+              onSave={async (e) => {
+                if (
+                  Number(e) > Number(maxRetailTransactionLimit) ||
+                  Number(e) < Number(minRetailTransactionLimit)
+                ) {
+                  setRtError(true);
+                } else {
+                  checkUserAuth(e, TransactionTypes.CARD_RETAIL, setRtLimit);
+                  setRtError(false);
+                }
+              }}
+              value={NumberFormatter(`${rtLimit}`, 2)}
+              keyboardType="number-pad"
+              label="Daily limit"
+              valuePrefix={currencyCode}
+              error={rtError}
+              errorLabel={`Your Retail Transaction limit is between ${minRetailTransactionLimit} - ${maxRetailTransactionLimit} `}
+            />
+            <EditableInput
+              onSave={async (e) => {
+                if (
+                  Number(e) > Number(maxRetailTransactionLimit) ||
+                  Number(e) < Number(minRetailTransactionLimit)
+                ) {
+                  setRtError(true);
+                } else {
+                  checkUserAuth(e, TransactionTypes.CARD_RETAIL, setRtLimit);
+                  setRtError(false);
+                }
+              }}
+              value={NumberFormatter(`${rtLimit}`, 2)}
+              keyboardType="number-pad"
+              label="Online transaction daily limit"
+              valuePrefix={currencyCode}
+              error={rtError}
+              errorLabel={`Your Retail Transaction limit is between ${minRetailTransactionLimit} - ${maxRetailTransactionLimit} `}
+            />
+            {!hasPhysicalCard && <View>
+            <EditableInput
+              onSave={async (e) => {
+                if (
+                  Number(e) > Number(maxCashWithdrawalLimit) ||
+                  Number(e) < Number(minCashWithdrawalLimit)
+                ) {
+                  setCwError(true);
+                } else {
+                  checkUserAuth(e, TransactionTypes.CARD_WITHDRAW, setCWLimit);
+                  setCwError(false);
+                }
+              }}
+              value={NumberFormatter(`${cwLimit}`, 2)}
+              keyboardType="number-pad"
+              label="Overseas transaction daily limit"
+              valuePrefix={currencyCode}
+              errorLabel={`Your Cash withdrawal limit is between ${minCashWithdrawalLimit} - ${maxCashWithdrawalLimit} `}
+              error={cwError}
+            />
+            <EditableInput
+              onSave={async (e) => {
+                if (
+                  Number(e) > Number(maxCashWithdrawalLimit) ||
+                  Number(e) < Number(minCashWithdrawalLimit)
+                ) {
+                  setCwError(true);
+                } else {
+                  checkUserAuth(e, TransactionTypes.CARD_WITHDRAW, setCWLimit);
+                  setCwError(false);
+                }
+              }}
+              value={NumberFormatter(`${cwLimit}`, 2)}
+              keyboardType="number-pad"
+              label="ATM withdrawal daily limit"
+              valuePrefix={currencyCode}
+              errorLabel={`Your Cash withdrawal limit is between ${minCashWithdrawalLimit} - ${maxCashWithdrawalLimit} `}
+              error={cwError}
+            />
+            <EditableInput
+              onSave={async (e) => {
+                if (
+                  Number(e) > Number(maxContactLessLimit) ||
+                  Number(e) < Number(minContactLessLimit)
+                ) {
+                  setCtError(true);
+                } else {
+                  checkUserAuth(
+                    e,
+                    TransactionTypes.CONTACTLESS_WITHDRAW,
+                    setCtLimit
+                  );
+                  setCtError(false);
+                }
+              }}
+              value={NumberFormatter(`${ctLimit}`, 2)}
+              keyboardType="number-pad"
+              label="Contactless transaction limit"
+              valuePrefix={currencyCode}
+              errorLabel={`Your Contactless transaction limit is between ${minContactLessLimit} - ${maxContactLessLimit} `}
+              error={ctError}
+            />
+            </View>}
+          </View>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button
+            label={i18n?.t("adb_card.btn_go_home") ?? "Go to Home"}
+            onPress={() => {
+              onPressGotoHome();
+            }}
+          />
+        </View>
+      </KeyboardAwareScrollView>
       <AlertModal
         isVisible={isAlertVisible}
         position="bottom"
@@ -320,8 +342,12 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
           </View>
         }
       />
-      {/* <LoadingModal shouldShow={ isLoadingCardLimit} /> */}
-    </KeyboardAvoidingView>
+      <AlertMessage
+        onClose={() => {}}
+        isVisible={!!showAlertMsg}
+        title="Session Expired."
+      />
+    </>
   );
 };
 

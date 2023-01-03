@@ -2,26 +2,38 @@ import React, { useContext } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { ThemeContext } from "react-native-theme-component";
 import TouchID from "react-native-touch-id";
+import CloseIcon from "../../../assets/close-icon";
+import DangerIcon from "../../../assets/danger-icon";
 import { InfoIcon } from "../../../assets/info.icon";
+import RightArrowIcon from "../../../assets/right-arrow-icon";
 import { BRoundedTickIcon } from "../../../assets/rounded-tick.icon";
+import { BTickIcon } from "../../../assets/tick.icon";
 import { WalletContext } from "../../../context/wallet-context";
 import AlertModal from "../../alert-model";
 import Button from "../core/button";
 import { AppPasscodeCompStyle } from "../types";
+import { validatePIN } from "./helpers";
 import useMergeStyles from "./styles";
 export interface AppPassCodeProps {
   style?: AppPasscodeCompStyle;
   onPressGotoCard: () => void;
   orderPhysicalCard: () => void;
-  onSuccess: () => void;
-  // error: boolean;
-  // showAlert:boolean;
-  // setShowAlert: (val:boolean) => void;
-  // setError: (val:boolean) => void;
-  isForVirtualCard:boolean
+  onSuccess: (e:string) => void;
+  onPressNext?: (e:string) => void;
+  isForPhysicalCard?:boolean;
+  isForVirtualCard?:boolean;
+  extraData?: any[];
+  title?:string;
+  subTitle?:string;
+  error?:boolean;
+  setError: (e:boolean) => void;
+  showAlert?:boolean;
+  setShowAlert: (e:boolean) => void;
+  secondaryErrorLabel?: string;
+  showSecondaryErrorLabel?:boolean;
 }
 
-const RenderButtons = ({ onPress }: { onPress: (num: string) => void }) => {
+const RenderButtons = ({ onPress, isForPhysicalCard }: { onPress: (num: string) => void, isForPhysicalCard?:boolean }) => {
   const data: any[] = [...Array(12).keys()];
   return (
     <View
@@ -38,9 +50,9 @@ const RenderButtons = ({ onPress }: { onPress: (num: string) => void }) => {
         return (
           <TouchableOpacity
             onPress={() =>
-              onPress(i === 9 ? "" : i === 10 ? "0" : i === 11 ? "X" : i + 1)
+              onPress(i === 9 ? isForPhysicalCard ? "X" : "" : i === 10 ? '0' : i === 11 ? isForPhysicalCard ? "Go" : "X" : i + 1)
             }
-            disabled={i === 9}
+            // disabled={isForPhysicalCard && i === 9}
             style={{
               height: 64,
               width: 64,
@@ -52,18 +64,27 @@ const RenderButtons = ({ onPress }: { onPress: (num: string) => void }) => {
               borderRadius: 100,
             }}
           >
-            <Text style={{ fontWeight: "600" }}>
-              {i === 9 ? "" : i === 10 ? 0 : i === 11 ? "X" : i + 1}
-            </Text>
+            {i === 9 ? <View>
+              {
+               isForPhysicalCard && <CloseIcon />
+              }
+            </View> : i===11 ? <View>
+              {
+               isForPhysicalCard ? <RightArrowIcon size={24}/> : <CloseIcon />
+              }
+            </View> : <Text style={{ fontWeight: "600", color: "#1b1b1b" }}>
+              { i === 10 ? 0 : i + 1}
+            </Text>}
           </TouchableOpacity>
         );
       })}
     </View>
   );
 };
-const RenderPass = ({ val }: { val: string }) => {
+const RenderPass = ({ val,extraData, errorLabel, showError }: { val: string,extraData?:any[], showError?:boolean, errorLabel?:string }) => {
   const data: any[] = [...Array(6).keys()];
   return (
+    <View>
     <View
       style={{
         flexDirection: "row",
@@ -71,33 +92,67 @@ const RenderPass = ({ val }: { val: string }) => {
         alignItems: "center",
         paddingHorizontal: 60,
       }}
-    >
+      >
       {data.map((i) => {
         return (
           <View
-            style={{
-              height: 16,
-              width: 16,
-              backgroundColor: i < val.length ? "#1b1b1b" : "transparent",
-              borderRadius: 20,
-              marginHorizontal: 12,
-              borderWidth: 1,
-            }}
+          style={{
+            height: 16,
+            width: 16,
+            backgroundColor: i < val.length ? "#1b1b1b" : "transparent",
+            borderRadius: 20,
+            marginHorizontal: 12,
+            borderWidth: 1,
+          }}
           />
-        );
-      })}
+          );
+        })}
     </View>
+    <View style={{marginTop:15}}>
+
+    {
+      extraData?.map((ed) => {
+        return(
+          <View style={{marginVertical:4, paddingHorizontal: 24, flexDirection:'row', alignItems:'center'}}>
+            <BTickIcon height={15} width={15} color={validatePIN(val) ? "green" : "#1b1b1b"} />
+            <Text style={{color:"#000", marginLeft: 10}}>{ed.title}</Text>
+          </View>
+        )
+      })
+    }
+    {
+     showError &&  <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center', alignSelf:'center'}}>
+      <DangerIcon />
+        <Text style={{color: "#000", marginLeft: 10}}>Your PINs do not match.</Text>
+      </View>
+    }
+    </View>
+        </View>
   );
 };
 
 const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
   props: AppPassCodeProps
 ) => {
-  const { style, onPressGotoCard, orderPhysicalCard, onSuccess, isForVirtualCard } = props;
+  const { style,
+    onPressGotoCard,
+    orderPhysicalCard,
+    onSuccess,
+    isForVirtualCard,
+    isForPhysicalCard,
+    extraData,
+    title,
+    subTitle,
+    error,
+    setError,
+    showAlert,
+    setShowAlert,
+    showSecondaryErrorLabel,
+    secondaryErrorLabel,
+    onPressNext,
+  } = props;
   const styles: AppPasscodeCompStyle = useMergeStyles(style);
   const [userVal, setUserVal] = React.useState("");
-  const [showAlert, setShowAlert] = React.useState(false);
-  const [error, setError] = React.useState(false);
   const { createVCApplication, isSubmittingVCApplication } =
     useContext(WalletContext);
   const { i18n } = useContext(ThemeContext);
@@ -107,7 +162,6 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
     })
       .then(() => {
         if(isForVirtualCard){
-
           createVCApplication().then((e) => {
             setShowAlert(true);
             if (!e) {
@@ -115,7 +169,9 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
             }
           });
         }else{
-          onSuccess()
+          if(onPressNext === undefined) {
+            onSuccess(userVal)
+          }
         }
       })
       .catch(() => {});
@@ -130,7 +186,9 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
           }
         });
       }else{
-        onSuccess()
+      if(onPressNext === undefined) {
+        onSuccess(userVal)
+      }
       }
     }
   }, [userVal]);
@@ -138,11 +196,10 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
     <View style={styles.containerStyle}>
       <View style={styles.titleContainerStyle}>
         <Text style={styles.titleStyle}>
-          {i18n?.t("adb_card.lbl_enter_app_pass") ?? "Enter your app passcode"}
+          {title ?? i18n?.t("adb_card.lbl_enter_app_pass")}
         </Text>
         <Text style={styles.subTitleStyle}>
-          {i18n?.t("adb_card.lbl_enter_digit_pass") ??
-            "Enter your 6-digit passcode to continue."}
+          {subTitle ?? i18n?.t("adb_card.lbl_enter_digit_pass")}
         </Text>
       </View>
       <TextInput
@@ -152,13 +209,19 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
           width: "100%",
           opacity: 0,
         }}
+        editable={false}
       />
       <View style={{ flex: 0.8, justifyContent: "space-between" }}>
-        <RenderPass val={userVal} />
+        <RenderPass val={userVal} extraData={extraData ?? []} showError={showSecondaryErrorLabel} errorLabel={secondaryErrorLabel}/>
         <RenderButtons
+        isForPhysicalCard={isForPhysicalCard}
           onPress={(e) => {
             if (e === "X") {
-              setUserVal(userVal.substring(0, userVal.length - 1));
+              setUserVal("");
+            }else if(e === 'Go'){
+              if(onPressNext){
+                onPressNext(userVal)
+              }
             } else {
               if (userVal.length < 6) {
                 setUserVal(userVal + e);
@@ -170,17 +233,16 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
       <AlertModal
         isVisible={showAlert}
         position="bottom"
-        title={error ? "Unsuccessful!" : "Success!"}
+        title={error ? "Unsuccessful!" : isForPhysicalCard ? "Card PIN successfully set!" : "Success!"}
         subtitle={
           error
             ? i18n?.t("adb_card.lbl_req_failed") ??
               "Sorry, your request is unsuccessful in this instance. Please try again later."
-            : i18n?.t("adb_card.lbl_card_activated") ??
-              "Your virtual card has been activated. Get your  physical card today!"
+            : isForPhysicalCard ? "Your PIN has been set." : i18n?.t("adb_card.lbl_card_activated")
         }
         icon={
           <View style={{ height: 55, width: 55 }}>
-            {error ? <InfoIcon /> : <BRoundedTickIcon />}
+            {error ? <InfoIcon color={"#00000030"} /> : <BRoundedTickIcon />}
           </View>
         }
         style={{
@@ -192,30 +254,35 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
         onConfirmed={() => {}}
         children={
           <View style={{ paddingHorizontal: 24, width: "100%" }}>
-            <View style={{ marginBottom: 10 }}>
+            {!isForPhysicalCard && <View style={{ marginBottom: 10 }}>
               <Button
                 labelColor="#1b1b1b"
                 background="#ffffff"
                 label={
                   error
-                    ? i18n?.t("adb_card.btn_go_home") ?? "Go to Home"
-                    : i18n?.t("adb_card.btn_go_card") ?? "Go to Card Centre"
+                    ? i18n?.t("adb_card.btn_go_home")
+                    : i18n?.t("adb_card.btn_go_card")
                 }
                 onPress={onPressGotoCard}
               />
-            </View>
+            </View>}
             <Button
               label={
                 error
-                  ? i18n?.t("adb_card.btn_retry") ?? "Retry"
-                  : i18n?.t("adb_card.btn_order_physical_card") ??
-                    "Order Physical Card"
+                  ? i18n?.t("adb_card.btn_retry")
+                  :isForPhysicalCard ? i18n?.t("adb_card.btn_go_card") : i18n?.t("adb_card.btn_order_physical_card")
               }
               onPress={() => {
                 if (!error) {
-                  orderPhysicalCard();
+                  if(isForPhysicalCard){
+                    onPressGotoCard();
+                    setShowAlert(false)
+                  }else{
+                    orderPhysicalCard();
+                  }
                 } else {
                   setShowAlert(false);
+                  setUserVal("")
                 }
               }}
             />

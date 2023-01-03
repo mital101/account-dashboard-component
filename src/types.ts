@@ -4,7 +4,7 @@ import {
   ImageStyle,
   StyleProp,
   TextStyle,
-  ViewStyle,
+  ViewStyle
 } from "react-native";
 import { AlertModalStyles } from "react-native-theme-component/src/alert";
 import { EmptyWalletThemeProps } from "./components/no-account-dashboard-component";
@@ -12,7 +12,7 @@ import {
   BankImagesMap,
   Transaction,
   TransactionSummary,
-  Wallet,
+  Wallet
 } from "./model";
 
 export type WalletListComponentRefs = {
@@ -345,6 +345,7 @@ export type TransactionLimit = {
 export type TransactionChannel = {
   name: string;
   code: string;
+  description: string;
   enabled: boolean;
 };
 
