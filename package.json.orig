@@ -1,7 +1,11 @@
 {
   "name": "@banking-component/account-dashboard-component",
   "private": true,
+<<<<<<< HEAD
   "version": "1.9.99",
+=======
+  "version": "1.9.97",
+>>>>>>> 626e89c1892e6bf185fbc59dd1cd10ab104a7555
   "description": "Manage wallets/transactions",
   "repository": {
     "type": "git",

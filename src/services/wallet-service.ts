@@ -2,7 +2,7 @@ import qs from "qs";
 import {
   FilterTransaction,
   UdpateLimitType,
-  VirtualCardApplicationBody,
+  VirtualCardApplicationBody
 } from "../types";
 
 type WalletClient = {
@@ -708,15 +708,15 @@ export class WalletService {
   updateCardStatus = async (
     status: string,
     walletId: string,
-    ott: string,
+    // ott: string,
     reason?: string,
     reasonCode?: string
   ) => {
-    if (this._walletClient) {
+    if (this._walletServiceClient) {
       console.log("service -> updateCardStatus", walletId, reason, reasonCode);
       try {
-        const response = await this._walletClient.post(
-          `/wallets/${walletId}/status?oneTimeToken=${ott}`,
+        const response = await this._walletServiceClient.post(
+          `/wallets/${walletId}/status?oneTimeToken=`,
           {
             status,
             reason,
@@ -848,19 +848,13 @@ export class WalletService {
   };
 
   getTransactionChannels = async (walletId: string) => {
-    if (this._walletClient) {
-      console.log("service -> getTransactionLimitByProxyNumber", walletId);
+    if (this._walletServiceClient) {
       try {
-        const response = await this._walletClient.get(
+        const response = await this._walletServiceClient.get(
           `wallets/${walletId}/transaction-channels`
-        );
-        console.log(
-          "service -> getTransactionChannels -> response.data",
-          response.data
         );
         return response.data;
       } catch (error) {
-        console.log("error2", error);
         throw error;
       }
     } else {
@@ -1179,7 +1173,7 @@ export class WalletService {
         );
         return response.data;
       } catch (err) {
-        console.log("createVirtualCardApplication ---> err", err);
+        return err;
       }
     } else {
       throw new Error("Wallet Service Client is not registered");

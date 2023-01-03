@@ -3,6 +3,7 @@ export { default as ADBCardComponent } from "./src/components/adb-card";
 export { default as AppPassCodeComponent } from "./src/components/adb-card/app-passcode-component";
 export { default as VirtualCardInfo } from "./src/components/adb-card/card-info-component";
 export { default as CardManagementComponent } from "./src/components/adb-card/physical-card-component";
+export { default as AutoPhysicalCardComponent } from "./src/components/adb-card/physical-card-component/auto-physical-card-activation";
 export { default as CardLimitComponent } from "./src/components/adb-card/physical-card-component/card-limit-component";
 export { default as ManualCardActivation } from "./src/components/adb-card/physical-card-component/manual-physical-card-activation";
 export { default as OrderPhysicalCardComponent } from "./src/components/adb-card/physical-card-component/order-physical-card";

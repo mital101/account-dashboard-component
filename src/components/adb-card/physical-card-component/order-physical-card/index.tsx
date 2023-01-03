@@ -27,12 +27,12 @@ export const addressRadioGroup = [
     desc: "{Olive P5-20, Empire Residence, 40170, Damansara Perdana, Selangor}",
     selected: false,
   },
-  {
-    id: "rd-2",
-    title: "MyKad address",
-    desc: "{B10, D’Aman Residence, Jalan Perdana 5, Taman Perdana 5, Puchong, Selangor}",
-    selected: false,
-  },
+  // {
+  //   id: "rd-2",
+  //   title: "MyKad address",
+  //   desc: "{B10, D’Aman Residence, Jalan Perdana 5, Taman Perdana 5, Puchong, Selangor}",
+  //   selected: false,
+  // },
 ];
 
 const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (

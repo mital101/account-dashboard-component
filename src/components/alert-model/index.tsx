@@ -4,7 +4,7 @@ import {
   Platform,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import Modal from "react-native-modal";
 import { Button, ThemeContext } from "react-native-theme-component";

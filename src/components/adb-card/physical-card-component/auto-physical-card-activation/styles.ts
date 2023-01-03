@@ -1,24 +1,21 @@
 import { defaultsDeep } from "lodash";
 import { StyleProp, StyleSheet, TextStyle, ViewStyle } from "react-native";
 
-export interface CardLimitStyles {
-    wrapperStyle?: StyleProp<ViewStyle>;
+export interface AutoPhysicalCardStyles {
     containerStyle?: StyleProp<ViewStyle>;
+    bgImageStyle?:StyleProp<ViewStyle>;
+    buttonContainer?:StyleProp<ViewStyle>;
     titleStyle?:StyleProp<TextStyle>;
     subTitleStyle?:StyleProp<TextStyle>;
-    cardContainerStyle?:StyleProp<ViewStyle>;
-    buttonContainer?:StyleProp<ViewStyle>;
 }
 
 const useMergeStyles = (
-  style?: CardLimitStyles
-): CardLimitStyles => {
-  const defaultStyles: CardLimitStyles = StyleSheet.create({
-    wrapperStyle: {
+  style?:AutoPhysicalCardStyles 
+): AutoPhysicalCardStyles => {
+  const defaultStyles: AutoPhysicalCardStyles = StyleSheet.create({
+    containerStyle: {
         backgroundColor: "#fff",
-        paddingHorizontal: 24,
-        flexGrow:1,
-        justifyContent:'space-between'
+        flex:1,
     },
     titleStyle: {
       fontSize: 24,
@@ -30,10 +27,18 @@ const useMergeStyles = (
       fontSize: 14,
       color: '#1b1b1b',
     },
+    bgImageStyle: {
+        flex: 0.8,
+        paddingHorizontal:24,
+        justifyContent:'center',
+        alignItems:'center'
+    },
     buttonContainer: {
-      marginVertical: 20,
-      width:'100%',
-      alignSelf:'center'
+        flex: 0.2,
+        backgroundColor: "#00000060",
+        justifyContent:'center',
+        alignItems:'center',
+        paddingHorizontal:24,
     }
   });
 

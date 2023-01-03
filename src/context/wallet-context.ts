@@ -17,7 +17,7 @@ import {
   Wallet,
   WalletLimit,
   WalletSummary,
-  WalletTransaction,
+  WalletTransaction
 } from "../model";
 import walletLocalStore from "../services/local-store";
 import { WalletService } from "../services/wallet-service";
@@ -25,11 +25,9 @@ import {
   ADBWallet,
   CardLimitsType,
   CardReport,
-  FilterTransaction,
-  TransactionChannel,
-  TransactionLimit,
+  FilterTransaction, TransactionChannel, TransactionLimit,
   TransferType,
-  UdpateLimitType,
+  UdpateLimitType
 } from "../types";
 const walletService = WalletService.instance();
 
@@ -146,7 +144,10 @@ export interface WalletContextData {
     otpId: string
   ) => Promise<boolean>;
   cardWalletStatus?: string;
-  updateCardStatus: (status: string) => void;
+  updateCardStatus: ( status: string,
+    walletId: string,
+    reason?: string,
+    reasonCode?: string) => void;
 
   getTransactionLimit: () => void;
   generateOTPForUpdateTransactionLimit: () => void;
@@ -194,6 +195,10 @@ export interface WalletContextData {
   cardLimits: CardLimitsType[] | null;
   updateCardLimits: (limitSetting: UdpateLimitType) => Promise<void>;
   isUpdatingCardLimits: boolean;
+  hasPhysicalCard: boolean;
+
+  // Transaction Channels
+  transactionChannels: TransactionChannel[];
 }
 
 export const walletDefaultValue: WalletContextData = {
@@ -313,6 +318,8 @@ export const walletDefaultValue: WalletContextData = {
   cardLimits: null,
   updateCardLimits: async () => undefined,
   isUpdatingCardLimits: false,
+  hasPhysicalCard: false,
+  transactionChannels: []
 };
 
 export const WalletContext =
@@ -431,6 +438,9 @@ export function useWalletContextValue(): WalletContextData {
     useState<boolean>(false);
   const [_errorUpdatingCardLimits, setErrorUpdatingCardLimits] =
     useState<Error>();
+  
+  const [_hasPhysicalCard, setPhysicalCard] = useState<boolean>(false);
+  const [_transactionChannel, setTransactionChannels] = useState<TransactionChannel[]>([]);
 
   const getVirtualCardStatus = async () => {
     const res = await walletLocalStore.getCustomerCardStatus();
@@ -508,9 +518,13 @@ export function useWalletContextValue(): WalletContextData {
     const cardWallet: CardWallet | undefined = walletsOrdered.find(
       (w) => w.type === "CARD_WALLET"
     );
-    if (cardWallet && cardWallet?.status === "ACTIVE") {
-      setVirtualCardActive(true);
+    if (cardWallet) {
+      setVirtualCardActive(cardWallet?.status === "ACTIVE");
       setCardWallets(cardWallet);
+      setCardWalletStatus(cardWallet?.status);
+    } else if (!cardWallet) {
+      setVirtualCardActive(false);
+      setCardWallets(undefined);
     }
   };
 
@@ -1318,23 +1332,25 @@ export function useWalletContextValue(): WalletContextData {
   );
 
   const getTransactionChannels = useCallback(async () => {
+    console.log('Inside get transaction');
     setIsLoadingGetTransactionChannel(true);
     try {
       if (_cardWallet?.walletId) {
+        
         const response = await walletService.getTransactionChannels(
           _cardWallet.walletId
         );
         if (response.data?.channels?.length > 0) {
           console.log("getTransactionChannels -> limit", response.data);
-          const isEnable = response.data.channels
-            .filter(
-              (c: TransactionChannel) =>
-                c.code === "ECOMDOMESTIC" || c.code === "ECOMINTERNATIONAL"
-            )
-            .some((c: TransactionChannel) => c.enabled);
-          console.log("getTransactionChannels -> isEnable", isEnable);
-          setIsEnableTransactionChannel(isEnable);
-          setInitIsEnableTransactionChannel(isEnable);
+          // const isEnable = response.data.channels
+          //   .filter(
+          //     (c: TransactionChannel) =>
+          //       c.code === "ECOMDOMESTIC" || c.code === "ECOMINTERNATIONAL"
+          //   )
+          //   .some((c: TransactionChannel) => c.enabled);
+          // setIsEnableTransactionChannel(isEnable);
+          // setInitIsEnableTransactionChannel(isEnable);
+          setTransactionChannels(response.data.channels ?? [])
         }
       }
     } catch (error: any) {
@@ -1488,6 +1504,20 @@ export function useWalletContextValue(): WalletContextData {
     }
   }, []);
 
+  const updateCardStatus = useCallback(async (
+    status: string,
+    walletId: string,
+    reason?: string,
+    reasonCode?: string
+  ) => {
+    try {
+      const response = await walletService.updateCardStatus(status, walletId, reason, reasonCode);
+      setCardWalletStatus(status === "ACTIVE" ? "ACTIVE" : "LOCKED")
+    }catch(err){
+      console.log("updateCardStatus --> Err", err); 
+    }
+  }, [])
+
   const updateCardLimits = useCallback(
     async (limitSettings: UdpateLimitType) => {
       try {
@@ -1595,7 +1625,7 @@ export function useWalletContextValue(): WalletContextData {
       oneTimeToken: _oneTimeToken,
       generateOTPForUpdateCardStatus,
       verifyOTPForUpdateCardStatus,
-      updateCardStatus: setCardWalletStatus,
+      updateCardStatus: updateCardStatus,
       cardWalletStatus: _cardWalletStatus,
       transactionLimits: _transactionLimits,
       isLoadingGetTransactionLimit: _isLoadingTransactionLimits,
@@ -1629,8 +1659,12 @@ export function useWalletContextValue(): WalletContextData {
       cardLimits: _cardLimit,
       isLoadingCardLimit: _isLoadingCardLimit,
       isUpdatingCardLimits: _isUpdatingCardLimit,
+      hasPhysicalCard: _hasPhysicalCard,
+      transactionChannels: _transactionChannel
     }),
     [
+      _transactionChannel,
+      _hasPhysicalCard,
       _isUpdatingCardLimit,
       _isLoadingCardLimit,
       _cardLimit,
