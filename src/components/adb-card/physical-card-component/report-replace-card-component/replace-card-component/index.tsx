@@ -1,0 +1,269 @@
+import React, { useContext, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button, ThemeContext } from "react-native-theme-component";
+import { InfoIcon } from "../../../../../assets/info.icon";
+import { BRoundedTickIcon } from "../../../../../assets/rounded-tick.icon";
+import AlertModal from "../../../../alert-model";
+import DeliverInfoSheet from "../../order-physical-card/deliver-info-sheet";
+import { ReportIssueType } from "../report-card-component";
+import useMergeStyles, { ReplaceCardComponentStyles } from "./styles";
+export interface ReplaceCardComponentProps {
+  style?: ReplaceCardComponentStyles;
+  reason: string;
+  onPressSettings: () => void;
+  onPressGotoHome: () => void;
+  onPressContinue: () => void;
+}
+export const addressRadioGroup = [
+  {
+    id: "rd-1",
+    title: "Mailing address",
+    desc: "{Olive P5-20, Empire Residence, 40170, Damansara Perdana, Selangor}",
+    selected: true,
+  },
+];
+const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
+  const { style, reason, onPressSettings, onPressGotoHome, onPressContinue } =
+    props;
+  const { i18n } = useContext(ThemeContext);
+  const styles: ReplaceCardComponentStyles = useMergeStyles(style);
+  const [radioData, setRadioData] = useState(addressRadioGroup);
+  const [showSheet, setShowSheet] = useState(false);
+  const [showAlert, setAlert] = useState(false);
+  const [error, setError] = useState(false);
+  const handlePress = (index: number) => {
+    const arr = [...radioData];
+    arr.forEach((_, i) => {
+      arr[i].selected = false;
+    });
+    arr[index].selected = !arr[index].selected;
+    setRadioData(arr);
+  };
+  return (
+    <View style={styles.containerStyle}>
+      <Text style={styles.titleStyle}>Replace your card today!</Text>
+      <Text style={styles.subTitleStyle}>
+        Please confirm your delivery address. Your replacement card will have
+        different card details for security reasons.
+      </Text>
+      <View style={styles.reasonContainer}>
+        <Text style={styles.reasonTitle}>Reason for replacement</Text>
+        <Text style={styles.reasonText}>{reason}</Text>
+      </View>
+      <View style={innerStyles.subTitleContainer}>
+        <Text style={innerStyles.deliverText}>
+          {i18n?.t("adb_card.lbl_deliver_to") ?? "Deliver to"}
+        </Text>
+        <TouchableOpacity onPress={() => setShowSheet(true)}>
+          <InfoIcon height={16} width={16} color={"#000000"} />
+        </TouchableOpacity>
+      </View>
+      {radioData.map((item, index) => (
+        <View style={innerStyles.radioButtonContainer}>
+          <TouchableOpacity
+            style={innerStyles.radioBtnOuterCircle}
+            onPress={() => handlePress(index)}
+          >
+            {item.selected && <View style={innerStyles.radioBtnInnerCircle} />}
+          </TouchableOpacity>
+          <View style={innerStyles.radioBtnTextContainer}>
+            <Text style={innerStyles.radioBtnTitle}>{item.title}</Text>
+            <Text style={{ color: "#1b1b1b" }}>{item.desc}</Text>
+          </View>
+        </View>
+      ))}
+      <DeliverInfoSheet
+        isVisible={showSheet}
+        onClose={() => setShowSheet(false)}
+        onPressSettings={onPressSettings}
+      />
+      <View style={styles.buttonContainer}>
+        <View style={innerStyles.copyContainer}>
+          <Text style={innerStyles.copyContainerText}>
+            {reason === ReportIssueType.DAMAGED
+              ? "No fees will be deducted from your main account."
+              : "RM 12.00 fees will be deducted from your main account."}
+          </Text>
+        </View>
+        <Button
+          style={{
+            primaryContainerStyle: {
+              borderRadius: 100,
+              height: 56,
+              marginBottom: 8,
+              borderWidth: 2,
+              borderColor: "#1b1b1b",
+            },
+            primaryLabelStyle: {
+              color: "#1b1b1b",
+            },
+          }}
+          bgColor="#FFFFFF"
+          variant="primary"
+          label={i18n?.t("adb_card.btn_go_home")}
+          onPress={onPressGotoHome}
+        />
+        <Button
+          style={{
+            primaryContainerStyle: {
+              borderRadius: 100,
+              height: 56,
+            },
+            primaryLabelStyle: {
+              color: "#FFFFFF",
+            },
+          }}
+          bgColor="#1b1b1b"
+          variant="primary"
+          label={i18n?.t("adb_card.btn_continue")}
+          onPress={() => {
+            setAlert(true);
+            setError(false);
+          }}
+        />
+      </View>
+      <AlertModal
+        isVisible={showAlert}
+        position="bottom"
+        title={
+          error
+            ? i18n?.t("adb_card.lbl_unsuccessful")
+            : i18n?.t("adb_card.lbl_success")
+        }
+        subtitle={
+          error
+            ? i18n?.t("adb_card.lbl_req_failed")
+            : "Your replacement card has been ordered and will be delivered to your selected address."
+        }
+        icon={
+          <View style={{ height: 55, width: 55 }}>
+            {error ? (
+              <InfoIcon color="#00000030" />
+            ) : (
+              <BRoundedTickIcon color="#00000030" />
+            )}
+          </View>
+        }
+        onCancel={() => {}}
+        onConfirmed={() => {}}
+        style={{
+          containerStyle: {
+            borderRadius: 24,
+          },
+        }}
+        children={
+          <View style={{ paddingHorizontal: 24, width: "100%" }}>
+            {!error && (
+              <View style={innerStyles.copyContainer}>
+                <Text style={innerStyles.copyContainerText}>
+                  {`You can start transacting with your${
+                    reason === ReportIssueType.LOST_OR_STOLEN
+                      ? " replacement"
+                      : ""
+                  } virtual card right now.`}
+                </Text>
+              </View>
+            )}
+            <View style={{ marginBottom: 10 }}>
+              <Button
+                style={{
+                  primaryContainerStyle: {
+                    borderRadius: 100,
+                    height: 56,
+                    borderWidth: 2,
+                    borderColor: "#1b1b1b",
+                  },
+                  primaryLabelStyle: {
+                    color: "#1b1b1b",
+                  },
+                }}
+                bgColor="#ffffff"
+                variant="primary"
+                label={i18n?.t("adb_card.btn_go_home")}
+                onPress={() => {
+                  setAlert(false);
+                  if (!error) {
+                    onPressGotoHome();
+                  }
+                }}
+              />
+            </View>
+            <Button
+              style={{
+                primaryContainerStyle: {
+                  borderRadius: 100,
+                  height: 56,
+                },
+              }}
+              bgColor="#1b1b1b"
+              variant="primary"
+              label={
+                error
+                  ? i18n?.t("adb_card.btn_retry")
+                  : i18n?.t("adb_card.btn_track_card")
+              }
+              onPress={() => {
+                setAlert(false);
+                if (!error) {
+                  //   onPressTrackCard();
+                }
+              }}
+            />
+          </View>
+        }
+      />
+    </View>
+  );
+};
+
+export default ReplaceCardComponent;
+
+const innerStyles = StyleSheet.create({
+  subTitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  deliverText: {
+    fontWeight: "600",
+    marginRight: 10,
+    color: "#1b1b1b",
+  },
+  radioButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    marginVertical: 8,
+  },
+  radioBtnOuterCircle: {
+    height: 24,
+    width: 24,
+    borderWidth: 2,
+    borderRadius: 24,
+    padding: 2,
+  },
+  radioBtnInnerCircle: {
+    height: "100%",
+    width: "100%",
+    backgroundColor: "#1b1b1b",
+    borderRadius: 24,
+  },
+  radioBtnTextContainer: {
+    marginLeft: 10,
+  },
+  radioBtnTitle: {
+    fontWeight: "600",
+    marginBottom: 4,
+    color: "#1b1b1b",
+  },
+  copyContainer: {
+    backgroundColor: "#dddddd",
+    width: "100%",
+    borderRadius: 3,
+    padding: 16,
+    marginVertical: 16,
+  },
+  copyContainerText: {
+    fontSize: 12,
+    color: "#1b1b1b",
+  },
+});

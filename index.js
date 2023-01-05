@@ -7,6 +7,7 @@ export { default as AutoPhysicalCardComponent } from "./src/components/adb-card/
 export { default as CardLimitComponent } from "./src/components/adb-card/physical-card-component/card-limit-component";
 export { default as ManualCardActivation } from "./src/components/adb-card/physical-card-component/manual-physical-card-activation";
 export { default as OrderPhysicalCardComponent } from "./src/components/adb-card/physical-card-component/order-physical-card";
+export { default as ReportAndReplaceComponent } from "./src/components/adb-card/physical-card-component/report-replace-card-component";
 export { default as ActiveCardRequestComponent } from "./src/components/card-components/card-active-card-request";
 export { default as CardTermAndConditionsComponent } from "./src/components/card-components/card-term-and-conditions";
 export { default as CardUpdateTransactionLimitsComponent } from "./src/components/card-components/card-transaction-limits";
