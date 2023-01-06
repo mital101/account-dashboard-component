@@ -92,7 +92,7 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
           label={i18n?.t("adb_card.lbl_limit")}
         />
         <CircularImageView
-          onClick={onReportPress}
+          onClick={() => onReportPress()}
           style={{
             containerStyle: {
               marginHorizontal: 12,
