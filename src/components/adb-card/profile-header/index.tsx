@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { AuthContext } from "react-native-auth-component";
 import { ThemeContext } from "react-native-theme-component";
 import BarcodeIcon from "../../../assets/barcode-icon";
+import { WalletContext } from "../../../context/wallet-context";
 import AccountBalanceCard from "../balance-component";
 import CircularImageView from "../core/circular-image-view";
 import { ActivateVirtualCardStyle, BalanceStyle } from "../types";
@@ -40,11 +42,15 @@ const ProfileHeader: React.FC<ProfileInterface> = (props) => {
     onBarcodePress,
     onSettingsPress,
   } = props;
+  const { profile } = useContext(AuthContext);
+  const { wallets } = useContext(WalletContext);
+  const currentBalance = wallets.length > 0 ? wallets[0].currentBalance : 0;
   const { i18n } = useContext(ThemeContext);
+  const fullName = `${profile?.firstName} ${profile?.lastName}`.trim();
   return (
     <>
       <View style={styles.profileNameContainer}>
-        <Text style={styles.usernameText}>Hi, 101</Text>
+        <Text style={styles.usernameText}>Hi, {fullName}</Text>
         <CircularImageView onClick={onSettingsPress} />
       </View>
       <View style={styles.membershipContainer}>

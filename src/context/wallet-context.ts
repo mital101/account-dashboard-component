@@ -17,7 +17,7 @@ import {
   Wallet,
   WalletLimit,
   WalletSummary,
-  WalletTransaction
+  WalletTransaction,
 } from "../model";
 import walletLocalStore from "../services/local-store";
 import { WalletService } from "../services/wallet-service";
@@ -25,9 +25,11 @@ import {
   ADBWallet,
   CardLimitsType,
   CardReport,
-  FilterTransaction, TransactionChannel, TransactionLimit,
+  FilterTransaction,
+  TransactionChannel,
+  TransactionLimit,
   TransferType,
-  UdpateLimitType
+  UdpateLimitType,
 } from "../types";
 const walletService = WalletService.instance();
 
@@ -126,6 +128,7 @@ export interface WalletContextData {
   walletLimits?: WalletLimit[];
   financialProfile?: FinancialProfile;
   cardWallet?: CardWallet;
+  bankWallet?: CardWallet;
   isLoadingCardWallet?: boolean;
   getCardWallet: () => void;
   generateOTPForCardDetails: () => void;
@@ -144,10 +147,12 @@ export interface WalletContextData {
     otpId: string
   ) => Promise<boolean>;
   cardWalletStatus?: string;
-  updateCardStatus: ( status: string,
+  updateCardStatus: (
+    status: string,
     walletId: string,
     reason?: string,
-    reasonCode?: string) => void;
+    reasonCode?: string
+  ) => void;
 
   getTransactionLimit: () => void;
   generateOTPForUpdateTransactionLimit: () => void;
@@ -270,6 +275,7 @@ export const walletDefaultValue: WalletContextData = {
   walletLimits: undefined,
   financialProfile: undefined,
   cardWallet: undefined,
+  bankWallet: undefined,
   isLoadingCardWallet: false,
   getCardWallet: () => undefined,
   generateOTPForCardDetails: () => undefined,
@@ -319,7 +325,7 @@ export const walletDefaultValue: WalletContextData = {
   updateCardLimits: async () => undefined,
   isUpdatingCardLimits: false,
   hasPhysicalCard: false,
-  transactionChannels: []
+  transactionChannels: [],
 };
 
 export const WalletContext =
@@ -394,6 +400,7 @@ export function useWalletContextValue(): WalletContextData {
 
   const [_walletLimits, setWalletLimits] = useState<WalletLimit[]>([]);
   const [_cardWallet, setCardWallets] = useState<CardWallet>();
+  const [_bankWallet, setBankWallet] = useState<CardWallet>();
   const [_isLoadingCardWallet, setIsLoadingCardWallet] = useState<boolean>();
   const [_isLoadingGenerateOTP, setIsLoadingGenerateOTP] =
     useState<boolean>(false);
@@ -438,9 +445,11 @@ export function useWalletContextValue(): WalletContextData {
     useState<boolean>(false);
   const [_errorUpdatingCardLimits, setErrorUpdatingCardLimits] =
     useState<Error>();
-  
+
   const [_hasPhysicalCard, setPhysicalCard] = useState<boolean>(false);
-  const [_transactionChannel, setTransactionChannels] = useState<TransactionChannel[]>([]);
+  const [_transactionChannel, setTransactionChannels] = useState<
+    TransactionChannel[]
+  >([]);
 
   const getVirtualCardStatus = async () => {
     const res = await walletLocalStore.getCustomerCardStatus();
@@ -518,6 +527,14 @@ export function useWalletContextValue(): WalletContextData {
     const cardWallet: CardWallet | undefined = walletsOrdered.find(
       (w) => w.type === "CARD_WALLET"
     );
+    const bankWallet: CardWallet | undefined = walletsOrdered.find(
+      (w) => w.type === "BANK_WALLET"
+    );
+    if (bankWallet) {
+      setBankWallet(bankWallet);
+    } else {
+      setBankWallet(undefined);
+    }
     if (cardWallet) {
       setVirtualCardActive(cardWallet?.status === "ACTIVE");
       setCardWallets(cardWallet);
@@ -1332,11 +1349,10 @@ export function useWalletContextValue(): WalletContextData {
   );
 
   const getTransactionChannels = useCallback(async () => {
-    console.log('Inside get transaction');
+    console.log("Inside get transaction");
     setIsLoadingGetTransactionChannel(true);
     try {
       if (_cardWallet?.walletId) {
-        
         const response = await walletService.getTransactionChannels(
           _cardWallet.walletId
         );
@@ -1350,7 +1366,7 @@ export function useWalletContextValue(): WalletContextData {
           //   .some((c: TransactionChannel) => c.enabled);
           // setIsEnableTransactionChannel(isEnable);
           // setInitIsEnableTransactionChannel(isEnable);
-          setTransactionChannels(response.data.channels ?? [])
+          setTransactionChannels(response.data.channels ?? []);
         }
       }
     } catch (error: any) {
@@ -1504,19 +1520,27 @@ export function useWalletContextValue(): WalletContextData {
     }
   }, []);
 
-  const updateCardStatus = useCallback(async (
-    status: string,
-    walletId: string,
-    reason?: string,
-    reasonCode?: string
-  ) => {
-    try {
-      const response = await walletService.updateCardStatus(status, walletId, reason, reasonCode);
-      setCardWalletStatus(status === "ACTIVE" ? "ACTIVE" : "LOCKED")
-    }catch(err){
-      console.log("updateCardStatus --> Err", err); 
-    }
-  }, [])
+  const updateCardStatus = useCallback(
+    async (
+      status: string,
+      walletId: string,
+      reason?: string,
+      reasonCode?: string
+    ) => {
+      try {
+        const response = await walletService.updateCardStatus(
+          status,
+          walletId,
+          reason,
+          reasonCode
+        );
+        setCardWalletStatus(status === "ACTIVE" ? "ACTIVE" : "LOCKED");
+      } catch (err) {
+        console.log("updateCardStatus --> Err", err);
+      }
+    },
+    []
+  );
 
   const updateCardLimits = useCallback(
     async (limitSettings: UdpateLimitType) => {
@@ -1548,6 +1572,7 @@ export function useWalletContextValue(): WalletContextData {
       getWalletDetail,
       getAggregatedWallets,
       deleteWallet,
+      bankWallet: _bankWallet,
       errorUnlinkWallet: _unlinkError,
       isUnlinking: _isUnlinking,
       isUpdatingPrimary: _isUpdatingPrimary,
@@ -1660,9 +1685,10 @@ export function useWalletContextValue(): WalletContextData {
       isLoadingCardLimit: _isLoadingCardLimit,
       isUpdatingCardLimits: _isUpdatingCardLimit,
       hasPhysicalCard: _hasPhysicalCard,
-      transactionChannels: _transactionChannel
+      transactionChannels: _transactionChannel,
     }),
     [
+      _bankWallet,
       _transactionChannel,
       _hasPhysicalCard,
       _isUpdatingCardLimit,
