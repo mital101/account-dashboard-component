@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { ImageBackground, StyleSheet, View } from 'react-native';
+import { StyleSheet, View,Text,TouchableOpacity } from 'react-native';
 import { Button, ThemeContext } from 'react-native-theme-component';
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
 import { InfoIcon } from '../../../../assets/info.icon';
 import { BRoundedTickIcon } from '../../../../assets/rounded-tick.icon';
 import AlertModal from '../../../alert-model';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import { RNCamera } from 'react-native-camera';
 import useMergeStyles, { AutoPhysicalCardStyles } from './styles';
 export interface IAutoCardActivation {
     style?: AutoPhysicalCardStyles;
@@ -28,9 +30,15 @@ const AutoCardActivation:React.FC<IAutoCardActivation> = (props:IAutoCardActivat
       }
       requestCamera()
     }, [])
+
+    const onSuccess = e => {
+      // Linking.openURL(e.data).catch(err =>
+        // console.error('An error occured')
+      // );
+    };
   return (
     <View style={styles.containerStyle}>
-        <ImageBackground source={require("../../../../assets/activate_card_img.png")} style={styles.bgImageStyle}>
+        {/*<ImageBackground source={require("../../../../assets/activate_card_img.png")} style={styles.bgImageStyle}>
             <View style={{height: 175, width: '78%', marginBottom: 10, borderRadius: 10, overflow:"hidden"}}>
               {!device ? null : <Camera
                 style={{height: '100%', width: '100%',borderRadius: 10, backgroundColor:'red'}}
@@ -41,7 +49,41 @@ const AutoCardActivation:React.FC<IAutoCardActivation> = (props:IAutoCardActivat
                 ref={cameraRef}
               />}
             </View>
-        </ImageBackground>
+        </ImageBackground>*/}
+        {<QRCodeScanner
+           onRead={this.onSuccess}
+           showMarker={true}
+           reactivate={true}
+           topViewStyle={{flex:0,paddingTop:40}}
+           // bottomViewStyle={{flex: 2}}
+           // cameraContainerStyle={{marginTop:-5}}
+           // flashMode={RNCamera.Constants.FlashMode.torch}
+           // topContent={
+           //   <Text style={styles.centerText}>
+           //     Go to{' '}
+           //     <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on
+           //     your computer and scan the QR code.
+           //   </Text>
+           // }
+           bottomContent={
+             <View style={{
+               flex:1,
+               paddingTop:20,
+               paddingBottom:8,
+               paddingHorizontal:15,
+               alignSelf:'flex-start'
+             }}>
+               <Text style={styles.titleStyle}>
+                 {"Activate card"}
+               </Text>
+               <TouchableOpacity onPress={() => setAlert(true)} >
+                 <Text style={styles.subTitleStyle}>
+                   {"Scan the QR code printed on the letter that you received together with your card."}
+                 </Text>
+               </TouchableOpacity>
+             </View>
+           }
+         />}
         <View style={styles.buttonContainer}>
             <Button
             // onPress={() => setAlert(true)}
@@ -59,13 +101,14 @@ const AutoCardActivation:React.FC<IAutoCardActivation> = (props:IAutoCardActivat
         position="bottom"
 
         title={error ? "Unsuccessful!" : "Your card is successfully activated!"}
-        subtitle={
-          error
-            ? i18n?.t("adb_card.lbl_req_failed") ??
-              "Sorry, your request is unsuccessful in this instance. Please try again later."
-            : i18n?.t("adb_card.lbl_card_activated") ??
-              "Let’s setup your Card PIN."
-        }
+        // subtitle={
+        //   error
+        //     ? i18n?.t("adb_card.lbl_req_failed") ??
+        //       "Sorry, your request is unsuccessful in this instance. Please try again later."
+        //     : i18n?.t("adb_card.lbl_card_activated") ??
+        //       "Let’s setup your Card PIN."
+        // }
+        subtitle={"Let’s setup your Card PIN."}
         icon={
           <View style={{ height: 55, width: 55 }}>
             {error ? <InfoIcon color='#1b1b1b30' /> : <BRoundedTickIcon color='#1b1b1b30'/>}

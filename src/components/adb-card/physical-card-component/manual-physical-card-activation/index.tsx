@@ -131,24 +131,29 @@ const ManualCardActivation: React.FC<ManualCardActivationProps> = (props) => {
         title={"Your card has already been activated."}
         onClose={() => setAlertMsg(false)}
       />
-      <Text style={styles.titleStyle}>Enter your card details</Text>
+      <Text style={styles.titleStyle}>Enter your unique
+one-time code</Text>
       <Text style={styles.subTitleStyle}>
-        Verify and complete your card information.
+        Enter the one-time code printed on the letter that you received together with your card
       </Text>
       <View style={styles.inputContainerStyle}>
-        <CardInput
-          showCardImg
-          label="Card number"
+         <CardInput
+          // showCardImg
+          label="One-time code"
           value={cardNumber}
+          // onChangeText={(e) => {
+          //   const formattedNum = formatCC(e);
+          //   setCardNumber(formattedNum);
+          //   setBFlag(true)
+          // }}
           onChangeText={(e) => {
-            const formattedNum = formatCC(e);
-            setCardNumber(formattedNum);
             setBFlag(true)
+            setCardNumber(e)
           }}
-          error={!isCardInvalid.success}
-          errorLabel="Invalid card number."
+          // error={!isCardInvalid.success}
+          // errorLabel="Invalid card number."
         />
-        <View style={styles.sensitiveDataContainer}>
+        {/*<View style={styles.sensitiveDataContainer}>
           <View style={{ width: "48%" }}>
             <CardInput
               label="Expiry date"
@@ -170,7 +175,7 @@ const ManualCardActivation: React.FC<ManualCardActivationProps> = (props) => {
               errorLabel="Invalid CVV."
             />
           </View>
-        </View>
+        </View>*/}
       </View>
       <Animated.View
         style={[innerStyles.animatedButtonStyle, { bottom: keyboardHeight }]}
@@ -178,17 +183,17 @@ const ManualCardActivation: React.FC<ManualCardActivationProps> = (props) => {
         <Button
           label={i18n?.t("adb_card.btn_submit")}
           bgColor="#1b1b1b"
-          disabled={isSubmitDisabled}
-          disableColor={"#1b1b1b20"}
+          // disabled={isSubmitDisabled}
+          // disableColor={"#1b1b1b20"}
           style={{
             primaryContainerStyle: innerStyles.primaryButtonContainerStyle,
             primaryLabelStyle: innerStyles.primaryButtonLabelStyle,
           }}
           onPress={() => {
-            const success=checkDetails();
-              if(success){
-                setAlertMsg(true)
-              }
+            // const success=checkDetails();
+            //   if(success){
+            //     setAlertMsg(true)
+            //   }
           }}
         />
       </Animated.View>

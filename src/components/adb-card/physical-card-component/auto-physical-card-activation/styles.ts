@@ -10,7 +10,7 @@ export interface AutoPhysicalCardStyles {
 }
 
 const useMergeStyles = (
-  style?:AutoPhysicalCardStyles 
+  style?:AutoPhysicalCardStyles
 ): AutoPhysicalCardStyles => {
   const defaultStyles: AutoPhysicalCardStyles = StyleSheet.create({
     containerStyle: {
@@ -29,13 +29,13 @@ const useMergeStyles = (
     },
     bgImageStyle: {
         flex: 0.8,
-        paddingHorizontal:24,
+        // paddingHorizontal:24,
         justifyContent:'center',
         alignItems:'center'
     },
     buttonContainer: {
         flex: 0.2,
-        backgroundColor: "#00000060",
+        // backgroundColor: "#00000060",
         justifyContent:'center',
         alignItems:'center',
         paddingHorizontal:24,
