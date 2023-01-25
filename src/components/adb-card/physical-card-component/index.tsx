@@ -134,7 +134,7 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
           title={
             isVirtualCardActive
               ? i18n?.t("adb_card.lbl_want_physical_card")
-              : i18n?.t("adb_card.lbl_activate_card", { other: "!" })
+              : i18n?.t("adb_card.lbl_activate_card",{ other: "!" })
           }
           subTitle={
             isVirtualCardActive
