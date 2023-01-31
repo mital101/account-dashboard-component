@@ -31,18 +31,14 @@ const useMergeStyles = (
         flex: 0.8,
         paddingHorizontal:24,
         justifyContent:'center',
-        alignItems:'center',
-        backgroundColor : 'white'
+        alignItems:'center'
     },
     buttonContainer: {
         flex: 0.2,
-        backgroundColor: "#ffffff",
+        backgroundColor: "#00000060",
         justifyContent:'center',
         alignItems:'center',
         paddingHorizontal:24,
-        position :'absolute',
-        width :'100%',
-        bottom :50
     }
   });
 
