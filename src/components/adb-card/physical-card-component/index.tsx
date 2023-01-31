@@ -203,10 +203,7 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
             
           }, 1000);
         }}
-        title={isCardLocked
-          ? i18n?.t("lock_card.btn_unlock_card")
-          : i18n?.t("lock_card.btn_lock_card")
-        }
+        title={i18n?.t("lock_card.btn_lock_card")}
         isVisible={showLockSheet}
         onClose={() =>{
            setShowLockSheet(false)
