@@ -30,7 +30,6 @@ export interface CardManagementStyles {
   navContainerTextStyle?: StyleProp<TextStyle>;
   navContainerSubTitleStyle?: StyleProp<TextStyle>;
 }
-
 const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
   const {
     style,
@@ -65,12 +64,21 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
     if ('123456' === value || value === 'faceunlock') {
       setError(false);
       setShowErrorLabel(false);
+      if(isCardLocked){
+           const status = "ACTIVE";
+              const walletId = cardWallet?.walletId ?? "";
+              updateCardStatus(status, walletId);
+      }else{
+
+      
         setCardLock(true)
+        
           const status = "LOCKED";
           const walletId = cardWallet?.walletId ?? "";
           const reason = "test";
           const reasonCode = "LOST";
           updateCardStatus(status, walletId, reason, reasonCode);
+      }
           onLockCard() 
           setpasscodeVisible(false)
     } else {
@@ -129,9 +137,10 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
         <CircularImageView
           onClick={() => {
             if (isCardLocked) {
-              const status = "ACTIVE";
-              const walletId = cardWallet?.walletId ?? "";
-              updateCardStatus(status, walletId);
+              // const status = "ACTIVE";
+              // const walletId = cardWallet?.walletId ?? "";
+              // updateCardStatus(status, walletId);
+              setShowLockSheet(true);
             } else {
               setShowLockSheet(true);
             }
@@ -193,6 +202,10 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
             
           }, 1000);
         }}
+        title={isCardLocked
+          ? i18n?.t("lock_card.btn_unlock_card")
+          : i18n?.t("lock_card.btn_lock_card")
+        }
         isVisible={showLockSheet}
         onClose={() =>{
            setShowLockSheet(false)
