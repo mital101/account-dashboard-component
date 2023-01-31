@@ -17,6 +17,11 @@ const useMergeStyles = (style?: AppPasscodeCompStyle) => {
       paddingHorizontal: 24,
       paddingTop: 24,
     },
+    appCodeContainerStyle : {
+      backgroundColor: "#ffffff",
+      paddingHorizontal: 24,
+      paddingTop: 24,
+    },
     titleStyle: {
       fontSize: 24,
       fontWeight: "600",

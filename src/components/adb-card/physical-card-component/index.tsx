@@ -13,6 +13,7 @@ import VirtualCard from "../card-info-component/components/virtual-card";
 import CarouselCard from "../core/carousel-card";
 import CircularImageView from "../core/circular-image-view";
 import LockCardBottomSheet from "./lock-card-sheet";
+import EnterAppPassCodeComponent from './enter-app-passcode'
 import SettingsBottomSheet from "./settings-sheet";
 import useMergeStyles from "./styles";
 
@@ -22,13 +23,13 @@ export interface CardManagementProps {
   onLimitPress: () => void;
   onChangeCardPin: () => void;
   onReportPress: () => void;
+  onLockCard: () => void;
 }
 export interface CardManagementStyles {
   navContainerStyle?: StyleProp<ViewStyle>;
   navContainerTextStyle?: StyleProp<TextStyle>;
   navContainerSubTitleStyle?: StyleProp<TextStyle>;
 }
-
 const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
   const {
     style,
@@ -36,6 +37,7 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
     onLimitPress,
     onChangeCardPin,
     onReportPress,
+    onLockCard
   } = props;
   const styles: CardManagementStyles = useMergeStyles(style);
   const {
@@ -48,10 +50,42 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showLockSheet, setShowLockSheet] = useState<boolean>(false);
   const [cardLock, setCardLock] = useState<boolean>(false);
+  const [passcodeVisible,setpasscodeVisible] = useState<boolean>(false);
   const isCardLocked = useMemo(
     () => cardWalletStatus !== "ACTIVE",
     [cardWalletStatus]
   );
+
+  const [showAlert, setAlert] = useState(false);
+  const [error, setError] = useState(false);
+  const [showErrorLabel, setShowErrorLabel] = useState(false);
+
+  const confirmPIN = (value: string) => {
+    if ('123456' === value || value === 'faceunlock') {
+      setError(false);
+      setShowErrorLabel(false);
+      if(isCardLocked){
+           const status = "ACTIVE";
+              const walletId = cardWallet?.walletId ?? "";
+              updateCardStatus(status, walletId);
+      }else{
+
+      
+        setCardLock(true)
+        
+          const status = "LOCKED";
+          const walletId = cardWallet?.walletId ?? "";
+          const reason = "test";
+          const reasonCode = "LOST";
+          updateCardStatus(status, walletId, reason, reasonCode);
+      }
+          onLockCard() 
+          setpasscodeVisible(false)
+    } else {
+      setShowErrorLabel(true);
+    }
+  };
+
   return (
     <ScrollView style={{ backgroundColor: "#ffffff" }}>
       <View style={styles.navContainerStyle}>
@@ -103,9 +137,11 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
         <CircularImageView
           onClick={() => {
             if (isCardLocked) {
-              const status = "ACTIVE";
-              const walletId = cardWallet?.walletId ?? "";
-              updateCardStatus(status, walletId);
+              // const status = "ACTIVE";
+              // const walletId = cardWallet?.walletId ?? "";
+              // updateCardStatus(status, walletId);
+              setpasscodeVisible(true)
+
             } else {
               setShowLockSheet(true);
             }
@@ -161,17 +197,37 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
       />
       <LockCardBottomSheet
         onLockCard={() => {
-          //  setCardLock(true)
-          const status = "LOCKED";
-          const walletId = cardWallet?.walletId ?? "";
-          const reason = "test";
-          const reasonCode = "LOST";
-          updateCardStatus(status, walletId, reason, reasonCode);
           setShowLockSheet(false);
+          setTimeout(() => {
+          setpasscodeVisible(true)
+            
+          }, 1000);
         }}
+        title={i18n?.t("lock_card.btn_lock_card")}
         isVisible={showLockSheet}
-        onClose={() => setShowLockSheet(false)}
+        onClose={() =>{
+           setShowLockSheet(false)
+        }}
       />
+     <EnterAppPassCodeComponent
+        key={'Hello'}
+        isForPhysicalCard={true}
+        isVisible={passcodeVisible}
+        title="Enter your app passcode"
+        subTitle="Enter your 6-digit passcode to continue."
+        onSuccess={confirmPIN}
+        onPressNext={confirmPIN}
+        error={error}
+        showAlert={showAlert}
+        onClosePassCode={() => setpasscodeVisible(!passcodeVisible)}
+        setError={(e) => setError(e)}
+        setShowAlert={(e) => setAlert(e)}
+        // onPressGotoCard={() => navigation.navigate(Route.ADB_MAIN_TABBAR, { screen: 'Card' })}
+        orderPhysicalCard={() => { } }
+        showSecondaryErrorLabel={showErrorLabel}
+        secondaryErrorLabel={'Your passcode do not match.'} onPressGotoCard={function (): void {
+          throw new Error("Function not implemented.");
+        } }    />
     </ScrollView>
   );
 };
