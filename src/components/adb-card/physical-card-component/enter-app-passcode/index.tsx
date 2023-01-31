@@ -218,6 +218,8 @@ const EnterAppPassCodeComponent: React.FC<AppPassCodeProps> = (
     setUserVal("");
     if (isVisible) {
       setTimeout(() => {
+        console.log('execute');
+        
         TouchID.authenticate("Authentication required to proceed", {
           passcodeFallback: false,
         })
@@ -237,7 +239,10 @@ const EnterAppPassCodeComponent: React.FC<AppPassCodeProps> = (
             setUserVal("");
             onSuccess("faceunlock");
           })
-          .catch(() => {});
+          .catch((err) => {
+            console.log("err",err);
+            
+          });
       }, 1000);
     }
   }, [isVisible]);

@@ -140,7 +140,8 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
               // const status = "ACTIVE";
               // const walletId = cardWallet?.walletId ?? "";
               // updateCardStatus(status, walletId);
-              setShowLockSheet(true);
+              setpasscodeVisible(true)
+
             } else {
               setShowLockSheet(true);
             }
