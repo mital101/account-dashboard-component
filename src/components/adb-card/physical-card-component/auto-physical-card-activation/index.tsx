@@ -23,7 +23,7 @@ const AutoCardActivation: React.FC<IAutoCardActivation> = (
 ) => {
   const { style, onPressManuallyActivate, onPressSetpin } = props;
   const styles: AutoPhysicalCardStyles = useMergeStyles(style);
-  const { i18n } = useContext(ThemeContext);
+  const { i18n, colors } = useContext(ThemeContext);
   const [showAlert, setAlert] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const devices = useCameraDevices();
@@ -37,35 +37,46 @@ const AutoCardActivation: React.FC<IAutoCardActivation> = (
 
   const requestCamera = async () => {
     const newCameraPermission = await Camera.requestCameraPermission();
-    console.log("Camera : ", newCameraPermission);
   };
 
   const frameProcessor = useFrameProcessor((frame) => {
     "worklet";
     const qrCodes = scanQRCodes(frame);
-    console.log(`Detected QR Codes: ${qrCodes}`);
   }, []);
 
-  console.log("device", device);
+  const innerStyles = StyleSheet.create({
+    primaryButtonContainerStyle: {
+      height: 56,
+      borderRadius: 100,
+      justifyContent: "center",
+      width: "100%",
+    },
+    primaryButtonLabelStyle: {
+      textAlign: "center",
+      color: "#ffffff",
+      fontWeight: "500",
+      fontFamily: "Poppins-Bold",
+    },
+    mainContainer: {
+      backgroundColor: colors.black,
+      opacity: 0.1,
+      flex: 1,
+    },
+    camaraView: {
+      height: "100%",
+      width: "100%",
+      borderRadius: 10,
+      backgroundColor: "red",
+    },
+  });
 
   return (
     <View style={styles.containerStyle}>
       <View style={{ height: "50%" }}>
-        <View
-          style={{
-            backgroundColor: "#000000",
-            opacity: 0.1,
-            flex: 1,
-          }}
-        >
+        <View style={innerStyles.mainContainer}>
           {device == undefined ? null : (
             <Camera
-              style={{
-                height: "100%",
-                width: "100%",
-                borderRadius: 10,
-                backgroundColor: "red",
-              }}
+              style={innerStyles.camaraView}
               device={device}
               isActive={true}
               enableHighQualityPhotos
@@ -192,18 +203,3 @@ const AutoCardActivation: React.FC<IAutoCardActivation> = (
 };
 
 export default AutoCardActivation;
-
-const innerStyles = StyleSheet.create({
-  primaryButtonContainerStyle: {
-    height: 56,
-    borderRadius: 100,
-    justifyContent: "center",
-    width: "100%",
-  },
-  primaryButtonLabelStyle: {
-    textAlign: "center",
-    color: "#ffffff",
-    fontWeight: "500",
-    fontFamily: "Poppins-Bold",
-  },
-});
