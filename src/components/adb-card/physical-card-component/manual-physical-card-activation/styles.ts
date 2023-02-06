@@ -1,5 +1,7 @@
 import { defaultsDeep } from "lodash";
+import { useContext } from "react";
 import { StyleProp, StyleSheet, TextStyle, ViewStyle } from "react-native";
+import { ThemeContext } from "react-native-theme-component";
 
 export interface ManualCardActivationStyles {
     wrapperStyle?: StyleProp<ViewStyle>;
@@ -13,6 +15,8 @@ export interface ManualCardActivationStyles {
 const useMergeStyles = (
   style?: ManualCardActivationStyles
 ): ManualCardActivationStyles => {
+  const { fonts } = useContext(ThemeContext);
+
   const defaultStyles: ManualCardActivationStyles = StyleSheet.create({
     wrapperStyle: {
         backgroundColor: "#fff",
@@ -20,14 +24,16 @@ const useMergeStyles = (
         flex:1,
     },
     titleStyle: {
-      fontSize: 24,
+      fontSize: 28,
       fontWeight: '600',
       color: '#1b1b1b',
       marginBottom: 8,
+      marginTop:10
     },
     subTitleStyle: {
       fontSize: 14,
       color: '#1b1b1b',
+      fontFamily: fonts.regular,
     },
     inputContainerStyle: {
       marginTop: 24
