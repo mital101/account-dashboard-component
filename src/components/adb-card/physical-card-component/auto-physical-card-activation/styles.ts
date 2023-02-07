@@ -17,25 +17,25 @@ const useMergeStyles = (
 
   const defaultStyles: AutoPhysicalCardStyles = StyleSheet.create({
     containerStyle: {
-      backgroundColor: "#fff",
+      backgroundColor: colors.primaryButtonLabelColor,
       flex: 1,
     },
     titleStyle: {
       fontSize: 24,
       fontWeight: "600",
-      color: "#1b1b1b",
+      color: colors.btnColor,
       marginBottom: 8,
     },
     subTitleStyle: {
       fontSize: 14,
-      color: "#1b1b1b",
+      color: colors.btnColor,
     },
     bgImageStyle: {
       flex: 0.8,
       paddingHorizontal: 24,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: "white",
+      backgroundColor: colors.primaryButtonLabelColor,
     },
     buttonContainer: {
       flex: 0.2,
