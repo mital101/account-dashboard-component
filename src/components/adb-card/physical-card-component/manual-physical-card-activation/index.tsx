@@ -244,7 +244,7 @@ const ManualCardActivation: React.FC<ManualCardActivationProps> = (props) => {
                 }}
                 bgColor={colors.primaryButtonLabelColor}
                 variant="primary"
-                label={"Go to Home"}
+                label={i18n?.t("adb_card.go_to_home_btn")}
                 onPress={() => {
                   setShowAlert(false);
                   onPressGotoHome();
@@ -261,7 +261,11 @@ const ManualCardActivation: React.FC<ManualCardActivationProps> = (props) => {
               }}
               bgColor={colors.btnColor}
               variant="primary"
-              label={error ? "Retry" : "Setup PIN"}
+              label={
+                error
+                  ? i18n?.t("adb_card.btn_retry")
+                  : i18n?.t("adb_card.setup_pin")
+              }
               onPress={() => {
                 setShowAlert(false);
                 if (!error) {
