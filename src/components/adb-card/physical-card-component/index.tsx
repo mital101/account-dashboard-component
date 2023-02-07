@@ -200,7 +200,6 @@ const CardManagementComponent: React.FC<CardManagementProps> = (props) => {
           setShowLockSheet(false);
           setTimeout(() => {
           setpasscodeVisible(true)
-            
           }, 1000);
         }}
         title={i18n?.t("lock_card.btn_lock_card")}

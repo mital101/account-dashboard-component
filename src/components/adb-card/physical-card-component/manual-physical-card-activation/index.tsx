@@ -256,7 +256,7 @@ const ManualCardActivation: React.FC<ManualCardActivationProps> = (props) => {
                 primaryContainerStyle: {
                   borderRadius: 100,
                   height: 56,
-                  marginTop: 20,
+                  marginTop: 10,
                 },
               }}
               bgColor={colors.btnColor}
