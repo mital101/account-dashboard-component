@@ -124,6 +124,7 @@ const ManualCardActivation: React.FC<ManualCardActivationProps> = (props) => {
       fontFamily: fonts.medium,
       color: colors.inputColor,
     },
+    viewMain: { paddingHorizontal: 24, width: "100%" },
     input: {
       fontSize: 16,
       color: "#1D1C1D",
@@ -227,7 +228,7 @@ const ManualCardActivation: React.FC<ManualCardActivationProps> = (props) => {
         onCancel={() => {}}
         onConfirmed={() => {}}
         children={
-          <View style={{ paddingHorizontal: 24, width: "100%" }}>
+          <View style={innerStyles.viewMain}>
             {error && (
               <Button
                 style={{

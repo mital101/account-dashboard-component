@@ -67,7 +67,7 @@ const AutoCardActivation: React.FC<IAutoCardActivation> = (
       height: "100%",
       width: "100%",
       borderRadius: 10,
-      backgroundColor: "red",
+      backgroundColor: colors.red,
     },
     title: {
       fontFamily: fonts.semiBold,

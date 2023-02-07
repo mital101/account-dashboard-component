@@ -21,7 +21,7 @@ const useMergeStyles = (
     title: {
       textAlign: 'center',
       marginVertical: 12,
-      color: '#3E2D68',
+      color: colors.headerTitleColor,
       fontFamily: fonts.semiBold,
       fontSize: 22
     },
