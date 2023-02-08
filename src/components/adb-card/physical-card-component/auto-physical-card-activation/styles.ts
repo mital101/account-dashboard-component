@@ -1,6 +1,6 @@
 import { defaultsDeep } from "lodash";
 import { StyleProp, StyleSheet, TextStyle, ViewStyle } from "react-native";
-import { useContex } from "react";
+import { useContext } from "react";
 import { ThemeContext } from "react-native-theme-component";
 export interface AutoPhysicalCardStyles {
   containerStyle?: StyleProp<ViewStyle>;
@@ -13,7 +13,7 @@ export interface AutoPhysicalCardStyles {
 const useMergeStyles = (
   style?: AutoPhysicalCardStyles
 ): AutoPhysicalCardStyles => {
-  const { colors } = useContex(ThemeContext);
+  const { colors } = useContext(ThemeContext);
 
   const defaultStyles: AutoPhysicalCardStyles = StyleSheet.create({
     containerStyle: {
