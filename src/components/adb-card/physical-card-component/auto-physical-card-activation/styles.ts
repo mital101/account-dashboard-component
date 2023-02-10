@@ -39,7 +39,6 @@ const useMergeStyles = (
     },
     buttonContainer: {
       flex: 0.2,
-      backgroundColor: colors.black,
       justifyContent: "center",
       alignItems: "center",
       paddingHorizontal: 24,

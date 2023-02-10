@@ -1,5 +1,4 @@
 import React, {
-  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -105,12 +104,10 @@ const ManualCardActivation: React.FC<ManualCardActivationProps> = (props) => {
       borderRadius: 100,
       justifyContent: "center",
     },
-    bottom: { 
-      bottom: keyboardHeight 
-    },
+    bottom: { bottom: keyboardHeight },
     primaryButtonLabelStyle: {
       textAlign: "center",
-      color: colors.backgroundTextColor,
+      color: colors.white,
       fontFamily: fonts.bold,
     },
     animatedButtonStyle: {
@@ -247,7 +244,7 @@ const ManualCardActivation: React.FC<ManualCardActivationProps> = (props) => {
                 }}
                 bgColor={colors.primaryButtonLabelColor}
                 variant="primary"
-                label={i18n?.t("transfer_confirmation_component.go_to_home_btn")}
+                label={i18n?.t("adb_card.go_to_home_btn")}
                 onPress={() => {
                   setShowAlert(false);
                   onPressGotoHome();
