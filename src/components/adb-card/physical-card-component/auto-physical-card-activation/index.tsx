@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
+import { ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { fonts } from "react-native-auth-component";
 import { Button, ThemeContext } from "react-native-theme-component";
 import {
@@ -8,6 +8,9 @@ import {
   useFrameProcessor,
   scanQRCodes,
 } from "react-native-vision-camera";
+import {
+  BackIconArrow
+} from '../../../../assets/backIconArrow.icon';
 import { InfoIcon } from "../../../../assets/info.icon";
 import { BRoundedTickIcon } from "../../../../assets/rounded-tick.icon";
 import AlertModal from "../../../alert-model";
@@ -16,12 +19,13 @@ export interface IAutoCardActivation {
   style?: AutoPhysicalCardStyles;
   onPressManuallyActivate: () => void;
   onPressSetpin: () => void;
+  goBack: () => void;
 }
 
 const AutoCardActivation: React.FC<IAutoCardActivation> = (
   props: IAutoCardActivation
 ) => {
-  const { style, onPressManuallyActivate, onPressSetpin } = props;
+  const { style, onPressManuallyActivate, onPressSetpin, goBack } = props;
   const styles: AutoPhysicalCardStyles = useMergeStyles(style);
   const { i18n, colors } = useContext(ThemeContext);
   const [showAlert, setAlert] = useState<boolean>(false);
@@ -55,12 +59,10 @@ const AutoCardActivation: React.FC<IAutoCardActivation> = (
     primaryButtonLabelStyle: {
       textAlign: "center",
       color: colors.primaryButtonLabelColor,
-      fontWeight: "500",
-      fontFamily: "Poppins-Bold",
+      fontFamily: fonts.bold,
     },
     mainContainer: {
       color: colors.secondaryButtonLabelColor,
-      opacity: 0.1,
       flex: 1,
     },
     camaraView: {
@@ -83,12 +85,23 @@ const AutoCardActivation: React.FC<IAutoCardActivation> = (
       paddingHorizontal: 20,
     },
     height: { height: "50%" },
+    btnMargin : {
+      margin :10
+    }
   });
 
   return (
-    <View style={styles.containerStyle}>
+    <SafeAreaView style={styles.containerStyle}>
+      
       <View style={innerStyles.height}>
+
         <View style={innerStyles.mainContainer}>
+          <TouchableOpacity
+          onPress={() => goBack()}
+          style={innerStyles.btnMargin}>
+        <BackIconArrow color="#000"  />
+        </TouchableOpacity>
+
           {device == undefined ? null : (
             <Camera
               style={innerStyles.camaraView}
@@ -204,7 +217,7 @@ const AutoCardActivation: React.FC<IAutoCardActivation> = (
           </View>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
