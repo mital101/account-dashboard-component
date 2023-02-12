@@ -1,5 +1,7 @@
-import React, { useContext, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { WalletContext } from "@banking-component/account-dashboard-component/src/context/wallet-context";
+import { isEmpty } from "lodash";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Button, ThemeContext } from "react-native-theme-component";
 import { InfoIcon } from "../../../../../assets/info.icon";
 import { BRoundedTickIcon } from "../../../../../assets/rounded-tick.icon";
@@ -7,9 +9,11 @@ import AlertModal from "../../../../alert-model";
 import DeliverInfoSheet from "../../order-physical-card/deliver-info-sheet";
 import { ReportIssueType } from "../report-card-component";
 import useMergeStyles, { ReplaceCardComponentStyles } from "./styles";
+
 export interface ReplaceCardComponentProps {
   style?: ReplaceCardComponentStyles;
   reason: string;
+  loader: boolean;
   onPressSettings: () => void;
   onPressGotoHome: () => void;
   onPressContinue: () => void;
@@ -22,15 +26,18 @@ export const addressRadioGroup = [
     selected: true,
   },
 ];
+
 const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
-  const { style, reason, onPressSettings, onPressGotoHome, onPressContinue } =
-    props;
-  const { i18n } = useContext(ThemeContext);
+  const { style, reason, onPressSettings, onPressGotoHome, onPressContinue, loader } = props;
+  const { wallets,getWalletDetail } = useContext(WalletContext);
+  const { i18n, colors } = useContext(ThemeContext);
   const styles: ReplaceCardComponentStyles = useMergeStyles(style);
   const [radioData, setRadioData] = useState(addressRadioGroup);
   const [showSheet, setShowSheet] = useState(false);
   const [showAlert, setAlert] = useState(false);
+  const [showAlertWallet, setshowAlertWallet] = useState(false);
   const [error, setError] = useState(false);
+
   const handlePress = (index: number) => {
     const arr = [...radioData];
     arr.forEach((_, i) => {
@@ -39,6 +46,23 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
     arr[index].selected = !arr[index].selected;
     setRadioData(arr);
   };
+
+  const checkBalance = async () => {
+    if(!wallets.length == 0 && reason === ReportIssueType.LOST_OR_STOLEN){
+      setshowAlertWallet(true)
+      setError(false)
+    }else{
+     if(error){
+       setError(true);
+       setAlert(true) 
+     }else{
+     let response = await onPressContinue()
+        setAlert(response);
+        setShowSheet(false);
+     }
+    }
+  }
+
   return (
     <View style={styles.containerStyle}>
       <Text style={styles.titleStyle}>Replace your card today!</Text>
@@ -103,7 +127,12 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
           label={i18n?.t("adb_card.btn_go_home")}
           onPress={onPressGotoHome}
         />
-        <Button
+       {loader ? 
+       <ActivityIndicator
+        size={'large'}
+        color={colors.primaryColor}
+        />
+        : <Button
           style={{
             primaryContainerStyle: {
               borderRadius: 100,
@@ -117,11 +146,93 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
           variant="primary"
           label={i18n?.t("adb_card.btn_continue")}
           onPress={() => {
-            setAlert(true);
-            setError(false);
+            checkBalance()
+            
           }}
         />
+    
+      }
       </View>
+      <AlertModal
+        isVisible={showAlertWallet}
+        position="bottom"
+        title={
+          i18n?.t("adb_card.lbl_insufficient_balance")
+        }
+        subtitle={
+          i18n?.t("adb_card.lbl_insufficient_subTitle")  }
+        icon={
+          <View style={{ height: 55, width: 55 }}>
+            {error ? (
+              <InfoIcon color="#00000030" />
+            ) : (
+              <BRoundedTickIcon color="#00000030" />
+            )}
+          </View>
+        }
+        onCancel={() => {}}
+        onConfirmed={() => {}}
+        style={{
+          containerStyle: {
+            borderRadius: 24,
+          },
+        }}
+        children={
+          <View style={{ paddingHorizontal: 24, width: "100%" }}>
+     
+              <View style={innerStyles.copyContainer}>
+                <Text style={innerStyles.copyContainerText}>
+                  {`You can start transacting with your${
+                    reason === ReportIssueType.LOST_OR_STOLEN
+                      ? " replacement"
+                      : ""
+                  } virtual card right now.`}
+                </Text>
+              </View>
+        
+            <View style={{ marginBottom: 10 }}>
+              <Button
+                style={{
+                  primaryContainerStyle: {
+                    borderRadius: 100,
+                    height: 56,
+                    borderWidth: 2,
+                    borderColor: "#1b1b1b",
+                  },
+                  primaryLabelStyle: {
+                    color: "#1b1b1b",
+                  },
+                }}
+                bgColor="#ffffff"
+                variant="primary"
+                label={i18n?.t("adb_card.btn_go_home")}
+                onPress={() => {
+                  setshowAlertWallet(false);
+                 
+                    onPressGotoHome();
+                  
+                }}
+              />
+            </View>
+            <Button
+              style={{
+                primaryContainerStyle: {
+                  borderRadius: 100,
+                  height: 56,
+                },
+              }}
+              bgColor="#1b1b1b"
+              variant="primary"
+              label={ i18n?.t("common.lbl_continue")
+              }
+              onPress={() => {
+                setshowAlertWallet(false);
+               
+              }}
+            />
+          </View>
+        }
+      />
       <AlertModal
         isVisible={showAlert}
         position="bottom"
