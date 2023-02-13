@@ -1,5 +1,13 @@
-import React, { useContext, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { WalletContext } from "@banking-component/account-dashboard-component/src/context/wallet-context";
+import { isEmpty } from "lodash";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Button, ThemeContext } from "react-native-theme-component";
 import { InfoIcon } from "../../../../../assets/info.icon";
 import { BRoundedTickIcon } from "../../../../../assets/rounded-tick.icon";
@@ -7,9 +15,11 @@ import AlertModal from "../../../../alert-model";
 import DeliverInfoSheet from "../../order-physical-card/deliver-info-sheet";
 import { ReportIssueType } from "../report-card-component";
 import useMergeStyles, { ReplaceCardComponentStyles } from "./styles";
+
 export interface ReplaceCardComponentProps {
   style?: ReplaceCardComponentStyles;
   reason: string;
+  loader: boolean;
   onPressSettings: () => void;
   onPressGotoHome: () => void;
   onPressContinue: () => void;
@@ -22,15 +32,25 @@ export const addressRadioGroup = [
     selected: true,
   },
 ];
+
 const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
-  const { style, reason, onPressSettings, onPressGotoHome, onPressContinue } =
-    props;
-  const { i18n } = useContext(ThemeContext);
+  const {
+    style,
+    reason,
+    onPressSettings,
+    onPressGotoHome,
+    onPressContinue,
+    loader,
+  } = props;
+  const { wallets, getWalletDetail } = useContext(WalletContext);
+  const { i18n, colors } = useContext(ThemeContext);
   const styles: ReplaceCardComponentStyles = useMergeStyles(style);
   const [radioData, setRadioData] = useState(addressRadioGroup);
   const [showSheet, setShowSheet] = useState(false);
   const [showAlert, setAlert] = useState(false);
+  const [showAlertWallet, setshowAlertWallet] = useState(false);
   const [error, setError] = useState(false);
+
   const handlePress = (index: number) => {
     const arr = [...radioData];
     arr.forEach((_, i) => {
@@ -39,6 +59,76 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
     arr[index].selected = !arr[index].selected;
     setRadioData(arr);
   };
+
+  const checkBalance = async () => {
+    if (wallets.length == 0 && reason === ReportIssueType.LOST_OR_STOLEN) {
+      setshowAlertWallet(true);
+      setError(false);
+    } else {
+      if (error) {
+        setError(true);
+        setAlert(true);
+      } else {
+        let response = await onPressContinue();
+        setAlert(response);
+        setShowSheet(false);
+      }
+    }
+  };
+
+  const innerStyles = StyleSheet.create({
+    mainView: { paddingHorizontal: 24, width: "100%" },
+    marginBottom: { marginBottom: 10 },
+    subTitleContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 10,
+    },
+    childrenView: { paddingHorizontal: 24, width: "100%" },
+    deliverText: {
+      fontWeight: "600",
+      marginRight: 10,
+      color: colors.btnColor,
+    },
+    radioButtonContainer: {
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      marginVertical: 8,
+    },
+    radioBtnOuterCircle: {
+      height: 24,
+      width: 24,
+      borderWidth: 2,
+      borderRadius: 24,
+      padding: 2,
+    },
+    radioBtnInnerCircle: {
+      height: "100%",
+      width: "100%",
+      backgroundColor: colors.btnColor,
+      borderRadius: 24,
+    },
+    radioBtnTextContainer: {
+      marginLeft: 10,
+    },
+    radioBtnTitle: {
+      fontWeight: "600",
+      marginBottom: 4,
+      color: colors.btnColor,
+    },
+    copyContainer: {
+      backgroundColor: "#dddddd",
+      width: "100%",
+      borderRadius: 3,
+      padding: 16,
+      marginVertical: 16,
+    },
+    copyContainerText: {
+      fontSize: 12,
+      color: colors.btnColor,
+    },
+  });
+
   return (
     <View style={styles.containerStyle}>
       <Text style={styles.titleStyle}>Replace your card today!</Text>
@@ -68,7 +158,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
           </TouchableOpacity>
           <View style={innerStyles.radioBtnTextContainer}>
             <Text style={innerStyles.radioBtnTitle}>{item.title}</Text>
-            <Text style={{ color: "#1b1b1b" }}>{item.desc}</Text>
+            <Text style={{ color: colors.btnColor }}>{item.desc}</Text>
           </View>
         </View>
       ))}
@@ -92,36 +182,112 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
               height: 56,
               marginBottom: 8,
               borderWidth: 2,
-              borderColor: "#1b1b1b",
+              borderColor: colors.btnColor,
             },
             primaryLabelStyle: {
-              color: "#1b1b1b",
+              color: colors.btnColor,
             },
           }}
-          bgColor="#FFFFFF"
+          bgColor={colors.backgroundTextColor}
           variant="primary"
           label={i18n?.t("adb_card.btn_go_home")}
           onPress={onPressGotoHome}
         />
-        <Button
-          style={{
-            primaryContainerStyle: {
-              borderRadius: 100,
-              height: 56,
-            },
-            primaryLabelStyle: {
-              color: "#FFFFFF",
-            },
-          }}
-          bgColor="#1b1b1b"
-          variant="primary"
-          label={i18n?.t("adb_card.btn_continue")}
-          onPress={() => {
-            setAlert(true);
-            setError(false);
-          }}
-        />
+        {loader ? (
+          <ActivityIndicator size={"large"} color={colors.primaryColor} />
+        ) : (
+          <Button
+            style={{
+              primaryContainerStyle: {
+                borderRadius: 100,
+                height: 56,
+              },
+              primaryLabelStyle: {
+                color: colors.backgroundTextColor,
+              },
+            }}
+            bgColor={colors.btnColor}
+            variant="primary"
+            label={i18n?.t("adb_card.btn_continue")}
+            onPress={() => {
+              checkBalance();
+            }}
+          />
+        )}
       </View>
+      <AlertModal
+        isVisible={showAlertWallet}
+        position="bottom"
+        title={i18n?.t("adb_card.lbl_insufficient_balance")}
+        subtitle={i18n?.t("adb_card.lbl_insufficient_subTitle")}
+        icon={
+          <View style={{ height: 55, width: 55 }}>
+            {error ? (
+              <InfoIcon color={colors.icon} />
+            ) : (
+              <BRoundedTickIcon color={colors.icon} />
+            )}
+          </View>
+        }
+        onCancel={() => {}}
+        onConfirmed={() => {}}
+        style={{
+          containerStyle: {
+            borderRadius: 24,
+          },
+        }}
+        children={
+          <View style={innerStyles.mainView}>
+            <View style={innerStyles.copyContainer}>
+              <Text style={innerStyles.copyContainerText}>
+                {`You can start transacting with your${
+                  reason === ReportIssueType.LOST_OR_STOLEN
+                    ? " replacement"
+                    : ""
+                } virtual card right now.`}
+              </Text>
+            </View>
+
+            <View style={innerStyles.marginBottom}>
+              <Button
+                style={{
+                  primaryContainerStyle: {
+                    borderRadius: 100,
+                    height: 56,
+                    borderWidth: 2,
+                    borderColor: colors.btnColor,
+                  },
+                  primaryLabelStyle: {
+                    color: colors.btnColor,
+                  },
+                }}
+                bgColor={colors.backgroundTextColor}
+                variant="primary"
+                label={i18n?.t("adb_card.btn_go_home")}
+                onPress={() => {
+                  setshowAlertWallet(false);
+
+                  onPressGotoHome();
+                }}
+              />
+            </View>
+            <Button
+              style={{
+                primaryContainerStyle: {
+                  borderRadius: 100,
+                  height: 56,
+                },
+              }}
+              bgColor={colors.btnColor}
+              variant="primary"
+              label={i18n?.t("common.lbl_continue")}
+              onPress={() => {
+                setshowAlertWallet(false);
+              }}
+            />
+          </View>
+        }
+      />
       <AlertModal
         isVisible={showAlert}
         position="bottom"
@@ -138,9 +304,9 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
         icon={
           <View style={{ height: 55, width: 55 }}>
             {error ? (
-              <InfoIcon color="#00000030" />
+              <InfoIcon color={colors.icon} />
             ) : (
-              <BRoundedTickIcon color="#00000030" />
+              <BRoundedTickIcon color={colors.icon} />
             )}
           </View>
         }
@@ -152,7 +318,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
           },
         }}
         children={
-          <View style={{ paddingHorizontal: 24, width: "100%" }}>
+          <View style={innerStyles.childrenView}>
             {!error && (
               <View style={innerStyles.copyContainer}>
                 <Text style={innerStyles.copyContainerText}>
@@ -171,13 +337,13 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
                     borderRadius: 100,
                     height: 56,
                     borderWidth: 2,
-                    borderColor: "#1b1b1b",
+                    borderColor: colors.btnColor,
                   },
                   primaryLabelStyle: {
-                    color: "#1b1b1b",
+                    color: colors.btnColor,
                   },
                 }}
-                bgColor="#ffffff"
+                bgColor={colors.backgroundTextColor}
                 variant="primary"
                 label={i18n?.t("adb_card.btn_go_home")}
                 onPress={() => {
@@ -195,7 +361,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
                   height: 56,
                 },
               }}
-              bgColor="#1b1b1b"
+              bgColor={colors.btnColor}
               variant="primary"
               label={
                 error
@@ -205,7 +371,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
               onPress={() => {
                 setAlert(false);
                 if (!error) {
-                  //   onPressTrackCard();
+                  onPressSettings();
                 }
               }}
             />
@@ -217,53 +383,3 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
 };
 
 export default ReplaceCardComponent;
-
-const innerStyles = StyleSheet.create({
-  subTitleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  deliverText: {
-    fontWeight: "600",
-    marginRight: 10,
-    color: "#1b1b1b",
-  },
-  radioButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    marginVertical: 8,
-  },
-  radioBtnOuterCircle: {
-    height: 24,
-    width: 24,
-    borderWidth: 2,
-    borderRadius: 24,
-    padding: 2,
-  },
-  radioBtnInnerCircle: {
-    height: "100%",
-    width: "100%",
-    backgroundColor: "#1b1b1b",
-    borderRadius: 24,
-  },
-  radioBtnTextContainer: {
-    marginLeft: 10,
-  },
-  radioBtnTitle: {
-    fontWeight: "600",
-    marginBottom: 4,
-    color: "#1b1b1b",
-  },
-  copyContainer: {
-    backgroundColor: "#dddddd",
-    width: "100%",
-    borderRadius: 3,
-    padding: 16,
-    marginVertical: 16,
-  },
-  copyContainerText: {
-    fontSize: 12,
-    color: "#1b1b1b",
-  },
-});
