@@ -48,7 +48,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
   };
 
   const checkBalance = async () => {
-    if(!wallets.length == 0 && reason === ReportIssueType.LOST_OR_STOLEN){
+    if(wallets.length == 0 && reason === ReportIssueType.LOST_OR_STOLEN){
       setshowAlertWallet(true)
       setError(false)
     }else{
@@ -259,7 +259,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
                 label={i18n?.t("adb_card.btn_go_home")}
                 onPress={() => {
                   setshowAlertWallet(false);
-                 
+            
                     onPressGotoHome();
                   
                 }}
