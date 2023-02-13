@@ -63,6 +63,57 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
     }
   }
 
+  const innerStyles = StyleSheet.create({
+    subTitleContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 10,
+    },
+    childrenView : { paddingHorizontal: 24, width: "100%" },
+    deliverText: {
+      fontWeight: "600",
+      marginRight: 10,
+      color: colors.btnColor,
+    },
+    radioButtonContainer: {
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      marginVertical: 8,
+    },
+    radioBtnOuterCircle: {
+      height: 24,
+      width: 24,
+      borderWidth: 2,
+      borderRadius: 24,
+      padding: 2,
+    },
+    radioBtnInnerCircle: {
+      height: "100%",
+      width: "100%",
+      backgroundColor: colors.btnColor,
+      borderRadius: 24,
+    },
+    radioBtnTextContainer: {
+      marginLeft: 10,
+    },
+    radioBtnTitle: {
+      fontWeight: "600",
+      marginBottom: 4,
+      color: colors.btnColor,
+    },
+    copyContainer: {
+      backgroundColor: "#dddddd",
+      width: "100%",
+      borderRadius: 3,
+      padding: 16,
+      marginVertical: 16,
+    },
+    copyContainerText: {
+      fontSize: 12,
+      color: colors.btnColor,
+    },
+  });
+
   return (
     <View style={styles.containerStyle}>
       <Text style={styles.titleStyle}>Replace your card today!</Text>
@@ -92,7 +143,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
           </TouchableOpacity>
           <View style={innerStyles.radioBtnTextContainer}>
             <Text style={innerStyles.radioBtnTitle}>{item.title}</Text>
-            <Text style={{ color: "#1b1b1b" }}>{item.desc}</Text>
+            <Text style={{ color: colors.btnColor }}>{item.desc}</Text>
           </View>
         </View>
       ))}
@@ -116,13 +167,13 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
               height: 56,
               marginBottom: 8,
               borderWidth: 2,
-              borderColor: "#1b1b1b",
+              borderColor: colors.btnColor,
             },
             primaryLabelStyle: {
-              color: "#1b1b1b",
+              color: colors.btnColor,
             },
           }}
-          bgColor="#FFFFFF"
+          bgColor={colors.backgroundTextColor}
           variant="primary"
           label={i18n?.t("adb_card.btn_go_home")}
           onPress={onPressGotoHome}
@@ -139,10 +190,10 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
               height: 56,
             },
             primaryLabelStyle: {
-              color: "#FFFFFF",
+              color: colors.backgroundTextColor,
             },
           }}
-          bgColor="#1b1b1b"
+          bgColor={colors.btnColor}
           variant="primary"
           label={i18n?.t("adb_card.btn_continue")}
           onPress={() => {
@@ -164,9 +215,9 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
         icon={
           <View style={{ height: 55, width: 55 }}>
             {error ? (
-              <InfoIcon color="#00000030" />
+              <InfoIcon color={colors.icon} />
             ) : (
-              <BRoundedTickIcon color="#00000030" />
+              <BRoundedTickIcon color={colors.icon} />
             )}
           </View>
         }
@@ -197,13 +248,13 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
                     borderRadius: 100,
                     height: 56,
                     borderWidth: 2,
-                    borderColor: "#1b1b1b",
+                    borderColor: colors.btnColor,
                   },
                   primaryLabelStyle: {
-                    color: "#1b1b1b",
+                    color: colors.btnColor,
                   },
                 }}
-                bgColor="#ffffff"
+                bgColor={colors.backgroundTextColor}
                 variant="primary"
                 label={i18n?.t("adb_card.btn_go_home")}
                 onPress={() => {
@@ -221,7 +272,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
                   height: 56,
                 },
               }}
-              bgColor="#1b1b1b"
+              bgColor={colors.btnColor}
               variant="primary"
               label={ i18n?.t("common.lbl_continue")
               }
@@ -249,9 +300,9 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
         icon={
           <View style={{ height: 55, width: 55 }}>
             {error ? (
-              <InfoIcon color="#00000030" />
+              <InfoIcon color={colors.icon} />
             ) : (
-              <BRoundedTickIcon color="#00000030" />
+              <BRoundedTickIcon color={colors.icon} />
             )}
           </View>
         }
@@ -263,7 +314,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
           },
         }}
         children={
-          <View style={{ paddingHorizontal: 24, width: "100%" }}>
+          <View style={innerStyles.childrenView}>
             {!error && (
               <View style={innerStyles.copyContainer}>
                 <Text style={innerStyles.copyContainerText}>
@@ -282,13 +333,13 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
                     borderRadius: 100,
                     height: 56,
                     borderWidth: 2,
-                    borderColor: "#1b1b1b",
+                    borderColor: colors.btnColor,
                   },
                   primaryLabelStyle: {
-                    color: "#1b1b1b",
+                    color: colors.btnColor,
                   },
                 }}
-                bgColor="#ffffff"
+                bgColor={colors.backgroundTextColor}
                 variant="primary"
                 label={i18n?.t("adb_card.btn_go_home")}
                 onPress={() => {
@@ -306,7 +357,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
                   height: 56,
                 },
               }}
-              bgColor="#1b1b1b"
+              bgColor={colors.btnColor}
               variant="primary"
               label={
                 error
@@ -316,7 +367,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
               onPress={() => {
                 setAlert(false);
                 if (!error) {
-                  //   onPressTrackCard();
+                    onPressSettings();
                 }
               }}
             />
@@ -329,52 +380,4 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
 
 export default ReplaceCardComponent;
 
-const innerStyles = StyleSheet.create({
-  subTitleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  deliverText: {
-    fontWeight: "600",
-    marginRight: 10,
-    color: "#1b1b1b",
-  },
-  radioButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    marginVertical: 8,
-  },
-  radioBtnOuterCircle: {
-    height: 24,
-    width: 24,
-    borderWidth: 2,
-    borderRadius: 24,
-    padding: 2,
-  },
-  radioBtnInnerCircle: {
-    height: "100%",
-    width: "100%",
-    backgroundColor: "#1b1b1b",
-    borderRadius: 24,
-  },
-  radioBtnTextContainer: {
-    marginLeft: 10,
-  },
-  radioBtnTitle: {
-    fontWeight: "600",
-    marginBottom: 4,
-    color: "#1b1b1b",
-  },
-  copyContainer: {
-    backgroundColor: "#dddddd",
-    width: "100%",
-    borderRadius: 3,
-    padding: 16,
-    marginVertical: 16,
-  },
-  copyContainerText: {
-    fontSize: 12,
-    color: "#1b1b1b",
-  },
-});
+
