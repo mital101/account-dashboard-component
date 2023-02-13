@@ -1,7 +1,13 @@
 import { WalletContext } from "@banking-component/account-dashboard-component/src/context/wallet-context";
 import { isEmpty } from "lodash";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Button, ThemeContext } from "react-native-theme-component";
 import { InfoIcon } from "../../../../../assets/info.icon";
 import { BRoundedTickIcon } from "../../../../../assets/rounded-tick.icon";
@@ -28,8 +34,15 @@ export const addressRadioGroup = [
 ];
 
 const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
-  const { style, reason, onPressSettings, onPressGotoHome, onPressContinue, loader } = props;
-  const { wallets,getWalletDetail } = useContext(WalletContext);
+  const {
+    style,
+    reason,
+    onPressSettings,
+    onPressGotoHome,
+    onPressContinue,
+    loader,
+  } = props;
+  const { wallets, getWalletDetail } = useContext(WalletContext);
   const { i18n, colors } = useContext(ThemeContext);
   const styles: ReplaceCardComponentStyles = useMergeStyles(style);
   const [radioData, setRadioData] = useState(addressRadioGroup);
@@ -48,28 +61,30 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
   };
 
   const checkBalance = async () => {
-    if(wallets.length == 0 && reason === ReportIssueType.LOST_OR_STOLEN){
-      setshowAlertWallet(true)
-      setError(false)
-    }else{
-     if(error){
-       setError(true);
-       setAlert(true) 
-     }else{
-     let response = await onPressContinue()
+    if (wallets.length == 0 && reason === ReportIssueType.LOST_OR_STOLEN) {
+      setshowAlertWallet(true);
+      setError(false);
+    } else {
+      if (error) {
+        setError(true);
+        setAlert(true);
+      } else {
+        let response = await onPressContinue();
         setAlert(response);
         setShowSheet(false);
-     }
+      }
     }
-  }
+  };
 
   const innerStyles = StyleSheet.create({
+    mainView: { paddingHorizontal: 24, width: "100%" },
+    marginBottom: { marginBottom: 10 },
     subTitleContainer: {
       flexDirection: "row",
       alignItems: "center",
       marginBottom: 10,
     },
-    childrenView : { paddingHorizontal: 24, width: "100%" },
+    childrenView: { paddingHorizontal: 24, width: "100%" },
     deliverText: {
       fontWeight: "600",
       marginRight: 10,
@@ -178,40 +193,33 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
           label={i18n?.t("adb_card.btn_go_home")}
           onPress={onPressGotoHome}
         />
-       {loader ? 
-       <ActivityIndicator
-        size={'large'}
-        color={colors.primaryColor}
-        />
-        : <Button
-          style={{
-            primaryContainerStyle: {
-              borderRadius: 100,
-              height: 56,
-            },
-            primaryLabelStyle: {
-              color: colors.backgroundTextColor,
-            },
-          }}
-          bgColor={colors.btnColor}
-          variant="primary"
-          label={i18n?.t("adb_card.btn_continue")}
-          onPress={() => {
-            checkBalance()
-            
-          }}
-        />
-    
-      }
+        {loader ? (
+          <ActivityIndicator size={"large"} color={colors.primaryColor} />
+        ) : (
+          <Button
+            style={{
+              primaryContainerStyle: {
+                borderRadius: 100,
+                height: 56,
+              },
+              primaryLabelStyle: {
+                color: colors.backgroundTextColor,
+              },
+            }}
+            bgColor={colors.btnColor}
+            variant="primary"
+            label={i18n?.t("adb_card.btn_continue")}
+            onPress={() => {
+              checkBalance();
+            }}
+          />
+        )}
       </View>
       <AlertModal
         isVisible={showAlertWallet}
         position="bottom"
-        title={
-          i18n?.t("adb_card.lbl_insufficient_balance")
-        }
-        subtitle={
-          i18n?.t("adb_card.lbl_insufficient_subTitle")  }
+        title={i18n?.t("adb_card.lbl_insufficient_balance")}
+        subtitle={i18n?.t("adb_card.lbl_insufficient_subTitle")}
         icon={
           <View style={{ height: 55, width: 55 }}>
             {error ? (
@@ -229,19 +237,18 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
           },
         }}
         children={
-          <View style={{ paddingHorizontal: 24, width: "100%" }}>
-     
-              <View style={innerStyles.copyContainer}>
-                <Text style={innerStyles.copyContainerText}>
-                  {`You can start transacting with your${
-                    reason === ReportIssueType.LOST_OR_STOLEN
-                      ? " replacement"
-                      : ""
-                  } virtual card right now.`}
-                </Text>
-              </View>
-        
-            <View style={{ marginBottom: 10 }}>
+          <View style={innerStyles.mainView}>
+            <View style={innerStyles.copyContainer}>
+              <Text style={innerStyles.copyContainerText}>
+                {`You can start transacting with your${
+                  reason === ReportIssueType.LOST_OR_STOLEN
+                    ? " replacement"
+                    : ""
+                } virtual card right now.`}
+              </Text>
+            </View>
+
+            <View style={innerStyles.marginBottom}>
               <Button
                 style={{
                   primaryContainerStyle: {
@@ -259,9 +266,8 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
                 label={i18n?.t("adb_card.btn_go_home")}
                 onPress={() => {
                   setshowAlertWallet(false);
-            
-                    onPressGotoHome();
-                  
+
+                  onPressGotoHome();
                 }}
               />
             </View>
@@ -274,11 +280,9 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
               }}
               bgColor={colors.btnColor}
               variant="primary"
-              label={ i18n?.t("common.lbl_continue")
-              }
+              label={i18n?.t("common.lbl_continue")}
               onPress={() => {
                 setshowAlertWallet(false);
-               
               }}
             />
           </View>
@@ -367,7 +371,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
               onPress={() => {
                 setAlert(false);
                 if (!error) {
-                    onPressSettings();
+                  onPressSettings();
                 }
               }}
             />
@@ -379,5 +383,3 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
 };
 
 export default ReplaceCardComponent;
-
-
