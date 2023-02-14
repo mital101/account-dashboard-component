@@ -528,7 +528,7 @@ export function useWalletContextValue(): WalletContextData {
       (w) => w.type === "CARD_WALLET"
     );
     const bankWallet: CardWallet | undefined = walletsOrdered.find(
-      (w) => w.type === "BANK_WALLET"
+      (w) => w.type === "DEPOSIT_WALLET"
     );
     if (bankWallet) {
       setBankWallet(bankWallet);
