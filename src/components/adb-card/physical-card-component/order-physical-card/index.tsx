@@ -39,7 +39,7 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
   props
 ) => {
   const { style, onPressGotoHome, onPressTrackCard, onPressSettings } = props;
-  const { i18n } = useContext(ThemeContext);
+  const { i18n, fonts } = useContext(ThemeContext);
   const styles: OrderPhysicalCardStyles = useMergeStyles(style);
   const [radioData, setRadioData] = React.useState(addressRadioGroup);
   const [showAlert, setAlert] = React.useState(false);
@@ -53,6 +53,62 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
     arr[index].selected = !arr[index].selected;
     setRadioData(arr);
   };
+
+
+const innerStyles = StyleSheet.create({
+  subTitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  title :{
+fontFamily : fonts.bold
+  },
+  desc : { color: "#1b1b1b" ,
+fontFamily : fonts.regular},
+  deliverText: {
+    marginRight: 10,
+    color: "#1b1b1b",
+    fontFamily : fonts.semiBold
+  },
+  radioButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    marginVertical: 8,
+  },
+  radioBtnOuterCircle: {
+    height: 24,
+    width: 24,
+    borderWidth: 2,
+    borderRadius: 24,
+    padding: 2,
+  },
+  radioBtnInnerCircle: {
+    height: "100%",
+    width: "100%",
+    backgroundColor: "#1b1b1b",
+    borderRadius: 24,
+  },
+  radioBtnTitle: {
+    fontWeight: "600",
+    marginBottom: 4,
+    color: "#1b1b1b",
+  },
+  greyContainer: {
+    backgroundColor: "#dddddd",
+    width: "100%",
+    borderRadius: 3,
+    padding: 16,
+    marginVertical: 16,
+  },
+  greyContainerText: {
+    fontSize: 12,
+    color: "#1b1b1b",
+    fontFamily : fonts.regular
+  },
+});
+
+
   return (
     <>
       <ScrollView
@@ -66,7 +122,7 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
         bounces={false}
       >
         <View>
-          <Text style={styles.titleStyle}>
+          <Text style={[styles.titleStyle,innerStyles.title]}>
             {i18n?.t("adb_card.lbl_get_physical_card_today") ??
               "Get your physical card today!"}
           </Text>
@@ -79,27 +135,17 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
           <View style={innerStyles.subTitleContainer}>
             <Text style={innerStyles.deliverText}>
               {i18n?.t("adb_card.lbl_deliver_to") ?? "Deliver to"}
-            </Text>
-            <TouchableOpacity onPress={() => setShowSheet(true)}>
-              <InfoIcon height={16} width={16} color={"#000000"} />
-            </TouchableOpacity>
+            </Text>  
           </View>
           {radioData.map((item, index) => (
-            <View style={innerStyles.radioButtonContainer}>
-              <TouchableOpacity
-                style={innerStyles.radioBtnOuterCircle}
-                onPress={() => handlePress(index)}
-              >
-                {item.selected && (
-                  <View style={innerStyles.radioBtnInnerCircle} />
-                )}
-              </TouchableOpacity>
-              <View style={innerStyles.radioBtnTextContainer}>
-                <Text style={innerStyles.radioBtnTitle}>{item.title}</Text>
-                <Text style={{ color: "#1b1b1b" }}>{item.desc}</Text>
-              </View>
-            </View>
+                <Text style={innerStyles.desc}>{item.desc}</Text> 
           ))}
+           <View style={innerStyles.greyContainer}>
+            <Text style={innerStyles.greyContainerText}>
+              { i18n?.t("adb_card.lbl_get_physical_card_delivery")}
+            
+            </Text>
+          </View>
         </View>
         <View>
           <View style={innerStyles.greyContainer}>
@@ -223,53 +269,3 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
 };
 
 export default OrderPhysicalCardComponent;
-
-const innerStyles = StyleSheet.create({
-  subTitleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  deliverText: {
-    fontWeight: "600",
-    marginRight: 10,
-    color: "#1b1b1b",
-  },
-  radioButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    marginVertical: 8,
-  },
-  radioBtnOuterCircle: {
-    height: 24,
-    width: 24,
-    borderWidth: 2,
-    borderRadius: 24,
-    padding: 2,
-  },
-  radioBtnInnerCircle: {
-    height: "100%",
-    width: "100%",
-    backgroundColor: "#1b1b1b",
-    borderRadius: 24,
-  },
-  radioBtnTextContainer: {
-    marginLeft: 10,
-  },
-  radioBtnTitle: {
-    fontWeight: "600",
-    marginBottom: 4,
-    color: "#1b1b1b",
-  },
-  greyContainer: {
-    backgroundColor: "#dddddd",
-    width: "100%",
-    borderRadius: 3,
-    padding: 16,
-    marginVertical: 16,
-  },
-  greyContainerText: {
-    fontSize: 12,
-    color: "#1b1b1b",
-  },
-});

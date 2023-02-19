@@ -20,6 +20,7 @@ const useMergeStyles = (
         flexGrow:1,
         justifyContent:'space-between'
     },
+    paddingTop:{paddingTop :20},
     titleStyle: {
       fontSize: 24,
       fontWeight: '600',

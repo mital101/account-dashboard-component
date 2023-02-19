@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Dimensions,
   StyleSheet,
@@ -6,10 +6,14 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { ThemeContext } from "react-native-theme-component";
 import { CloseEyesIcon } from "../../../../../assets/close-eyes.icon";
+import {CopyIcon} from '../../../../../assets/copy.icon'
 import { EyesIcon } from "../../../../../assets/eyes.icon";
 import { LockIcon } from "../../../../../assets/lock-icon";
 import VisaIcon from "../common/visa-icon";
+import Clipboard from '@react-native-clipboard/clipboard';
+
 
 export interface VirtualCardProps {
   cardHolderName: string;
@@ -23,6 +27,8 @@ const VirtualCard: React.FC<VirtualCardProps> = (props) => {
   const { cardHolderName, showEyeIcon, showCardType, cardBottomText, isCardLock } = props;
   const [showCardNumber, setShowCardNumber] = useState(false);
   const [cardNumber] = useState("1234567895639044");
+  const { colors } = useContext(ThemeContext);
+
   return (
     <View style={{ marginVertical: 32 }} pointerEvents={isCardLock ? "none" : "auto"}>
       <View style={[[styles.container,  {borderColor: isCardLock ? "#00000030" : "#000"}]]}>
@@ -45,6 +51,7 @@ const VirtualCard: React.FC<VirtualCardProps> = (props) => {
             </View>
           </View>
           <View style={styles.cardNumberContainer}>
+         
             <View style={{ marginHorizontal: 4 }}>
               <Text style={styles.cardNumberText}>••••</Text>
             </View>
@@ -59,7 +66,16 @@ const VirtualCard: React.FC<VirtualCardProps> = (props) => {
                 {showCardNumber ? cardNumber.substring(12, 16) : "••••"}
               </Text>
             </View>
+           {showCardNumber && <TouchableOpacity 
+            onPress={() => {
+              Clipboard.setString(cardNumber);
+            }}
+            style={styles.marginLeft}>
+              <CopyIcon color={colors.black} width={20} height={20}/>
+            </TouchableOpacity>}
+          
           </View>
+         
         </View>
         <View style={[styles.lowerContainer,  {opacity: isCardLock ? 0.3 : 1}]}>
           <Text style={styles.cardNameText}>{cardHolderName}</Text>
@@ -96,6 +112,7 @@ const styles = StyleSheet.create({
     height: (Dimensions.get("screen").height * 25) / 100,
     borderWidth: 1,
   },
+  marginLeft :{marginLeft :'30%'},
   upperContainer: {
     backgroundColor: "#dddddd",
     padding: 17,
