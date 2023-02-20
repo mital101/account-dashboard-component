@@ -108,6 +108,9 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
       backgroundColor: colors.btnColor,
       borderRadius: 24,
     },
+    radioBtnTextContainer: {
+      marginLeft: 10,
+    },
     radioBtnTitle: {
       fontWeight: "600",
       marginBottom: 4,

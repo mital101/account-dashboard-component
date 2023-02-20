@@ -21,7 +21,7 @@ const CarouselCard: React.FC<CarouselCardProps> = (props) => {
 
       <TouchableOpacity style={styles.buttonContainerStyle} onPress={onPress}>
         <Text style={styles.buttonLabelStyle}>{buttonLabel}</Text>
-        <View style={{ width: 10, height: 10, marginLeft: 15 }}>
+        <View style={{ width: 15, height: 15, marginLeft: 5 }}>
           <ArrowRightIcon color="#fff" />
         </View>
       </TouchableOpacity>

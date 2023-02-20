@@ -278,6 +278,7 @@ const AppPassCodeComponent: React.FC<AppPassCodeProps> = (
                     onPressGotoCard();
                     setShowAlert(false)
                   }else{
+                    setShowAlert(false);
                     orderPhysicalCard();
                   }
                 } else {

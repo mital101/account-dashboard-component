@@ -48,4 +48,5 @@ export interface AppPasscodeCompStyle {
   titleContainerStyle?: StyleProp<TextStyle>;
   titleStyle?: StyleProp<TextStyle>;
   subTitleStyle?: StyleProp<TextStyle>;
+  appCodeContainerStyle?: StyleProp<TextStyle>;
 }

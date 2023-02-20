@@ -20,6 +20,7 @@ export interface ILockCardSheet {
   style?: LockCardSheetStyles;
   onClose: () => void;
   onLockCard: () => void;
+  title : () => void;
 }
 export interface ILockCardItemStyle {
   item: {
@@ -44,7 +45,7 @@ const SettingsItemStyle = (props: ILockCardItemStyle) => {
 };
 
 const LockCardBottomSheet = (props: ILockCardSheet) => {
-  const { isVisible, style, onClose, onLockCard } = props;
+  const { isVisible, style, onClose, onLockCard,title } = props;
   const styles: LockCardSheetStyles = useMergeStyles(style);
   const { i18n } = useContext(ThemeContext);
   const [lockCardData] = useState([
@@ -112,7 +113,7 @@ const LockCardBottomSheet = (props: ILockCardSheet) => {
         }}
         bgColor="#1b1b1b"
         variant="primary"
-        label={i18n?.t("lock_card.btn_lock_card")}
+        label={title}
         onPress={onLockCard}
       />
     </BottomSheet>
