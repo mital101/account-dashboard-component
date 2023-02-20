@@ -169,13 +169,7 @@ const CardLimitComponent: React.FC<CardLimitProps> = (props) => {
             {i18n?.t("adb_card.lbl_set_preffered_limits") ??
               "Please set your preferred limits for each transaction type."}
           </Text>
-          <View style={styles.cardContainerStyle}>
-            <VirtualCard
-              showEyeIcon
-              cardHolderName="{Nur Aeolanda Binti Mahmud}"
-            />
-          </View>
-          <View>
+          <View style={styles.paddingTop}>
             <EditableInput
               onSave={async (e) => {
                 if (

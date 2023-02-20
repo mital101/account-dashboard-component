@@ -1,6 +1,5 @@
 import { WalletContext } from "@banking-component/account-dashboard-component/src/context/wallet-context";
-import { isEmpty } from "lodash";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -43,7 +42,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
     loader,
   } = props;
   const { wallets, getWalletDetail } = useContext(WalletContext);
-  const { i18n, colors } = useContext(ThemeContext);
+  const { i18n, colors, fonts } = useContext(ThemeContext);
   const styles: ReplaceCardComponentStyles = useMergeStyles(style);
   const [radioData, setRadioData] = useState(addressRadioGroup);
   const [showSheet, setShowSheet] = useState(false);
@@ -79,6 +78,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
   const innerStyles = StyleSheet.create({
     mainView: { paddingHorizontal: 24, width: "100%" },
     marginBottom: { marginBottom: 10 },
+    btnSpace: { height: 55, width: 55 },
     subTitleContainer: {
       flexDirection: "row",
       alignItems: "center",
@@ -86,7 +86,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
     },
     childrenView: { paddingHorizontal: 24, width: "100%" },
     deliverText: {
-      fontWeight: "600",
+      fontFamily: fonts.semiBold,
       marginRight: 10,
       color: colors.btnColor,
     },
@@ -117,7 +117,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
       color: colors.btnColor,
     },
     copyContainer: {
-      backgroundColor: "#dddddd",
+      backgroundColor: colors.disableTransparent,
       width: "100%",
       borderRadius: 3,
       padding: 16,
@@ -126,12 +126,15 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
     copyContainerText: {
       fontSize: 12,
       color: colors.btnColor,
+      fontFamily: fonts.regular,
     },
   });
 
   return (
     <View style={styles.containerStyle}>
-      <Text style={styles.titleStyle}>Replace your card today!</Text>
+      <Text style={styles.titleStyle}>
+        {i18n?.t("adb_card.lbl_report_replace_title")}
+      </Text>
       <Text style={styles.subTitleStyle}>
         Please confirm your delivery address. Your replacement card will have
         different card details for security reasons.
@@ -144,24 +147,15 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
         <Text style={innerStyles.deliverText}>
           {i18n?.t("adb_card.lbl_deliver_to") ?? "Deliver to"}
         </Text>
-        <TouchableOpacity onPress={() => setShowSheet(true)}>
-          <InfoIcon height={16} width={16} color={"#000000"} />
-        </TouchableOpacity>
       </View>
       {radioData.map((item, index) => (
-        <View style={innerStyles.radioButtonContainer}>
-          <TouchableOpacity
-            style={innerStyles.radioBtnOuterCircle}
-            onPress={() => handlePress(index)}
-          >
-            {item.selected && <View style={innerStyles.radioBtnInnerCircle} />}
-          </TouchableOpacity>
-          <View style={innerStyles.radioBtnTextContainer}>
-            <Text style={innerStyles.radioBtnTitle}>{item.title}</Text>
-            <Text style={{ color: colors.btnColor }}>{item.desc}</Text>
-          </View>
-        </View>
+        <Text style={{ color: colors.btnColor }}>{item.desc}</Text>
       ))}
+      <View style={innerStyles.copyContainer}>
+        <Text style={innerStyles.copyContainerText}>
+          {i18n?.t("adb_card.lbl_get_physical_card_delivery")}
+        </Text>
+      </View>
       <DeliverInfoSheet
         isVisible={showSheet}
         onClose={() => setShowSheet(false)}
@@ -221,7 +215,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
         title={i18n?.t("adb_card.lbl_insufficient_balance")}
         subtitle={i18n?.t("adb_card.lbl_insufficient_subTitle")}
         icon={
-          <View style={{ height: 55, width: 55 }}>
+          <View style={innerStyles.btnSpace}>
             {error ? (
               <InfoIcon color={colors.icon} />
             ) : (
@@ -302,7 +296,7 @@ const ReplaceCardComponent = (props: ReplaceCardComponentProps) => {
             : "Your replacement card has been ordered and will be delivered to your selected address."
         }
         icon={
-          <View style={{ height: 55, width: 55 }}>
+          <View style={innerStyles.btnSpace}>
             {error ? (
               <InfoIcon color={colors.icon} />
             ) : (
