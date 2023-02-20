@@ -39,7 +39,7 @@ const OrderPhysicalCardComponent: React.FC<OrderPhysicalCardProps> = (
   props
 ) => {
   const { style, onPressGotoHome, onPressTrackCard, onPressSettings } = props;
-  const { i18n, fonts } = useContext(ThemeContext);
+  const { i18n, fonts ,colors} = useContext(ThemeContext);
   const styles: OrderPhysicalCardStyles = useMergeStyles(style);
   const [radioData, setRadioData] = React.useState(addressRadioGroup);
   const [showAlert, setAlert] = React.useState(false);
@@ -64,11 +64,11 @@ const innerStyles = StyleSheet.create({
   title :{
 fontFamily : fonts.bold
   },
-  desc : { color: "#1b1b1b" ,
+  desc : { color: colors.btnColor ,
 fontFamily : fonts.regular},
   deliverText: {
     marginRight: 10,
-    color: "#1b1b1b",
+    color: colors.btnColor,
     fontFamily : fonts.semiBold
   },
   radioButtonContainer: {
@@ -86,16 +86,16 @@ fontFamily : fonts.regular},
   radioBtnInnerCircle: {
     height: "100%",
     width: "100%",
-    backgroundColor: "#1b1b1b",
+    backgroundColor: colors.btnColor,
     borderRadius: 24,
   },
   radioBtnTitle: {
     fontWeight: "600",
     marginBottom: 4,
-    color: "#1b1b1b",
+    color: colors.btnColor,
   },
   greyContainer: {
-    backgroundColor: "#dddddd",
+    backgroundColor: colors.disableTransparent,
     width: "100%",
     borderRadius: 3,
     padding: 16,
@@ -103,7 +103,7 @@ fontFamily : fonts.regular},
   },
   greyContainerText: {
     fontSize: 12,
-    color: "#1b1b1b",
+    color: colors.btnColor,
     fontFamily : fonts.regular
   },
 });
@@ -160,7 +160,7 @@ fontFamily : fonts.regular},
                 height: 56,
               },
             }}
-            bgColor="#1b1b1b"
+            bgColor={colors.btnColor}
             variant="primary"
             label={i18n?.t("adb_card.btn_continue") ?? "Continue"}
             onPress={() => {
@@ -223,13 +223,13 @@ fontFamily : fonts.regular},
                     borderRadius: 100,
                     height: 56,
                     borderWidth: 2,
-                    borderColor: "#1b1b1b",
+                    borderColor: colors.btnColor,
                   },
                   primaryLabelStyle: {
-                    color: "#1b1b1b",
+                    color: colors.btnColor,
                   },
                 }}
-                bgColor="#ffffff"
+                bgColor={colors.backgroundTextColor}
                 variant="primary"
                 label={i18n?.t("adb_card.btn_go_home") ?? "Go to Home"}
                 onPress={() => {
@@ -247,7 +247,7 @@ fontFamily : fonts.regular},
                   height: 56,
                 },
               }}
-              bgColor="#1b1b1b"
+              bgColor={colors.btnColor}
               variant="primary"
               label={
                 error

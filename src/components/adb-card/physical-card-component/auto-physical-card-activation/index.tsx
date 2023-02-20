@@ -57,7 +57,6 @@ const AutoCardActivation:React.FC<IAutoCardActivation> = (props:IAutoCardActivat
         <AlertModal
         isVisible={showAlert}
         position="bottom"
-
         title={error ? "Unsuccessful!" : "Your card is successfully activated!"}
         subtitle={
           error
